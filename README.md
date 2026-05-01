@@ -26,6 +26,10 @@ The dev server runs at `http://localhost:4321/koko-site/`.
 
 ## Content workflow
 
+> **For the full authoring convention, see [POST-AUTHORING.md](./POST-AUTHORING.md).**
+> Folder structure, frontmatter, available components, multi-file posts, and
+> a copy-pasteable AI-agent system prompt.
+
 The **iCloud Blog folder is the source of truth** for posts. The Astro
 content collection in `src/content/notebook/` is a derived mirror — what
 gets deployed.

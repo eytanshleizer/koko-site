@@ -38,6 +38,10 @@ const destDir = path.join(repoRoot, "src", "content", "notebook")
 
 const SKIP_NAMES = new Set([".DS_Store", ".git", "node_modules"])
 const SKIP_EXTS = new Set([".swp", ".tmp", ".bak"])
+// Folders or files starting with `_` (e.g. _template, _draft) are private to
+// the source folder and never synced. Use `_` to keep templates, drafts, or
+// scratch posts in iCloud without publishing them.
+const isPrivate = (name) => name.startsWith("_")
 
 async function exists(p) {
   try {
@@ -57,6 +61,7 @@ async function walk(dir, base = dir) {
   const out = []
   for (const e of entries) {
     if (SKIP_NAMES.has(e.name)) continue
+    if (isPrivate(e.name)) continue
     const ext = path.extname(e.name).toLowerCase()
     if (SKIP_EXTS.has(ext)) continue
     const abs = path.join(dir, e.name)

@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --bg: theme(colors.ink.0);
+    --fg: theme(colors.bone.0);
+    --fg-dim: theme(colors.bone.200);
+    --fg-mute: theme(colors.bone.300);
+    --line: theme(colors.bone.500 / 25%);
+    --accent: theme(colors.ember.300);
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: theme(fontFamily.sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: theme(colors.ember.300 / 35%);
+    color: theme(colors.bone.0);
+  }
+}
+
+@layer components {
+  /* Editorial mono label, e.g. "FIG 0.1" */
+  .label-mono {
+    @apply font-mono text-[0.72rem] uppercase tracking-[0.18em] text-bone-300;
+  }
+
+  .label-mono-accent {
+    @apply font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ember-300;
+  }
+
+  /* Two-tone inline split: bright text + dim continuation in same paragraph */
+  .editorial {
+    @apply text-bone-300;
+  }
+  .editorial > .em {
+    @apply text-bone-0;
+  }
+
+  /* Container */
+  .container-page {
+    @apply mx-auto w-full max-w-page px-6 md:px-10;
+  }
+
+  /* Hairline divider */
+  .hairline {
+    @apply h-px w-full bg-bone-500/15;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-full border border-bone-500/30 px-5 py-2.5 text-sm font-medium text-bone-50 transition;
+  }
+  .btn-ghost:hover {
+    @apply border-bone-200/50 bg-bone-0/[0.04];
+  }
+
+  /* Solid button (sparingly used) */
+  .btn-solid {
+    @apply inline-flex items-center gap-2 rounded-full bg-bone-0 px-5 py-2.5 text-sm font-semibold text-ink-0 transition;
+  }
+  .btn-solid:hover {
+    @apply bg-bone-100;
+  }
+
+  /* Card on dark — editorial */
+  .card {
+    @apply rounded-xl border border-bone-500/15 bg-ink-50 transition;
+  }
+  .card:hover {
+    @apply border-bone-500/30 bg-ink-100;
+  }
+}

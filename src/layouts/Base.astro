@@ -1,0 +1,86 @@
+---
+import "@/styles/global.css"
+import Nav from "@/components/Nav.astro"
+import Footer from "@/components/Footer.astro"
+
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+}
+
+const {
+  title = "Eytan Shleizer",
+  description = "Problem exploration, AI, and the shape of what's coming.",
+  ogImage,
+} = Astro.props as Props
+
+const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shleizer`
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body class="bg-ink-0 text-bone-0 antialiased">
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <!--
+      Mermaid is loaded only on pages that actually contain diagrams. The
+      remark-mermaid plugin transforms ```mermaid blocks into <pre class="mermaid">
+      elements; this script renders them client-side using a dark theme that
+      matches the editorial palette.
+    -->
+    <script>
+      const renderMermaid = async () => {
+        const nodes = document.querySelectorAll<HTMLElement>("pre.mermaid")
+        if (nodes.length === 0) return
+        const mermaid = (await import("mermaid")).default
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "base",
+          themeVariables: {
+            background: "#000000",
+            primaryColor: "#1c1c1c",
+            primaryTextColor: "#fafafa",
+            primaryBorderColor: "#525252",
+            lineColor: "#a3a3a3",
+            secondaryColor: "#262626",
+            tertiaryColor: "#161616",
+            fontFamily: "Inter Tight, Inter, ui-sans-serif, system-ui",
+          },
+          securityLevel: "strict",
+        })
+        await mermaid.run({ nodes: Array.from(nodes) })
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", renderMermaid)
+      } else {
+        renderMermaid()
+      }
+    </script>
+  </body>
+</html>

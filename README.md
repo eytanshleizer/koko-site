@@ -1,17 +1,70 @@
-# Quartz v4
+# koko-site
 
-> “[One] who works with the door open gets all kinds of interruptions, but [they] also occasionally gets clues as to what the world is and what might be important.” — Richard Hamming
+Personal site of Eytan Shleizer — notebook, tools, about. Deployed at
+[eytanshleizer.github.io/koko-site](https://eytanshleizer.github.io/koko-site).
 
-Quartz is a set of tools that helps you publish your [digital garden](https://jzhao.xyz/posts/networked-thought) and notes as a website for free.
+Built with [Astro 5](https://astro.build/) + Tailwind. The hero scene
+(animated star + Dyson rings + nebula) is a small Three.js composition; each
+piece lives in its own module under `src/components/scene/`.
 
-🔗 Read the documentation and get started: https://quartz.jzhao.xyz/
+## Stack
 
-[Join the Discord Community](https://discord.gg/cRFFHYye7t)
+- **Astro 5** — static site generator with content collections
+- **MDX** — for posts that need to embed components or interactive bits
+- **Mermaid** — diagrams render client-side from `\`\`\`mermaid` fenced blocks
+- **Tailwind CSS** + `@tailwindcss/typography` for editorial prose
+- **Three.js** — hero scene
 
-## Sponsors
+## Local development
 
-<p align="center">
-  <a href="https://github.com/sponsors/jackyzha0">
-    <img src="https://cdn.jsdelivr.net/gh/jackyzha0/jackyzha0/sponsorkit/sponsors.svg" />
-  </a>
-</p>
+```bash
+npm install
+npm run dev
+```
+
+The dev server runs at `http://localhost:4321/koko-site/`.
+
+## Content
+
+Notebook posts live in `src/content/notebook/` and follow this schema (see
+`src/content/config.ts`):
+
+```yaml
+---
+title: "Post title"
+excerpt: "One-line summary."
+date: 2026-01-01
+fig: "FIG 1.X"   # optional
+draft: false     # optional
+---
+```
+
+Each post is one of:
+
+- A flat markdown file: `src/content/notebook/some-slug.md`
+- A folder with `index.md` and supporting files (images, components):
+  `src/content/notebook/some-slug/index.md`
+
+Posts are accessible at `/notebook/<slug>`. Mermaid diagrams use the
+standard fenced-code syntax.
+
+## Deployment
+
+Pushes to `main` trigger `.github/workflows/deploy.yml`, which builds the
+Astro site and publishes `dist/` to GitHub Pages.
+
+## Layout
+
+- `src/pages/` — routes
+- `src/components/` — UI components (Nav, Footer, Hero pieces)
+- `src/components/scene/` — Three.js modules (star, rings, etc.)
+- `src/content/notebook/` — notebook posts
+- `src/lib/` — small helpers (e.g. the remark-mermaid plugin)
+- `src/layouts/Base.astro` — shared HTML shell
+- `src/styles/global.css` — Tailwind layer + design tokens
+
+## Archive
+
+The original Quartz-based version of this site lives on the
+[`archive/quartz`](https://github.com/eytanshleizer/koko-site/tree/archive/quartz)
+branch.

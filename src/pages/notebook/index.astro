@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content"
+import Base from "@/layouts/Base.astro"
+import SectionLabel from "@/components/SectionLabel.astro"
+
+const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
+const link = (href: string) => base + href
+
+const posts = (await getCollection("notebook", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+)
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+---
+
+<Base
+  title="Notebook · Eytan Shleizer"
+  description="Working notes on problem exploration, AI, and the shape of what's coming."
+>
+  <section>
+    <div class="container-page pt-16 pb-10 md:pt-24 md:pb-14">
+      <SectionLabel fig="FIG 1.0" title="Notebook" />
+      <h1
+        class="mt-6 max-w-3xl text-display font-semibold tracking-tighter text-bone-0"
+        style="text-wrap: balance;"
+      >
+        A working notebook on the problems worth solving.
+      </h1>
+      <p class="mt-6 max-w-2xl text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
+        Long-form thinking on AI, problem exploration, and futures design. Posts
+        are working drafts more than finished essays — the hope is to be useful,
+        and to keep moving.
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page"><div class="hairline"></div></div>
+
+  <section>
+    <div class="container-page py-14 md:py-20">
+      <ul class="divide-y divide-bone-500/15 border-b border-bone-500/15">
+        {
+          posts.map((post) => (
+            <li>
+              <a
+                class="group grid gap-4 py-8 md:grid-cols-[160px_1fr_auto] md:items-baseline md:gap-10"
+                href={link(`/notebook/${post.slug}`)}
+              >
+                <div class="flex items-baseline gap-3 md:flex-col md:items-start md:gap-1">
+                  {post.data.fig && (
+                    <p class="label-mono">{post.data.fig}</p>
+                  )}
+                  <p class="text-[12.5px] text-bone-300">{fmt(post.data.date)}</p>
+                </div>
+                <div>
+                  <h2 class="text-[22px] font-semibold tracking-tight text-bone-0 transition group-hover:text-bone-200 md:text-[26px]">
+                    {post.data.title}
+                  </h2>
+                  <p class="mt-2 max-w-[60ch] text-[14.5px] leading-relaxed text-bone-300">
+                    {post.data.excerpt}
+                  </p>
+                </div>
+                <span
+                  aria-hidden="true"
+                  class="hidden text-bone-300 transition group-hover:translate-x-0.5 group-hover:text-bone-0 md:inline"
+                >
+                  →
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

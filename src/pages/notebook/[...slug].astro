@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from "astro:content"
+import Base from "@/layouts/Base.astro"
+import SectionLabel from "@/components/SectionLabel.astro"
+
+export async function getStaticPaths() {
+  const posts = await getCollection("notebook", ({ data }) => !data.draft)
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }))
+}
+
+const { post } = Astro.props
+const { Content } = await render(post)
+
+const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
+const link = (href: string) => base + href
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+---
+
+<Base title={`${post.data.title} · Notebook`} description={post.data.excerpt}>
+  <article>
+    <header class="container-page pt-16 pb-10 md:pt-24 md:pb-14">
+      <a
+        class="inline-flex items-center gap-1 text-[13px] text-bone-300 transition hover:text-bone-0"
+        href={link("/notebook")}
+      >
+        <span aria-hidden="true">←</span>
+        Notebook
+      </a>
+
+      <div class="mt-10 max-w-3xl">
+        <SectionLabel fig={post.data.fig ?? "FIG 1.X"} title="Working note" />
+        <h1
+          class="mt-6 text-display font-semibold tracking-tighter text-bone-0"
+          style="text-wrap: balance;"
+        >
+          {post.data.title}
+        </h1>
+        <p class="mt-6 text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
+          {post.data.excerpt}
+        </p>
+        <p class="mt-6 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+          {fmt(post.data.date)}
+        </p>
+      </div>
+    </header>
+
+    <div class="container-page"><div class="hairline"></div></div>
+
+    <div class="container-page py-14 md:py-20">
+      <div
+        class="prose prose-invert max-w-prose prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-[1.5rem] prose-p:text-[16.5px] prose-p:leading-[1.75] prose-p:text-bone-200 prose-strong:text-bone-0 prose-a:text-bone-0 prose-a:underline prose-a:underline-offset-4 prose-a:decoration-bone-500/40 hover:prose-a:decoration-bone-200 prose-blockquote:border-l-2 prose-blockquote:border-ember-300/60 prose-blockquote:pl-5 prose-blockquote:text-bone-100 prose-blockquote:not-italic prose-li:text-bone-200"
+      >
+        <Content />
+      </div>
+    </div>
+  </article>
+</Base>

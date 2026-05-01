@@ -1,0 +1,152 @@
+---
+// Hero scene controller — owns the canvas, scene, camera, renderer, animation loop.
+// Each visual element (star, rings, beams, etc.) lives in its own module under
+// `./scene/`. Compose them here.
+---
+
+<div class="orb-stage" aria-hidden="true">
+  <canvas data-hero-scene></canvas>
+</div>
+
+<style>
+  .orb-stage {
+    position: relative;
+    width: clamp(380px, 46vw, 700px);
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
+    pointer-events: none;
+    isolation: isolate;
+  }
+  canvas[data-hero-scene] {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<script>
+  import * as THREE from "three"
+  import { buildStar } from "./scene/star"
+  import { buildRing } from "./scene/rings"
+
+  // Procedural environment map for PBR reflections — dim space with a faint
+  // warm horizon. The star itself is not in the env map (the PointLight
+  // creates its direct illumination); this is just for ambient reflections.
+  function buildEnvTexture(renderer: THREE.WebGLRenderer): THREE.Texture {
+    const canvas = document.createElement("canvas")
+    canvas.width = 512
+    canvas.height = 256
+    const ctx = canvas.getContext("2d")!
+    const grad = ctx.createLinearGradient(0, 0, 0, 256)
+    grad.addColorStop(0, "#0c0a14")    // top: deep cool purple
+    grad.addColorStop(0.5, "#2a1d12")  // horizon: faint warm
+    grad.addColorStop(1, "#06060c")    // bottom: black
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, 512, 256)
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.mapping = THREE.EquirectangularReflectionMapping
+    tex.colorSpace = THREE.SRGBColorSpace
+
+    const pmrem = new THREE.PMREMGenerator(renderer)
+    const env = pmrem.fromEquirectangular(tex).texture
+    pmrem.dispose()
+    tex.dispose()
+    return env
+  }
+
+  function init() {
+    const canvases = document.querySelectorAll<HTMLCanvasElement>(
+      "canvas[data-hero-scene]"
+    )
+    for (const canvas of canvases) {
+      if ((canvas as any).__heroSceneInit) continue
+      ;(canvas as any).__heroSceneInit = true
+      mount(canvas)
+    }
+  }
+
+  function mount(canvas: HTMLCanvasElement) {
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100)
+    camera.position.set(0, 0.3, 4.6)
+    camera.lookAt(0, 0, 0)
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance",
+    })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    function fit() {
+      const rect = canvas.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) return
+      renderer.setSize(rect.width, rect.height, false)
+      camera.aspect = rect.width / rect.height
+      camera.updateProjectionMatrix()
+    }
+    fit()
+    new ResizeObserver(fit).observe(canvas)
+
+    // Lighting for PBR objects (the star uses its own shader and ignores lights).
+    // Sun = strong warm point light at origin; small cool fill so the dark side
+    // of metal doesn't go pitch black.
+    const sunLight = new THREE.PointLight(0xffd1a0, 12, 0, 1.4)
+    sunLight.position.set(0, 0, 0)
+    scene.add(sunLight)
+
+    const fill = new THREE.HemisphereLight(0x4a4060, 0x1a1020, 0.25)
+    scene.add(fill)
+
+    // Environment map — gives metal something subtle to reflect.
+    scene.environment = buildEnvTexture(renderer)
+
+    // Compose scene elements (more to come — beams, etc.)
+    const star = buildStar(scene, { radius: 0.55 })
+    // Two thin Dyson rings spinning at different orientations and rates so the
+    // 3D orbital motion is visible (each ring's plane precesses around its own
+    // world-space spin axis).
+    const ringInner = buildRing(scene, {
+      innerRadius: 0.84,
+      outerRadius: 0.88,
+      height: 0.10,
+      tilt: -0.45,
+      spinAxis: new THREE.Vector3(0.15, 1.0, 0.0),
+      spinSpeed: 0.22,
+    })
+    const ringOuter = buildRing(scene, {
+      innerRadius: 1.14,
+      outerRadius: 1.18,
+      height: 0.12,
+      tilt: 0.30,
+      twist: 0.55,
+      spinAxis: new THREE.Vector3(1.0, 0.2, 0.0),
+      spinSpeed: -0.14,
+    })
+
+    const updaters = [star.update, ringInner.update, ringOuter.update]
+
+    let visible = true
+    const tick = () => {
+      requestAnimationFrame(tick)
+      if (!visible) return
+      const t = performance.now() / 1000
+      for (const u of updaters) u(t)
+      renderer.render(scene, camera)
+    }
+    tick()
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) visible = e.isIntersecting
+      },
+      { threshold: 0 }
+    )
+    io.observe(canvas)
+  }
+
+  init()
+  document.addEventListener("astro:page-load", init)
+</script>

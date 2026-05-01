@@ -1,0 +1,93 @@
+---
+import Base from "@/layouts/Base.astro"
+import SectionLabel from "@/components/SectionLabel.astro"
+
+const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
+const link = (href: string) => base + href
+---
+
+<Base
+  title="About · Eytan Shleizer"
+  description="Problem exploration, AI, and the shape of what's coming. A short bio."
+>
+  <section>
+    <div class="container-page pt-16 pb-10 md:pt-24 md:pb-14">
+      <SectionLabel fig="FIG 3.0" title="About" />
+      <h1
+        class="mt-6 max-w-3xl text-display font-semibold tracking-tighter text-bone-0"
+        style="text-wrap: balance;"
+      >
+        Working at the edge of intelligence and intent.
+      </h1>
+    </div>
+  </section>
+
+  <div class="container-page"><div class="hairline"></div></div>
+
+  <section>
+    <div class="container-page py-14 md:py-20">
+      <div class="grid gap-12 md:grid-cols-[1.4fr_1fr]">
+        <div class="max-w-prose text-[16.5px] leading-[1.75] text-bone-200">
+          <p>
+            I'm Eytan Shleizer. I work on problems that won't sit still — the
+            ones where the answer keeps moving, and the cost of being wrong
+            shows up upstream of the work.
+          </p>
+          <p class="mt-6">
+            Most of my time goes to three things: thinking through hard problem
+            spaces (and writing about them in the{" "}
+            <a
+              class="text-bone-0 underline underline-offset-4 decoration-bone-500/40 hover:decoration-bone-200"
+              href={link("/notebook")}>notebook</a
+            >), building instruments that change how that thinking gets done
+            (the{" "}
+            <a
+              class="text-bone-0 underline underline-offset-4 decoration-bone-500/40 hover:decoration-bone-200"
+              href={link("/tools")}>tools</a
+            > section), and collaborating with people working on adjacent
+            questions.
+          </p>
+          <p class="mt-6">
+            The through-line is curiosity about how we make decisions when the
+            problem is ambiguous, the data is partial, and the consequences are
+            durable.
+          </p>
+        </div>
+
+        <aside>
+          <p class="label-mono">Get in touch</p>
+          <ul class="mt-4 space-y-3 text-[14.5px] text-bone-200">
+            <li>
+              <a
+                class="hover:text-bone-0"
+                href="mailto:hello@eytanshleizer.com"
+              >
+                hello@eytanshleizer.com
+              </a>
+            </li>
+            <li>
+              <a
+                class="hover:text-bone-0"
+                href="https://github.com/eytanshleizer"
+                target="_blank"
+                rel="noopener"
+              >
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a
+                class="hover:text-bone-0"
+                href="https://linkedin.com/in/eytanshleizer"
+                target="_blank"
+                rel="noopener"
+              >
+                LinkedIn
+              </a>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>

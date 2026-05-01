@@ -1,0 +1,123 @@
+---
+// Nebula fog behind the sun. Sized to fill its parent container — drop this
+// inside the hero's orb column (a `position: relative` div) and it stays on
+// the right side without bleeding behind the headline text.
+//
+// Composition: a warm orange anchor (matches the sun), a cool blue counter
+// for contrast, and a faint rose accent. Each layer drifts independently.
+---
+
+<div class="hero-nebula" aria-hidden="true">
+  <div class="cloud cloud-warm-1"></div>
+  <div class="cloud cloud-warm-2"></div>
+  <div class="cloud cloud-cool"></div>
+  <div class="cloud cloud-rose"></div>
+</div>
+
+<style>
+  .hero-nebula {
+    position: absolute;
+    /* Anchored to the parent's left edge (so it never crosses into text);
+       extends slightly past the other three sides for an atmospheric feel. */
+    top: -12%;
+    bottom: -15%;
+    left: 0;
+    right: -12%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 0;
+  }
+
+  .cloud {
+    position: absolute;
+    border-radius: 9999px;
+    mix-blend-mode: screen;
+    filter: blur(70px);
+    will-change: transform, opacity;
+  }
+
+  /* Big warm anchor — dominant, matches the sun's hue. */
+  .cloud-warm-1 {
+    width: 90%;
+    height: 90%;
+    left: 5%;
+    top: 5%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 140, 70, 0.55) 0%,
+      rgba(255, 140, 70, 0.24) 30%,
+      transparent 65%
+    );
+    animation: drift-warm-1 22s ease-in-out infinite;
+  }
+
+  /* Hot inner highlight near the star. */
+  .cloud-warm-2 {
+    width: 55%;
+    height: 55%;
+    left: 18%;
+    top: 18%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 200, 130, 0.45) 0%,
+      rgba(255, 180, 110, 0.22) 30%,
+      transparent 60%
+    );
+    animation: drift-warm-2 18s ease-in-out infinite;
+  }
+
+  /* Cool counterpoint — blue down and to the right. */
+  .cloud-cool {
+    width: 70%;
+    height: 70%;
+    right: -5%;
+    bottom: -5%;
+    background: radial-gradient(
+      circle,
+      rgba(80, 130, 230, 0.5) 0%,
+      rgba(80, 130, 230, 0.22) 30%,
+      transparent 65%
+    );
+    animation: drift-cool 26s ease-in-out infinite;
+  }
+
+  /* Faint rose accent — adds chromatic richness. */
+  .cloud-rose {
+    width: 50%;
+    height: 50%;
+    right: 10%;
+    top: 0%;
+    background: radial-gradient(
+      circle,
+      rgba(225, 130, 200, 0.35) 0%,
+      rgba(225, 130, 200, 0.16) 35%,
+      transparent 70%
+    );
+    animation: drift-rose 30s ease-in-out infinite;
+  }
+
+  @keyframes drift-warm-1 {
+    0%   { transform: translate(0, 0) scale(1);    opacity: 0.95; }
+    50%  { transform: translate(-3%, 4%) scale(1.05); opacity: 1; }
+    100% { transform: translate(2%, -2%) scale(0.97); opacity: 0.9; }
+  }
+  @keyframes drift-warm-2 {
+    0%   { transform: translate(0, 0) scale(0.95); }
+    50%  { transform: translate(4%, -3%) scale(1.06); }
+    100% { transform: translate(-2%, 3%) scale(0.96); }
+  }
+  @keyframes drift-cool {
+    0%   { transform: translate(0, 0) scale(1);    opacity: 0.9; }
+    50%  { transform: translate(4%, -4%) scale(1.07); opacity: 1; }
+    100% { transform: translate(-3%, 2%) scale(0.95); opacity: 0.85; }
+  }
+  @keyframes drift-rose {
+    0%   { transform: translate(0, 0) scale(0.95); opacity: 0.85; }
+    50%  { transform: translate(-3%, 4%) scale(1.07); opacity: 1; }
+    100% { transform: translate(2%, -3%) scale(0.95); opacity: 0.9; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cloud { animation: none !important; }
+  }
+</style>

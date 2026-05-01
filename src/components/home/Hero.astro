@@ -1,0 +1,52 @@
+---
+// 1. Hero — the opening note. Plants the topic with a striking visual and a
+// tight statement so the visitor feels something serious is here.
+import HeroOrb from "@/components/HeroOrb.astro"
+import HeroNebula from "@/components/HeroNebula.astro"
+import HeroParticles from "@/components/HeroParticles.astro"
+
+const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
+const link = (href: string) => base + href
+---
+
+<section class="relative overflow-hidden">
+  <HeroParticles />
+
+  <div class="container-page relative z-10 pt-16 pb-28 md:pt-24 md:pb-40">
+    <div class="grid items-center gap-12 md:grid-cols-[1.05fr_1fr]">
+      <div class="relative z-10">
+        <h1
+          class="text-display-xl font-semibold tracking-tightest text-bone-0"
+          style="text-wrap: balance;"
+        >
+          <span class="block">Problem</span>
+          <span class="block text-bone-200">solving</span>
+          <span class="block">in the age</span>
+          <span class="block text-bone-200">of intelligence.</span>
+        </h1>
+
+        <p
+          class="mt-8 max-w-xl text-[17px] leading-[1.65] text-bone-300 md:text-[18px]"
+        >
+          A working notebook on what changes when machines start solving the
+          problems we used to. The bottleneck isn't doing the work anymore —
+          it's choosing which work is worth doing, and learning to hand it
+          over.
+        </p>
+
+        <div class="mt-10 flex flex-wrap items-center gap-3">
+          <a class="btn-solid" href={link("/notebook")}>
+            Read the notebook
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="btn-ghost" href={link("/tools")}>See the tools</a>
+        </div>
+      </div>
+
+      <div class="relative">
+        <HeroNebula />
+        <HeroOrb />
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+// 9. Closing — the invitation. One last sharp line and a soft hand-off.
+const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
+const link = (href: string) => base + href
+---
+
+<section>
+  <div class="container-page py-24 md:py-32">
+    <div class="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+          Closing
+        </p>
+        <p
+          class="mt-6 max-w-[44ch] text-[28px] font-semibold leading-[1.15] tracking-tight text-bone-0 md:text-[36px]"
+          style="text-wrap: balance;"
+        >
+          When solving gets cheap, framing gets precious. The skill doesn't
+          shrink — it moves.
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <a class="btn-solid" href={link("/notebook")}>
+          Read the notebook <span aria-hidden="true">→</span>
+        </a>
+        <a
+          class="btn-ghost"
+          href="https://github.com/eytanshleizer"
+          target="_blank"
+          rel="noopener">GitHub</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,49 @@
+---
+// 3. The questions — the map of the inquiry. Shows the substance: these
+// are open threads, not theses. Demonstrates the inquiry is structured.
+
+const questions = [
+  "How do I work with AI on a problem when it's better at solving than I am?",
+  "Can AI solve ill-structured problems, or only the ones we have already framed for it?",
+  "How do I structure a problem space so an agent can move through it productively?",
+  "What is a 'problem,' once a machine can dispatch most of them? Is the unit of work the problem, the framing, or the question behind it?",
+  "Are we transcending problem-solving for problem-finding? And if so, what does the new craft look like?",
+]
+---
+
+<section class="relative">
+  <div class="container-page py-24 md:py-32">
+    <div class="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-16">
+      <div>
+        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+          The questions
+        </p>
+        <h2
+          class="mt-6 text-display-sm font-semibold tracking-tighter text-bone-0"
+          style="text-wrap: balance;"
+        >
+          Five threads I keep coming back to.
+        </h2>
+        <p class="mt-6 text-[14.5px] leading-relaxed text-bone-300">
+          None of them are settled. Each is a different way of asking the
+          same thing.
+        </p>
+      </div>
+
+      <ol class="space-y-7">
+        {
+          questions.map((q, i) => (
+            <li class="grid grid-cols-[auto_1fr] gap-6">
+              <span class="font-mono text-[12px] tracking-tight text-bone-300 mt-2">
+                0{i + 1}
+              </span>
+              <p class="max-w-[60ch] text-[18px] leading-[1.5] text-bone-100 md:text-[20px] md:leading-[1.45]">
+                {q}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

@@ -1,501 +1,57 @@
 ---
-import { getCollection } from "astro:content"
+// Homepage — composed from section files in src/components/home/.
+// The narrative arc (in order):
+//   1. Hero            — the opening note
+//   2. WhyThisExists   — the personal arrival
+//   3. Questions       — the map of the inquiry
+//   4. Bet             — the thesis (the missing beat)
+//   5. Arc             — placeholder; framework still being drawn
+//   6. Interlude       — editorial break (visually distinct)
+//   7. Work            — the three doors
+//   8. Currents        — proof of life (latest posts)
+//   9. Closing         — the invitation
+
 import Base from "@/layouts/Base.astro"
-import HeroOrb from "@/components/HeroOrb.astro"
-import HeroNebula from "@/components/HeroNebula.astro"
-import HeroParticles from "@/components/HeroParticles.astro"
 
-const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
-const link = (href: string) => base + href
+import Hero from "@/components/home/Hero.astro"
+import WhyThisExists from "@/components/home/WhyThisExists.astro"
+import Questions from "@/components/home/Questions.astro"
+import Bet from "@/components/home/Bet.astro"
+import Arc from "@/components/home/Arc.astro"
+import Interlude from "@/components/home/Interlude.astro"
+import Work from "@/components/home/Work.astro"
+import Currents from "@/components/home/Currents.astro"
+import Closing from "@/components/home/Closing.astro"
 
-const posts = (await getCollection("notebook", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-)
-const recentPosts = posts.slice(0, 3)
-
-const fmt = (d: Date) =>
-  d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-
-const questions = [
-  "How do I work with AI on a problem when it's better at solving than I am?",
-  "Can AI solve ill-structured problems, or only the ones we have already framed for it?",
-  "How do I structure a problem space so an agent can move through it productively?",
-  "What is a 'problem,' once a machine can dispatch most of them? Is the unit of work the problem, the framing, or the question behind it?",
-  "Are we transcending problem-solving for problem-finding? And if so, what does the new craft look like?",
-]
-
-const phases = [
-  {
-    num: "01",
-    when: "Now → near",
-    title: "AI assists.",
-    body: "Models handle parts of the loop — drafting, summarizing, searching, structuring. Humans still own framing, judgment, and the next move. The bottleneck is doing.",
-    aiShare: 25,
-  },
-  {
-    num: "02",
-    when: "Soon",
-    title: "AI solves.",
-    body: "Once a problem is framed well, an agent can carry it from statement to result reliably. Human work moves upstream: pick the problem, set constraints, evaluate the answer.",
-    aiShare: 60,
-  },
-  {
-    num: "03",
-    when: "Later",
-    title: "AI finds.",
-    body: "The work is no longer to solve, or even to frame, but to bring problems worth solving — and eventually, to recognize the ones the system surfaces on its own.",
-    aiShare: 85,
-  },
-]
+const Hairline = () => null
 ---
 
 <Base
   title="Eytan Shleizer"
   description="Problem solving in the age of intelligence — a working notebook on how humans and AI find, frame, and solve the problems worth solving."
 >
-  <!-- ============================== HERO ============================== -->
-  <section class="relative overflow-hidden">
-    <HeroParticles />
-
-    <div class="container-page relative z-10 pt-16 pb-28 md:pt-24 md:pb-40">
-      <div class="grid items-center gap-12 md:grid-cols-[1.05fr_1fr]">
-        <div class="relative z-10">
-          <h1
-            class="text-display-xl font-semibold tracking-tightest text-bone-0"
-            style="text-wrap: balance;"
-          >
-            <span class="block">Problem</span>
-            <span class="block text-bone-200">solving</span>
-            <span class="block">in the age</span>
-            <span class="block text-bone-200">of intelligence.</span>
-          </h1>
-
-          <p
-            class="mt-8 max-w-xl text-[17px] leading-[1.65] text-bone-300 md:text-[18px]"
-          >
-            A working notebook on what changes when machines start solving the
-            problems we used to. The bottleneck isn't doing the work anymore —
-            it's choosing which work is worth doing, and learning to hand it
-            over.
-          </p>
-
-          <div class="mt-10 flex flex-wrap items-center gap-3">
-            <a class="btn-solid" href={link("/notebook")}>
-              Read the notebook
-              <span aria-hidden="true">→</span>
-            </a>
-            <a class="btn-ghost" href={link("/tools")}>See the tools</a>
-          </div>
-        </div>
-
-        <!-- Orb stage (right column on desktop, full-bleed background on mobile) -->
-        <div class="relative">
-          <HeroNebula />
-          <HeroOrb />
-        </div>
-      </div>
-    </div>
-  </section>
-
+  <Hero />
   <div class="container-page"><div class="hairline"></div></div>
 
-  <!-- ========================== WHY THIS EXISTS ========================== -->
-  <section class="relative">
-    <div class="container-page py-24 md:py-32">
-      <div class="grid gap-10 md:grid-cols-[1fr_2fr] md:gap-16">
-        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-          Why this exists
-        </p>
-        <div>
-          <p
-            class="max-w-[58ch] text-[28px] leading-[1.2] tracking-tight text-bone-300 md:text-[40px] md:leading-[1.15]"
-            style="text-wrap: balance;"
-          >
-            <span class="text-bone-0">I started this because of a question I couldn't put down:</span>
-            how do you do real problem-solving alongside something that's better at it than you are?
-          </p>
-          <p class="mt-10 max-w-[60ch] text-[16.5px] leading-[1.7] text-bone-300">
-            Solving used to be the whole job. When machines can do most of it,
-            the meaningful work moves upstream — to which problems are worth
-            touching, how they are framed, and what we even mean by an answer.
-            This site is the trail of working that out.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
+  <WhyThisExists />
   <div class="container-page"><div class="hairline"></div></div>
 
-  <!-- ========================== THE QUESTIONS ========================== -->
-  <section class="relative">
-    <div class="container-page py-24 md:py-32">
-      <div class="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-16">
-        <div>
-          <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-            The questions
-          </p>
-          <h2
-            class="mt-6 text-display-sm font-semibold tracking-tighter text-bone-0"
-            style="text-wrap: balance;"
-          >
-            Five threads I keep coming back to.
-          </h2>
-          <p class="mt-6 text-[14.5px] leading-relaxed text-bone-300">
-            None of them are settled. Each is a different way of asking the
-            same thing.
-          </p>
-        </div>
-
-        <ol class="space-y-7">
-          {
-            questions.map((q, i) => (
-              <li class="grid grid-cols-[auto_1fr] gap-6">
-                <span class="font-mono text-[12px] tracking-tight text-bone-300 mt-2">
-                  0{i + 1}
-                </span>
-                <p class="max-w-[60ch] text-[18px] leading-[1.5] text-bone-100 md:text-[20px] md:leading-[1.45]">
-                  {q}
-                </p>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
-    </div>
-  </section>
-
+  <Questions />
   <div class="container-page"><div class="hairline"></div></div>
 
-  <!-- ============================ THE ARC ============================ -->
-  <section class="relative">
-    <div class="container-page py-24 md:py-32">
-      <div class="max-w-3xl">
-        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-          The arc
-        </p>
-        <h2
-          class="mt-6 text-display-sm font-semibold tracking-tighter text-bone-0"
-          style="text-wrap: balance;"
-        >
-          Three phases of working with AI on problems.
-        </h2>
-        <p class="mt-6 max-w-[60ch] text-[16px] leading-[1.65] text-bone-300">
-          The bet I'm working from. Each phase makes the previous one cheaper
-          and shifts where the human's leverage lives. The bottleneck moves at
-          every step — but it never disappears.
-        </p>
-      </div>
-
-      <div class="mt-16 grid gap-px bg-bone-500/15 md:grid-cols-3">
-        {
-          phases.map((p) => (
-            <article class="bg-ink-0 p-8 md:p-10">
-              <div class="flex items-baseline justify-between gap-4">
-                <p class="font-mono text-[40px] tracking-tighter text-bone-300">
-                  {p.num}
-                </p>
-                <p class="font-mono text-[10.5px] uppercase tracking-[0.2em] text-bone-300">
-                  {p.when}
-                </p>
-              </div>
-              <h3 class="mt-6 text-[1.6rem] font-semibold tracking-tight text-bone-0">
-                {p.title}
-              </h3>
-              <p class="mt-4 max-w-[40ch] text-[14.5px] leading-[1.65] text-bone-300">
-                {p.body}
-              </p>
-
-              <div class="mt-10">
-                <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-bone-300">
-                  <span>Where the work lives</span>
-                  <span>{p.aiShare}% AI</span>
-                </div>
-                <div class="mt-2 h-px w-full bg-bone-500/30">
-                  <div
-                    class="h-px bg-ember-300/80"
-                    style={`width: ${p.aiShare}%`}
-                  />
-                </div>
-                <div class="mt-2 flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-bone-300">
-                  <span>Human</span>
-                  <span>AI</span>
-                </div>
-              </div>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================ INTERLUDE ============================ -->
-  <!-- Visual editorial break — bridges the philosophical framing into what's
-       actually here on the site. A single pull quote with a thin abstract
-       graphic to mark the section as a "scene break" rather than a header. -->
-  <section class="relative overflow-hidden border-y border-bone-500/15 bg-ink-50">
-    <div class="container-page py-28 md:py-40">
-      <div class="grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
-        <!-- Abstract: a single point, an arrow, and a constellation of nodes —
-             the move from "solving one problem" to "navigating a space." -->
-        <svg
-          viewBox="0 0 200 200"
-          fill="none"
-          class="h-32 w-32 shrink-0 text-bone-200 md:h-44 md:w-44"
-          aria-hidden="true"
-          stroke="currentColor"
-        >
-          <circle cx="40" cy="100" r="6" fill="currentColor" />
-          <line x1="50" y1="100" x2="120" y2="100" stroke-width="0.8" />
-          <path
-            d="M 110 92 L 122 100 L 110 108"
-            stroke-width="0.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <line x1="135" y1="100" x2="160" y2="60" stroke-width="0.6" />
-          <line x1="135" y1="100" x2="170" y2="115" stroke-width="0.6" />
-          <line x1="135" y1="100" x2="155" y2="155" stroke-width="0.6" />
-          <line x1="160" y1="60" x2="170" y2="115" stroke-width="0.5" />
-          <line x1="170" y1="115" x2="155" y2="155" stroke-width="0.5" />
-          <circle cx="135" cy="100" r="3" fill="currentColor" />
-          <circle cx="160" cy="60" r="4" fill="currentColor" />
-          <circle cx="170" cy="115" r="5" fill="currentColor" />
-          <circle cx="155" cy="155" r="3" fill="currentColor" />
-        </svg>
-
-        <div>
-          <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-            Interlude
-          </p>
-          <p
-            class="mt-6 max-w-[26ch] text-[36px] font-semibold leading-[1.05] tracking-tightest text-bone-0 md:text-[64px] md:leading-[1.02]"
-            style="text-wrap: balance;"
-          >
-            Solving was the question. Choosing is the new one.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================ WHAT EMERGED ============================ -->
-  <section class="relative">
-    <div class="container-page py-24 md:py-32">
-      <div class="max-w-3xl">
-        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-          What emerged
-        </p>
-        <h2
-          class="mt-6 text-display-sm font-semibold tracking-tighter text-bone-0"
-          style="text-wrap: balance;"
-        >
-          Three things have come out of chasing it.
-        </h2>
-        <p class="mt-6 max-w-[60ch] text-[16px] leading-[1.65] text-bone-300">
-          A notebook to think out loud, tools to put the thinking to work, and
-          a map of how the ideas connect. They feed each other.
-        </p>
-      </div>
-
-      <div class="mt-12 grid gap-px bg-bone-500/15 md:grid-cols-3">
-        <!-- Notebook -->
-        <a
-          class="group block bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
-          href={link("/notebook")}
-        >
-          <div class="mb-10 h-24 w-full">
-            <svg
-              viewBox="0 0 120 80"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.25"
-              stroke-linecap="round"
-              class="h-full w-auto text-bone-200 transition group-hover:text-bone-0"
-              aria-hidden="true"
-            >
-              <path d="M 8 22 Q 40 10, 70 22 T 112 28" />
-              <path d="M 8 40 Q 40 28, 70 40 T 112 46" />
-              <path d="M 8 58 Q 40 46, 70 58 T 112 64" />
-            </svg>
-          </div>
-          <h3 class="text-[1.15rem] font-semibold text-bone-0">Notebook</h3>
-          <p class="mt-3 text-[14.5px] leading-relaxed text-bone-300">
-            Working notes on the questions above — what problems mean now,
-            how to frame them for AI, and where the practice is heading.
-          </p>
-          <span class="mt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
-            Read the notebook
-            <span class="transition group-hover:translate-x-0.5" aria-hidden="true">→</span>
-          </span>
-        </a>
-
-        <!-- Tools -->
-        <a
-          class="group block bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
-          href={link("/tools")}
-        >
-          <div class="mb-10 h-24 w-full">
-            <svg
-              viewBox="0 0 120 80"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.25"
-              stroke-linecap="round"
-              class="h-full w-auto text-bone-200 transition group-hover:text-bone-0"
-              aria-hidden="true"
-            >
-              <circle cx="60" cy="40" r="26" />
-              <line x1="60" y1="6" x2="60" y2="74" />
-              <line x1="26" y1="40" x2="94" y2="40" />
-              <line x1="36" y1="16" x2="84" y2="64" />
-              <line x1="84" y1="16" x2="36" y2="64" />
-            </svg>
-          </div>
-          <h3 class="text-[1.15rem] font-semibold text-bone-0">Tools</h3>
-          <p class="mt-3 text-[14.5px] leading-relaxed text-bone-300">
-            Methods and instruments for problem work — including how to
-            structure problem spaces for agents, design problems that solve
-            themselves, and tighten the review-and-redirect loop. For you,
-            your agent, or both.
-          </p>
-          <span class="mt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
-            See the tools
-            <span class="transition group-hover:translate-x-0.5" aria-hidden="true">→</span>
-          </span>
-        </a>
-
-        <!-- Ideas -->
-        <a
-          class="group block bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
-          href={link("/ideas")}
-        >
-          <div class="mb-10 h-24 w-full">
-            <svg
-              viewBox="0 0 120 80"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.1"
-              stroke-linecap="round"
-              class="h-full w-auto text-bone-200 transition group-hover:text-bone-0"
-              aria-hidden="true"
-            >
-              <line x1="20" y1="22" x2="55" y2="42" />
-              <line x1="55" y1="42" x2="35" y2="64" />
-              <line x1="55" y1="42" x2="90" y2="28" />
-              <line x1="90" y1="28" x2="100" y2="58" />
-              <line x1="100" y1="58" x2="65" y2="66" />
-              <line x1="35" y1="64" x2="65" y2="66" />
-              <circle cx="20" cy="22" r="3" fill="currentColor" />
-              <circle cx="55" cy="42" r="4.5" fill="currentColor" />
-              <circle cx="35" cy="64" r="2.5" fill="currentColor" />
-              <circle cx="90" cy="28" r="3.5" fill="currentColor" />
-              <circle cx="100" cy="58" r="3" fill="currentColor" />
-              <circle cx="65" cy="66" r="2.5" fill="currentColor" />
-            </svg>
-          </div>
-          <h3 class="text-[1.15rem] font-semibold text-bone-0">Ideas</h3>
-          <p class="mt-3 text-[14.5px] leading-relaxed text-bone-300">
-            A working map of the concepts in this notebook — how they connect,
-            build on each other, and pull in new directions. The same questions,
-            seen visually.
-          </p>
-          <span class="mt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
-            Open the map
-            <span class="transition group-hover:translate-x-0.5" aria-hidden="true">→</span>
-          </span>
-        </a>
-      </div>
-    </div>
-  </section>
-
+  <Bet />
   <div class="container-page"><div class="hairline"></div></div>
 
-  <!-- ============================== LATEST ============================== -->
-  <section>
-    <div class="container-page py-24 md:py-32">
-      <div class="flex items-end justify-between gap-6">
-        <div>
-          <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-            Latest
-          </p>
-          <h2
-            class="mt-6 max-w-2xl text-display-sm font-semibold tracking-tighter text-bone-0"
-          >
-            From the notebook.
-          </h2>
-        </div>
-        <a
-          class="hidden md:inline-flex items-center gap-1 text-[13px] text-bone-200 hover:text-bone-0"
-          href={link("/notebook")}
-        >
-          All posts <span aria-hidden="true">→</span>
-        </a>
-      </div>
+  <Arc />
+  {/* Interlude has its own borders — no extra hairline before/after. */}
 
-      <ul class="mt-10 divide-y divide-bone-500/15 border-t border-bone-500/15">
-        {
-          recentPosts.map((post) => (
-            <li>
-              <a
-                class="group grid gap-3 py-7 md:grid-cols-[140px_1fr_auto] md:items-baseline md:gap-10"
-                href={link(`/notebook/${post.slug}`)}
-              >
-                <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-                  {fmt(post.data.date)}
-                </p>
-                <div>
-                  <h3 class="text-[18px] font-medium text-bone-0 transition group-hover:text-bone-200 md:text-[20px]">
-                    {post.data.title}
-                  </h3>
-                  <p class="mt-1.5 max-w-[60ch] text-[14px] leading-relaxed text-bone-300">
-                    {post.data.excerpt}
-                  </p>
-                </div>
-                <span
-                  aria-hidden="true"
-                  class="hidden text-bone-300 transition group-hover:translate-x-0.5 group-hover:text-bone-0 md:inline"
-                >
-                  →
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <Interlude />
 
+  <Work />
   <div class="container-page"><div class="hairline"></div></div>
 
-  <!-- =============================== CTA =============================== -->
-  <section>
-    <div class="container-page py-24 md:py-32">
-      <div class="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
-        <div>
-          <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-            Closing
-          </p>
-          <p
-            class="mt-6 max-w-[44ch] text-[28px] font-semibold leading-[1.15] tracking-tight text-bone-0 md:text-[36px]"
-            style="text-wrap: balance;"
-          >
-            When solving gets cheap, framing gets precious. The skill doesn't
-            shrink — it moves.
-          </p>
-        </div>
-        <div class="flex gap-3">
-          <a class="btn-solid" href={link("/notebook")}
-            >Read the notebook <span aria-hidden="true">→</span></a
-          >
-          <a
-            class="btn-ghost"
-            href="https://github.com/eytanshleizer"
-            target="_blank"
-            rel="noopener">GitHub</a
-          >
-        </div>
-      </div>
-    </div>
-  </section>
+  <Currents />
+  <div class="container-page"><div class="hairline"></div></div>
+
+  <Closing />
 </Base>

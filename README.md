@@ -44,16 +44,18 @@ src/content/notebook/                                        ← derived
 
 ### Authoring
 
-Write posts in `~/Library/.../CloudDocs/Blog/posts/`. The folder structure
-mirrors the URL: `posts/some-slug.md` → `/notebook/some-slug`. For posts
-with images or component embeds, use a folder:
+Write posts in `~/Library/.../CloudDocs/Blog/posts/`. **Each post is its
+own folder** with an `index.md` (or `index.mdx` for component embeds).
+The folder name becomes the URL slug:
 
 ```
 posts/some-slug/
   index.md          ← or index.mdx for component embeds
-  diagram.svg       ← referenced from index.md(x)
-  ...
+  diagram.svg       ← optional — referenced from the post
+  …
 ```
+
+`posts/some-slug/index.md` → `/notebook/some-slug`
 
 Frontmatter (see `src/content/config.ts`):
 

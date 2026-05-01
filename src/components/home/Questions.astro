@@ -24,7 +24,7 @@ const questions = [
     <div class="aurora-rose"></div>
   </div>
 
-  <div class="container-page relative z-10 py-24 md:py-32">
+  <div class="container-page relative z-10 pt-36 pb-24 md:pt-48 md:pb-32">
     <!-- Centered intro -->
     <div class="mx-auto max-w-3xl text-center">
       <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
@@ -70,7 +70,7 @@ const questions = [
     position: absolute;
     border-radius: 9999px;
     mix-blend-mode: screen;
-    opacity: 0.55;
+    opacity: 0.4;
   }
 
   .aurora-warm {
@@ -110,17 +110,14 @@ const questions = [
     );
   }
 
-  /* Glass card — slightly translucent black with a thin warm-tinted hairline
-     border. Restrained: no heavy backdrop-blur, no big shadow, just enough
-     surface to read as a card. */
+  /* Glass card — slightly translucent surface, no border. Just enough tint
+     to read as a card against the aurora gradient. */
   .glass-card {
-    background: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.035);
     border-radius: 6px;
-    transition: background 0.3s ease, border-color 0.3s ease;
+    transition: background 0.3s ease;
   }
   .glass-card:hover {
-    background: rgba(255, 255, 255, 0.045);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
   }
 </style>

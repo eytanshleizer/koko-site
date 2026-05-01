@@ -1,244 +1,278 @@
-// Palantir-inspired dark theme customizations
-// Clean, technical, data-forward aesthetic
+// ============================================
+// COSMIC DARK THEME
+// Deep space aesthetics with nebula-inspired palette
+// ============================================
 
-// Force dark mode as default by overriding Quartz's root variables
 :root {
-  --light: #0a0a0f !important;
-  --lightgray: #15151f !important;
-  --gray: #3a3a4a !important;
+  // Core backgrounds
+  --light: #000000 !important;
+  --lightgray: #0a0a0f !important;
+  --gray: #2a2a3a !important;
   --darkgray: #8a8a9a !important;
-  --dark: #e8e8ec !important;
-  --secondary: #00d4aa !important;
-  --tertiary: #00a884 !important;
-  --highlight: rgba(0, 212, 170, 0.08) !important;
-  --textHighlight: rgba(0, 212, 170, 0.25) !important;
-  --background-primary: #0a0a0f;
-  --background-secondary: #111118;
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --glow-teal: rgba(0, 212, 170, 0.15);
+  --dark: #f5f5f5 !important;
+  
+  // Cosmic accent palette
+  --secondary: #a855f7 !important;        // Purple nebula
+  --tertiary: #22d3ee !important;         // Cyan starlight
+  --highlight: rgba(168, 85, 247, 0.1) !important;
+  --textHighlight: rgba(168, 85, 247, 0.25) !important;
+  
+  // Extended palette
+  --accent-purple: #a855f7;
+  --accent-magenta: #e879f9;
+  --accent-cyan: #22d3ee;
+  --accent-teal: #00d4aa;
+  --accent-gold: #fbbf24;
+  --accent-pink: #ec4899;
+  
+  // Backgrounds
+  --background-primary: #000000;
+  --background-secondary: #0a0a0f;
+  --surface: #141414;
+  --border-subtle: rgba(168, 85, 247, 0.15);
+  --glow-purple: rgba(168, 85, 247, 0.2);
+  --glow-cyan: rgba(34, 211, 238, 0.2);
 }
 
-// Body background with subtle texture
 body {
-  background: linear-gradient(180deg, #0a0a0f 0%, #0d0d14 100%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(88, 28, 135, 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 0% 100%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+              #000000;
   min-height: 100vh;
 }
 
-// Page title styling - large, geometric
+// ============================================
+// TYPOGRAPHY
+// ============================================
+
 .page-title {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
-  
   a {
-    color: #e8e8ec !important;
+    color: #f5f5f5 !important;
     transition: color 0.2s ease;
-    
-    &:hover {
-      color: #00d4aa !important;
+    &:hover { 
+      color: #a855f7 !important; 
+      text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
     }
   }
 }
 
-// Article titles - strong presence
 .article-title {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   letter-spacing: -0.03em;
-  line-height: 1.2;
-  color: #e8e8ec;
+  line-height: 1.15;
+  color: #f5f5f5;
   margin-bottom: 0.5rem;
 }
 
-// Content meta - subtle, technical
 .content-meta {
-  color: #5a5a6a;
+  color: #6a6a6a;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-// Links with teal accent
-a {
-  color: #00d4aa;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    color: #00f5c4;
-    text-shadow: 0 0 12px rgba(0, 212, 170, 0.3);
-  }
-}
-
-// Internal links
-a.internal-link {
-  color: #00d4aa;
-  background: rgba(0, 212, 170, 0.06);
-  border-radius: 4px;
-  padding: 0 4px;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(0, 212, 170, 0.3);
-  
-  &:hover {
-    background: rgba(0, 212, 170, 0.12);
-    border-bottom-color: #00d4aa;
-  }
-}
-
-// Tags styling
-tag {
-  background: rgba(0, 212, 170, 0.08) !important;
-  border: 1px solid rgba(0, 212, 170, 0.2) !important;
-  color: #00d4aa !important;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.75rem;
-  border-radius: 4px;
-  padding: 2px 8px;
-  
-  &:hover {
-    background: rgba(0, 212, 170, 0.15) !important;
-    border-color: rgba(0, 212, 170, 0.4) !important;
-  }
-}
-
-// Search input
-.search input {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 6px;
-  font-family: "Inter", sans-serif;
-  
-  &:focus {
-    border-color: rgba(0, 212, 170, 0.4) !important;
-    box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.1);
-  }
-}
-
-// Explorer sidebar
-.explorer {
-  font-family: "Inter", sans-serif;
-  
-  .folder-title {
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
-  
-  a:hover {
-    color: #00d4aa;
-  }
-}
-
-// Table of contents
-toc {
-  font-family: "Inter", sans-serif;
-  
-  a:hover {
-    color: #00d4aa;
-  }
-}
-
-// Headers with geometric feel
 h1, h2, h3, h4, h5, h6 {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #e8e8ec;
+  color: #f5f5f5;
 }
 
 h1 {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.2);
   padding-bottom: 0.5rem;
 }
 
-h2 {
-  font-size: 1.6rem;
-  margin-top: 2rem;
+h2 { 
+  font-size: 1.6rem; 
+  margin-top: 2.5rem; 
 }
 
-// Code blocks - technical feel
-pre {
-  background: #111118 !important;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
+// ============================================
+// LINKS
+// ============================================
+
+a {
+  color: #a855f7;
+  transition: all 0.2s ease;
+  &:hover { 
+    color: #e879f9; 
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+  }
+}
+
+a.internal-link {
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.08);
+  border-radius: 4px;
+  padding: 0 4px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.3);
+  &:hover {
+    background: rgba(34, 211, 238, 0.15);
+    border-bottom-color: #22d3ee;
+    color: #67e8f9;
+  }
+}
+
+// ============================================
+// TAGS
+// ============================================
+
+tag {
+  background: rgba(168, 85, 247, 0.1) !important;
+  border: 1px solid rgba(168, 85, 247, 0.25) !important;
+  color: #a855f7 !important;
   font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  padding: 2px 8px;
+  &:hover {
+    background: rgba(168, 85, 247, 0.2) !important;
+    border-color: rgba(168, 85, 247, 0.5) !important;
+    color: #e879f9 !important;
+  }
+}
+
+// ============================================
+// SEARCH
+// ============================================
+
+.search input {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(168, 85, 247, 0.15) !important;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  &:focus {
+    border-color: rgba(168, 85, 247, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1), 0 0 20px rgba(168, 85, 247, 0.1);
+  }
+}
+
+// ============================================
+// EXPLORER & TOC
+// ============================================
+
+.explorer {
+  font-family: "Inter", sans-serif;
+  .folder-title { 
+    font-weight: 600; 
+    letter-spacing: 0.01em; 
+  }
+  a:hover { color: #a855f7; }
+}
+
+toc {
+  font-family: "Inter", sans-serif;
+  a:hover { color: #22d3ee; }
+}
+
+// ============================================
+// CODE BLOCKS
+// ============================================
+
+pre {
+  background: rgba(10, 10, 15, 0.8) !important;
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  border-radius: 10px;
+  font-family: "JetBrains Mono", monospace;
+  backdrop-filter: blur(8px);
 }
 
 code {
   font-family: "JetBrains Mono", monospace;
-  background: rgba(0, 212, 170, 0.06);
-  color: #00d4aa;
+  background: rgba(168, 85, 247, 0.1);
+  color: #e879f9;
   border-radius: 4px;
   padding: 2px 6px;
 }
 
-// Blockquotes - subtle left border
+// ============================================
+// BLOCKQUOTES
+// ============================================
+
 blockquote {
-  border-left: 2px solid #00d4aa;
-  background: rgba(0, 212, 170, 0.03);
-  border-radius: 0 6px 6px 0;
+  border-left: 2px solid #a855f7;
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.08) 0%, transparent 100%);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.5rem;
 }
 
-// Tables - clean, technical
+// ============================================
+// TABLES
+// ============================================
+
 table {
   border-collapse: collapse;
   font-family: "Inter", sans-serif;
-  
   th {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(168, 85, 247, 0.08);
     font-family: "Space Grotesk", sans-serif;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.8rem;
     letter-spacing: 0.05em;
-    color: #8a8a9a;
-    border-bottom: 1px solid rgba(0, 212, 170, 0.2);
+    color: #a8a8a8;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.3);
   }
-  
-  td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  }
-  
-  tr:hover {
-    background: rgba(0, 212, 170, 0.02);
-  }
+  td { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+  tr:hover { background: rgba(168, 85, 247, 0.05); }
 }
 
-// Popover - dark, teal accent
+// ============================================
+// POPOVER
+// ============================================
+
 .popover {
-  background: #15151f !important;
-  border: 1px solid rgba(0, 212, 170, 0.15) !important;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 212, 170, 0.05);
+  background: rgba(10, 10, 15, 0.95) !important;
+  border: 1px solid rgba(168, 85, 247, 0.25) !important;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 
+              0 0 0 1px rgba(168, 85, 247, 0.1),
+              0 0 60px rgba(168, 85, 247, 0.1);
+  backdrop-filter: blur(16px);
 }
 
-// Footer styling
+// ============================================
+// FOOTER
+// ============================================
+
 footer {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
   color: #3a3a4a;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  
   a {
-    color: #5a5a6a;
-    
-    &:hover {
-      color: #00d4aa;
-    }
+    color: #6a6a6a;
+    &:hover { color: #a855f7; }
   }
 }
 
-// Breadcrumbs
+// ============================================
+// BREADCRUMBS
+// ============================================
+
 .breadcrumb {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #5a5a6a;
+  color: #6a6a6a;
+  a { color: #6a6a6a; }
+  a:hover { color: #22d3ee; }
 }
 
-// List page titles
+// ============================================
+// MISC ELEMENTS
+// ============================================
+
 .list-title {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
@@ -246,112 +280,207 @@ footer {
   letter-spacing: -0.02em;
 }
 
-// Backlinks section
-.backlinks {
-  h3 {
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #5a5a6a;
-  }
+.backlinks h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6a6a6a;
 }
 
-// Selection highlight
 ::selection {
-  background: rgba(0, 212, 170, 0.2);
-  color: #e8e8ec;
+  background: rgba(168, 85, 247, 0.3);
+  color: #f5f5f5;
 }
 
-// Scrollbar styling
-::-webkit-scrollbar {
-  width: 8px;
-}
+// ============================================
+// SCROLLBAR
+// ============================================
 
-::-webkit-scrollbar-track {
-  background: #0a0a0f;
-}
-
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #000000; }
 ::-webkit-scrollbar-thumb {
-  background: #2a2a3a;
+  background: linear-gradient(180deg, #a855f7, #22d3ee);
   border-radius: 4px;
-  
-  &:hover {
-    background: #3a3a4a;
+  &:hover { 
+    background: linear-gradient(180deg, #c084fc, #67e8f9);
   }
 }
 
 // ============================================
-// LANDING PAGE HERO
+// INDEX PAGE — HIDE SIDEBARS
 // ============================================
 
-// On the index page, hide the left panel entirely and give full width
 body[data-slug="index"] {
   #quartz-body {
-    .left {
-      display: none !important;
+    .left { display: none !important; }
+    .center { 
+      grid-column: 1 / -1 !important; 
+      max-width: 900px; 
+      margin: 0 auto; 
+      padding: 0 2rem; 
     }
-    .center {
-      grid-column: 1 / -1 !important;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-    .right {
-      display: none !important;
-    }
+    .right { display: none !important; }
   }
-  
-  // Hide the default h1 title on index (we have our own hero-name)
-  .article-title {
-    display: none;
+  .article-title { display: none; }
+}
+
+// ============================================
+// INDEX PAGE — SECTIONS
+// ============================================
+
+body[data-slug="index"] hr {
+  border: none;
+  border-top: 1px solid rgba(168, 85, 247, 0.15);
+  margin: 3rem 0;
+}
+
+body[data-slug="index"] h2 {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6a6a6a;
+  margin-bottom: 1.5rem;
+}
+
+// ============================================
+// INDEX PAGE — RECENT NOTES
+// ============================================
+
+body[data-slug="index"] .recent-notes {
+  h3 { display: none; }
+  .recent-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .recent-li {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+    transition: all 0.2s ease;
+    &:last-child { border-bottom: none; }
+    &:hover {
+      padding-left: 0.5rem;
+    }
+    .desc h3 {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+      a {
+        color: #f5f5f5 !important;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        background: none !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+        &:hover { 
+          color: #a855f7 !important;
+          text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+      }
+    }
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      color: #6a6a6a;
+      margin: 0;
+    }
   }
 }
 
-// Hero section container
-.hero-section {
-  padding: 4rem 0 3rem;
-  
-  .hero-text {
-    max-width: 680px;
+// ============================================
+// SIDEBAR RECENT NOTES
+// ============================================
+
+.left .recent-notes {
+  padding: 0;
+  h3 {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #6a6a6a;
+    margin: 1.5rem 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+  }
+  .recent-ul { list-style: none; padding: 0; margin: 0; }
+  .recent-li {
+    .section {
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 2px;
+      transition: all 0.2s ease;
+      &:hover { 
+        background: rgba(168, 85, 247, 0.08); 
+        padding-left: 1rem;
+      }
+    }
+    .desc h3 {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin: 0 0 0.15rem 0;
+      a {
+        color: #a8a8a8 !important;
+        text-decoration: none;
+        background: none !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+        line-height: 1.4;
+        &:hover { color: #f5f5f5 !important; }
+      }
+    }
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      color: #4a4a5a;
+    }
   }
 }
 
-// Big name
+// ============================================
+// HERO LEGACY CLASSES (for compatibility)
+// ============================================
+
+.hero-section { padding: 4rem 0 3rem; .hero-text { max-width: 680px; } }
+
 .hero-name {
   font-family: "Space Grotesk", sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.1;
-  color: #e8e8ec;
+  color: #f5f5f5;
   margin: 0 0 0.5rem 0;
   border-bottom: none !important;
   padding-bottom: 0 !important;
 }
 
-// Tagline under name
 .hero-tagline {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.9rem;
-  color: #00d4aa;
+  color: #a855f7;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0 0 1.5rem 0;
 }
 
-// Bio paragraph
 .hero-bio {
   font-family: "Inter", sans-serif;
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #8a8a9a;
+  color: #a8a8a8;
   margin: 0 0 2rem 0;
   max-width: 560px;
 }
 
-// CTA links row
 .hero-links {
   display: flex;
   gap: 0.75rem;
@@ -363,185 +492,37 @@ body[data-slug="index"] {
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1.25rem;
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: "Inter", sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #8a8a9a !important;
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  color: #a8a8a8 !important;
+  background: rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
-  
   &:hover {
-    border-color: rgba(0, 212, 170, 0.35);
-    color: #00d4aa !important;
-    background: rgba(0, 212, 170, 0.05);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #a855f7 !important;
+    background: rgba(168, 85, 247, 0.08);
     text-shadow: none !important;
   }
 }
 
 .hero-link-primary {
-  background: rgba(0, 212, 170, 0.1) !important;
-  border-color: rgba(0, 212, 170, 0.3) !important;
-  color: #00d4aa !important;
-  
+  background: rgba(168, 85, 247, 0.15) !important;
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  color: #a855f7 !important;
   &:hover {
-    background: rgba(0, 212, 170, 0.18) !important;
-    border-color: #00d4aa !important;
-  }
-}
-
-// Horizontal divider between hero and recent posts
-body[data-slug="index"] hr {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  margin: 2rem 0;
-}
-
-// "Recent Posts" section heading on index
-body[data-slug="index"] h2 {
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #5a5a6a;
-  margin-bottom: 1.5rem;
-}
-
-// Recent notes list on the index page
-body[data-slug="index"] .recent-notes {
-  h3 {
-    display: none; // we show our own "Recent Posts" heading above
-  }
-  
-  .recent-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  
-  .recent-li {
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    .desc h3 {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin: 0 0 0.25rem 0;
-      
-      a {
-        color: #e8e8ec !important;
-        text-decoration: none;
-        transition: color 0.15s ease;
-        background: none !important;
-        border-bottom: none !important;
-        padding: 0 !important;
-        
-        &:hover {
-          color: #00d4aa !important;
-        }
-      }
-    }
-    
-    .meta {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.75rem;
-      color: #5a5a6a;
-      margin: 0;
-    }
+    background: rgba(168, 85, 247, 0.25) !important;
+    border-color: #a855f7 !important;
   }
 }
 
 // ============================================
-// BLOG POST LEFT PANEL — Posts List
+// CANVAS WRAPPER
 // ============================================
 
-// Style the RecentNotes component when used as a sidebar posts list
-.left .recent-notes {
-  padding: 0;
-  
-  h3 {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #5a5a6a;
-    margin: 1.5rem 0 0.75rem 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-  
-  .recent-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .recent-li {
-    .section {
-      padding: 0.5rem 0.75rem;
-      border-radius: 5px;
-      margin-bottom: 2px;
-      transition: background 0.15s ease;
-      
-      &:hover {
-        background: rgba(0, 212, 170, 0.06);
-      }
-    }
-    
-    .desc h3 {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin: 0 0 0.15rem 0;
-      
-      a {
-        color: #8a8a9a !important;
-        text-decoration: none;
-        background: none !important;
-        border-bottom: none !important;
-        padding: 0 !important;
-        line-height: 1.4;
-        
-        &:hover {
-          color: #e8e8ec !important;
-        }
-      }
-    }
-    
-    .meta {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.7rem;
-      color: #3a3a4a;
-    }
-  }
-}
-
-// Mobile adjustments
-@media (max-width: 800px) {
-  .article-title {
-    font-size: 1.6rem;
-  }
-  
-  h2 {
-    font-size: 1.3rem;
-  }
-}
-
-// ============================================
-// CINEMATIC DARK REDESIGN ADDITIONS
-// ============================================
-
-// Hero Canvas Wrapper - full screen particle background
 .hero-canvas-wrapper {
   position: fixed;
   top: 0;
@@ -551,52 +532,39 @@ body[data-slug="index"] .recent-notes {
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  
-  canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  canvas { display: block; width: 100%; height: 100%; }
 }
 
-// What I Do Grid - 3-column card layout
+// ============================================
+// GRIDS
+// ============================================
+
 .what-i-do-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
-// Explore Grid - navigation card layout
 .explore-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 700px) { grid-template-columns: 1fr; }
 }
 
-// Skills Grid - 2-column skills layout
 .skill-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  
-  @media (max-width: 800px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 800px) { grid-template-columns: 1fr; }
 }
 
-// Floating Nav Pill (optional header enhancement)
+// ============================================
+// NAVIGATION PILL
+// ============================================
+
 .site-nav-pill {
   position: fixed;
   top: 1.5rem;
@@ -606,12 +574,11 @@ body[data-slug="index"] .recent-notes {
   display: flex;
   gap: 0.25rem;
   padding: 0.5rem;
-  background: rgba(10, 10, 15, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
   border-radius: 999px;
-  
   a {
     padding: 0.5rem 1.25rem;
     font-family: "Inter", sans-serif;
@@ -621,27 +588,25 @@ body[data-slug="index"] .recent-notes {
     text-decoration: none !important;
     border-radius: 999px;
     transition: all 0.2s ease;
-    
-    &:hover,
-    &.active {
-      color: #f5f5f5 !important;
-      background: rgba(255, 255, 255, 0.06);
+    &:hover, &.active { 
+      color: #f5f5f5 !important; 
+      background: rgba(168, 85, 247, 0.15); 
     }
-    
-    &.active {
-      color: #00d4aa !important;
-    }
+    &.active { color: #a855f7 !important; }
   }
 }
 
-// Gradient text utility
+// ============================================
+// GRADIENT TEXT
+// ============================================
+
 .gradient-text {
-  background: linear-gradient(135deg, #00d4aa 0%, #a855f7 50%, #00e5ff 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 25%, #22d3ee 50%, #a855f7 75%, #e879f9 100%);
+  background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shift 8s ease infinite;
+  animation: gradient-shift 10s ease infinite;
 }
 
 @keyframes gradient-shift {
@@ -649,22 +614,27 @@ body[data-slug="index"] .recent-notes {
   50% { background-position: 100% 50%; }
 }
 
-// Enhanced card hover states
-.wid-card,
-.explore-card,
-.skill-card {
-  background: #141414;
-  border: 1px solid #2a2a2a;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  
+// ============================================
+// CARDS
+// ============================================
+
+.wid-card, .explore-card, .skill-card {
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 14px;
+  transition: all 0.35s ease;
+  backdrop-filter: blur(8px);
   &:hover {
-    border-color: #00d4aa;
-    box-shadow: 0 0 20px rgba(0, 212, 170, 0.1);
+    border-color: #a855f7;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.15), 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
   }
 }
 
-// Pill button styles
+// ============================================
+// BUTTONS
+// ============================================
+
 .btn-pill {
   display: inline-flex;
   align-items: center;
@@ -675,55 +645,54 @@ body[data-slug="index"] .recent-notes {
   font-weight: 600;
   text-decoration: none !important;
   border-radius: 999px;
-  transition: all 0.25s ease;
-  
+  transition: all 0.3s ease;
   &.btn-primary {
-    background: #00d4aa;
-    color: #000 !important;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    color: #fff !important;
     border: none;
-    
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
     &:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 30px rgba(0, 212, 170, 0.4);
+      transform: scale(1.03);
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.5), 0 0 60px rgba(236, 72, 153, 0.3);
     }
   }
-  
   &.btn-secondary {
     background: transparent;
     color: #f5f5f5 !important;
-    border: 1px solid #2a2a2a;
-    
+    border: 1px solid rgba(168, 85, 247, 0.4);
     &:hover {
-      border-color: #00d4aa;
-      color: #00d4aa !important;
+      border-color: #a855f7;
+      color: #a855f7 !important;
+      background: rgba(168, 85, 247, 0.08);
       transform: scale(1.02);
     }
   }
 }
 
-// Hide right panel on about and skills pages for cleaner reading
+// ============================================
+// ABOUT & SKILLS PAGES
+// ============================================
+
 body[data-slug="about"],
 body[data-slug="skills"] {
   #quartz-body {
-    .right {
-      display: none !important;
-    }
-    .center {
-      grid-column: 2 / -1 !important;
-      max-width: 780px;
-    }
+    .right { display: none !important; }
+    .center { grid-column: 2 / -1 !important; max-width: 780px; }
   }
 }
 
-// Blog index styling
 body[data-slug="posts/index"] {
   #quartz-body {
-    .right {
-      display: none !important;
-    }
-    .center {
-      grid-column: 2 / -1 !important;
-      max-width: 780px;
-    }
+    .right { display: none !important; }
+    .center { grid-column: 2 / -1 !important; max-width: 780px; }
   }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (max-width: 800px) {
+  .article-title { font-size: 1.8rem; }
+  h2 { font-size: 1.4rem; }
 }

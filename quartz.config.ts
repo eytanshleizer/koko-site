@@ -1,20 +1,13 @@
 import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
 
-/**
- * Quartz 4 Configuration
- *
- * See https://quartz.jzhao.xyz/configuration for more information.
- */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "Eytan's Blog",
+    pageTitle: "Eytan Shleizer",
     pageTitleSuffix: "",
     enableSPA: true,
     enablePopovers: true,
-    analytics: {
-      provider: "null",
-    },
+    analytics: { provider: "null" },
     locale: "en-US",
     baseUrl: "eytanshleizer.github.io/koko-site",
     ignorePatterns: ["private", "templates", ".obsidian"],
@@ -34,21 +27,21 @@ const config: QuartzConfig = {
           gray: "#b8b8b8",
           darkgray: "#4e4e4e",
           dark: "#2b2b2b",
-          secondary: "#284b63",
-          tertiary: "#84a59d",
-          highlight: "rgba(143, 159, 169, 0.15)",
-          textHighlight: "#fff23688",
+          secondary: "#7c3aed",
+          tertiary: "#06b6d4",
+          highlight: "rgba(124, 58, 237, 0.15)",
+          textHighlight: "#c084fc88",
         },
         darkMode: {
-          light: "#0a0a0f",
-          lightgray: "#15151f",
-          gray: "#3a3a4a",
+          light: "#000000",
+          lightgray: "#0a0a0f",
+          gray: "#2a2a3a",
           darkgray: "#8a8a9a",
-          dark: "#e8e8ec",
-          secondary: "#00d4aa",
-          tertiary: "#00a884",
-          highlight: "rgba(0, 212, 170, 0.08)",
-          textHighlight: "rgba(0, 212, 170, 0.25)",
+          dark: "#f5f5f5",
+          secondary: "#a855f7",
+          tertiary: "#22d3ee",
+          highlight: "rgba(168, 85, 247, 0.1)",
+          textHighlight: "rgba(168, 85, 247, 0.25)",
         },
       },
     },
@@ -56,16 +49,8 @@ const config: QuartzConfig = {
   plugins: {
     transformers: [
       Plugin.FrontMatter(),
-      Plugin.CreatedModifiedDate({
-        priority: ["frontmatter", "git", "filesystem"],
-      }),
-      Plugin.SyntaxHighlighting({
-        theme: {
-          light: "github-light",
-          dark: "github-dark",
-        },
-        keepBackground: false,
-      }),
+      Plugin.CreatedModifiedDate({ priority: ["frontmatter", "git", "filesystem"] }),
+      Plugin.SyntaxHighlighting({ theme: { light: "github-light", dark: "github-dark" }, keepBackground: false }),
       Plugin.ObsidianFlavoredMarkdown({ enableInHtmlEmbed: false }),
       Plugin.GitHubFlavoredMarkdown(),
       Plugin.TableOfContents(),
@@ -80,16 +65,11 @@ const config: QuartzConfig = {
       Plugin.ContentPage(),
       Plugin.FolderPage(),
       Plugin.TagPage(),
-      Plugin.ContentIndex({
-        enableSiteMap: true,
-        enableRSS: true,
-        rssSlug: "feed",
-      }),
+      Plugin.ContentIndex({ enableSiteMap: true, enableRSS: true, rssSlug: "feed" }),
       Plugin.Assets(),
       Plugin.Static(),
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
-      // Comment out CustomOgImages to speed up build time
       Plugin.CustomOgImages(),
     ],
   },

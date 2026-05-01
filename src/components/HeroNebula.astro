@@ -117,7 +117,38 @@
     100% { transform: translate(2%, -3%) scale(0.95); opacity: 0.9; }
   }
 
+  /* Paused state — toggled by the script below when the nebula scrolls out
+     of view. Keeps the browser from compositing four large blurred +
+     screen-blended divs on every frame when nothing is on screen. */
+  .hero-nebula.is-paused .cloud {
+    animation-play-state: paused;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .cloud { animation: none !important; }
   }
 </style>
+
+<script>
+  // Pause the nebula's CSS animations when it's not in the viewport. The
+  // animations themselves are cheap, but the per-frame compositing of four
+  // 70px-blurred + screen-blended elements is real scroll-perf overhead.
+  function initNebulaPause() {
+    const nebulae = document.querySelectorAll<HTMLElement>(".hero-nebula")
+    for (const el of nebulae) {
+      if ((el as any).__heroNebulaPauseInit) continue
+      ;(el as any).__heroNebulaPauseInit = true
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            el.classList.toggle("is-paused", !e.isIntersecting)
+          }
+        },
+        { threshold: 0 }
+      )
+      io.observe(el)
+    }
+  }
+  initNebulaPause()
+  document.addEventListener("astro:page-load", initNebulaPause)
+</script>

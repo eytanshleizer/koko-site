@@ -148,43 +148,41 @@
   color: theme(colors.bone.0);
 }
 
-/* Body fills the frame below the topbar. No padding — the embed owns it.
-   For mermaid (and other svg) embeds we provide a small inner gutter so the
-   diagram doesn't touch the edges; for natural-width embeds we don't, so
-   the embed can sit edge-to-edge. */
+/* Body fills the frame below the topbar. Default behavior: 16/9 aspect,
+   embed fills 100% × 100% (SVGs keep their internal aspect via
+   preserveAspectRatio). HTML embeds with a fixed design width opt out
+   by adding `data-embed-natural-width` to their root element — the
+   :has() rule below drops the aspect-ratio constraint so JS can set
+   the body's height from the scaled content. */
 .diagram-frame .diagram-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 8rem;
-  padding: 1rem;
-}
-
-.diagram-frame .diagram-body[data-natural-width] {
   display: block;
-  overflow: hidden;
-  min-height: 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   padding: 0;
-}
-
-/* Fixed-aspect mode: body locks to the given aspect ratio (set inline as
-   `style="aspect-ratio: 16/9"`), and the embedded child fills it. Used
-   for things like D3 force-graphs that want a consistent video-tile
-   preview shape regardless of how tall the content would otherwise be. */
-.diagram-frame .diagram-body[data-aspect-ratio] {
-  display: block;
-  padding: 0;
-  min-height: 0;
   overflow: hidden;
+  background: #000;
 }
-.diagram-frame .diagram-body[data-aspect-ratio] > * {
+.diagram-frame .diagram-body > * {
+  /* Default: child fills the body. We don't set `display` because the
+     embed's own display (grid, flex, block, …) needs to win. */
   width: 100%;
   height: 100%;
-  display: block;
+}
+.diagram-frame .diagram-body > svg {
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.diagram-frame .diagram-body svg {
-  max-width: 100%;
+/* Scale-to-fit override: when the embed declares its natural width, JS
+   takes over and sets the child's width + transform. We drop the aspect-
+   ratio constraint and reset width:100%/height:100% so the JS-set width
+   sticks. */
+.diagram-frame .diagram-body:has(> [data-embed-natural-width]) {
+  aspect-ratio: auto;
+  overflow: hidden;
+}
+.diagram-frame .diagram-body:has(> [data-embed-natural-width]) > * {
+  width: auto;
   height: auto;
 }
 
@@ -236,10 +234,13 @@
   padding: 1rem 1.5rem;
 }
 
-/* When a body is inside the overlay, give it the full width of the
-   overlay-content so scaleEmbed measures correctly. */
+/* When a body is inside the overlay it should fill the available space —
+   we drop the inline 16:9 constraint so SVG embeds can use the full
+   viewport, not be letterboxed inside a 16:9 box. */
 .diagram-overlay-content .diagram-body {
   width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
 }
 
 /* Lock background page scroll while overlay is open. */

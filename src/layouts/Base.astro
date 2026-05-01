@@ -57,18 +57,20 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
       Both run on initial load AND after Astro view-transitions.
     -->
     <script>
-      // Scale-to-fit logic for embeds with a fixed design width. The
-      // <Diagram naturalWidth={N}> prop sets data-natural-width on the body;
-      // we set the child's intrinsic width to N px, measure its natural
-      // height, then transform-scale it to fit container width. Same logic
-      // works inline and inside the fullscreen overlay (only the container
-      // width changes). If scaled height exceeds the container, the overlay
-      // scrolls — the embed itself never reflows.
+      // Scale-to-fit logic for HTML embeds with a fixed design width.
+      // The embed's root element declares its width via
+      // `data-embed-natural-width="N"`. We size the embed at N px, measure
+      // its natural height at that width, then transform-scale it to fit
+      // the body's container width. Body height is set to the scaled
+      // height. SVG-based embeds (mermaid, D3) don't need this — they
+      // scale naturally via viewBox + width:100%/height:100%.
       const scaleEmbed = (body: HTMLElement) => {
-        const nw = parseFloat(body.getAttribute("data-natural-width") || "")
-        if (!nw) return
         const child = body.firstElementChild as HTMLElement | null
         if (!child) return
+        const nw = parseFloat(
+          child.getAttribute("data-embed-natural-width") || "",
+        )
+        if (!nw) return
 
         child.style.width = nw + "px"
         child.style.flexShrink = "0"
@@ -77,7 +79,7 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
         const nh = child.offsetHeight
 
         const cw = body.clientWidth
-        const scale = Math.min(1, cw / nw)
+        const scale = cw / nw // allow upscaling in fullscreen
         child.style.transform = `scale(${scale})`
         body.style.height = nh * scale + "px"
       }
@@ -140,9 +142,7 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
         activePlaceholder = placeholder
 
         // Re-scale to fill the new (wider) container.
-        requestAnimationFrame(() => {
-          if (body.hasAttribute("data-natural-width")) scaleEmbed(body)
-        })
+        requestAnimationFrame(() => scaleEmbed(body))
       }
 
       const closeOverlay = () => {
@@ -156,9 +156,7 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
         activeFrame = null
         activePlaceholder = null
         // Re-scale for original (narrower) container.
-        if (body && body.hasAttribute("data-natural-width")) {
-          requestAnimationFrame(() => scaleEmbed(body))
-        }
+        if (body) requestAnimationFrame(() => scaleEmbed(body))
       }
 
       const initDiagrams = async () => {
@@ -173,9 +171,15 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
           openBtn?.addEventListener("click", () => openOverlay(frame))
         }
 
-        // Hook every scale-to-fit body to a ResizeObserver.
-        const scalingBodies = document.querySelectorAll<HTMLElement>(
-          ".diagram-body[data-natural-width]",
+        // Hook every body whose first child declares a natural width to
+        // a ResizeObserver. Embeds without the attribute use the default
+        // 16/9 fill behavior (CSS only, no JS).
+        const scalingBodies = Array.from(
+          document.querySelectorAll<HTMLElement>(".diagram-body"),
+        ).filter(
+          (b) =>
+            b.firstElementChild instanceof HTMLElement &&
+            b.firstElementChild.hasAttribute("data-embed-natural-width"),
         )
         for (const body of scalingBodies) {
           if ((body as any).__scaleInit) continue

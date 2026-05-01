@@ -1,21 +1,19 @@
 ---
-// D3 force-directed graph of problem-intelligence concepts. Renders inside
-// a <Diagram> frame on the post; the SVG fills the frame and scales up
-// when fullscreened. Nodes are draggable; releasing them lets the
-// simulation re-settle.
+// D3 force-directed graph of problem-intelligence concepts. The simulation
+// uses the SVG's actual rendered pixel dimensions (no fixed viewBox), so
+// the graph always fills its container — both inline and fullscreen — and
+// re-balances when the container resizes (ResizeObserver re-runs the center
+// force).
 //
-// The graph data is co-located here so the embed is fully self-contained.
-// d3 is imported in the script tag — Astro's bundler tree-shakes the
-// modules we don't use.
+// Nodes are draggable; releasing pins them in place briefly while the
+// simulation re-settles.
 
 const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
 ---
 
-<div class="concept-graph relative w-full" data-graph-id={id} style="min-height: 480px;">
+<div class="concept-graph relative h-full w-full" data-graph-id={id}>
   <svg
     class="block h-full w-full"
-    viewBox="0 0 800 480"
-    preserveAspectRatio="xMidYMid meet"
     aria-label="Force-directed graph of problem-intelligence concepts"
   ></svg>
 </div>
@@ -45,7 +43,7 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
     target: string | GraphNode
   }
 
-  const nodes: GraphNode[] = [
+  const NODES: GraphNode[] = [
     { id: "Problem", group: 0, size: 13 },
     { id: "Conductor", group: 0, size: 16 },
     { id: "Frame", group: 1, size: 12 },
@@ -63,7 +61,7 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
     { id: "Decision", group: 0, size: 11 },
   ]
 
-  const links: GraphLink[] = [
+  const LINKS: GraphLink[] = [
     { source: "Problem", target: "Conductor" },
     { source: "Conductor", target: "Frame" },
     { source: "Conductor", target: "Survey" },
@@ -86,9 +84,11 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
     if ((container as any).__graphInit) return
     ;(container as any).__graphInit = true
 
-    const svg = container.querySelector("svg")!
-    const width = 800
-    const height = 480
+    const svg = container.querySelector("svg") as SVGSVGElement
+    // Per-instance copies of nodes/links so multiple graphs on a page
+    // don't share simulation state.
+    const nodes: GraphNode[] = NODES.map((n) => ({ ...n }))
+    const links: GraphLink[] = LINKS.map((l) => ({ ...l }))
 
     const root = select(svg)
     const linkGroup = root.append("g").attr("class", "links")
@@ -127,6 +127,13 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
       .attr("font-family", "Inter Tight, ui-sans-serif, system-ui")
       .attr("pointer-events", "none")
 
+    // Track the SVG's actual pixel dimensions and use them in the
+    // simulation. viewBox is set to match so the SVG coords == pixel coords
+    // (1:1 mapping, no scaling), which keeps stroke widths and font sizes
+    // visually consistent regardless of container size.
+    let width = 0
+    let height = 0
+
     const sim = forceSimulation<GraphNode>(nodes)
       .force(
         "link",
@@ -135,12 +142,23 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
           .distance(80)
           .strength(0.7),
       )
-      .force("charge", forceManyBody().strength(-220))
+      .force("charge", forceManyBody().strength(-260))
       .force(
         "collide",
-        forceCollide<GraphNode>().radius((d) => d.size + 12),
+        forceCollide<GraphNode>().radius((d) => d.size + 14),
       )
-      .force("center", forceCenter(width / 2, height / 2))
+
+    const updateLayout = () => {
+      const rect = svg.getBoundingClientRect()
+      const w = Math.max(200, Math.round(rect.width))
+      const h = Math.max(200, Math.round(rect.height))
+      if (w === width && h === height) return
+      width = w
+      height = h
+      svg.setAttribute("viewBox", `0 0 ${w} ${h}`)
+      sim.force("center", forceCenter(w / 2, h / 2))
+      sim.alpha(0.4).restart()
+    }
 
     sim.on("tick", () => {
       linkSel
@@ -151,7 +169,6 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
       nodeSel.attr("transform", (d) => `translate(${d.x},${d.y})`)
     })
 
-    // Drag handler — pin a node while dragging, release on drop.
     nodeSel.call(
       drag<SVGGElement, GraphNode>()
         .on("start", (event, d) => {
@@ -169,6 +186,13 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
           d.fy = null
         }) as any,
     )
+
+    // Initial layout + re-layout on container resize (covers fullscreen
+    // toggle, window resize, and any other case where the SVG changes
+    // size).
+    updateLayout()
+    const ro = new ResizeObserver(updateLayout)
+    ro.observe(svg)
   }
 
   function initAll() {

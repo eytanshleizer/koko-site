@@ -3,45 +3,37 @@
 //
 // Layout:
 //   ┌──────────────────────────────────────────────────┐
-//   │  TITLE                                       ⤢   │  ← topbar (thin)
+//   │  TITLE                                       ⤢   │  ← topbar
 //   ├──────────────────────────────────────────────────┤
 //   │                                                  │
 //   │            preview (no padding)                  │
 //   │                                                  │
 //   └──────────────────────────────────────────────────┘
 //
-// Three height modes (pick one):
-//   - default                  → body fits its content (mermaid, plain SVG)
-//   - aspectRatio="16/9"        → body has a fixed aspect ratio; child fills it
-//                                (good for D3, demos, anything that wants a
-//                                 video-like preview tile)
-//   - naturalWidth={920}        → body's child is sized to N px wide and then
-//                                transform-scaled to fit container width
-//                                (good for fixed-design SaaS-style mocks)
+// One default behavior, no per-Diagram knobs:
 //
-// Click ⤢ → the body is *moved* into a fixed-position overlay with its own
-// topbar + X close. Width fills the viewport; if content is taller, the
-// overlay scrolls. ESC, X, or click on the dimmed margin closes.
+//   - The body has aspect-ratio 16/9, and the embed inside fills it
+//     (width:100%, height:100%). SVG-based embeds (mermaid, D3) keep
+//     their internal aspect via viewBox + preserveAspectRatio.
+//
+//   - HTML embeds with a fixed design width (e.g. a SaaS mock at 920px)
+//     opt in to scale-to-fit by adding `data-embed-natural-width="920"`
+//     to their root element. JS then sizes the embed at its natural width
+//     and transform-scales it to fit. The body's aspect-ratio is dropped
+//     so its height grows to match the scaled content.
+//
+//   - In fullscreen, the same logic runs against a wider container.
+//     Width fits the viewport; if scaled height exceeds it, the overlay
+//     scrolls vertically.
 //
 // Usage:
-//   <Diagram title="Concept map" aspectRatio="16/9">
+//   <Diagram title="Concept map">
 //     <ConceptGraph />
-//   </Diagram>
-//
-//   <Diagram title="Problem inbox" naturalWidth={920}>
-//     <ProblemIntelApp />
 //   </Diagram>
 interface Props {
   title?: string
-  naturalWidth?: number
-  aspectRatio?: string  // CSS aspect-ratio value, e.g. "16/9", "4/3", "1/1"
 }
-const { title, naturalWidth, aspectRatio } = Astro.props as Props
-
-const bodyAttrs: Record<string, string> = {}
-if (naturalWidth) bodyAttrs["data-natural-width"] = String(naturalWidth)
-if (aspectRatio) bodyAttrs["data-aspect-ratio"] = aspectRatio
-const bodyStyle = aspectRatio ? `aspect-ratio: ${aspectRatio};` : undefined
+const { title } = Astro.props as Props
 ---
 
 <figure class="diagram-frame not-prose">
@@ -68,7 +60,7 @@ const bodyStyle = aspectRatio ? `aspect-ratio: ${aspectRatio};` : undefined
       </svg>
     </button>
   </header>
-  <div class="diagram-body" style={bodyStyle} {...bodyAttrs}>
+  <div class="diagram-body">
     <slot />
   </div>
 </figure>

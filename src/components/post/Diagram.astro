@@ -1,58 +1,62 @@
 ---
-// Generic frame for diagrams, embeds, and interactive demos. Same chrome as
-// the mermaid output: thin border, black bg, fullscreen toggle in the corner,
-// optional caption underneath.
+// Generic frame for diagrams, embeds, and interactive demos.
 //
-// Usage in an .mdx post:
+// Layout:
+//   ┌──────────────────────────────────────────────────┐
+//   │  TITLE                                       ⤢   │  ← topbar (thin)
+//   ├──────────────────────────────────────────────────┤
+//   │                                                  │
+//   │            preview (no padding)                  │
+//   │                                                  │
+//   └──────────────────────────────────────────────────┘
 //
-//   import Diagram from "@/components/post/Diagram.astro"
-//   import MyDemo from "./_my-demo.astro"
+// Click ⤢ → the body is *moved* into a fixed-position overlay with its own
+// topbar + X close button. Width fills the viewport; if the embed's natural
+// height exceeds it, the overlay scrolls vertically. ESC, X, or click on the
+// dimmed margin closes.
 //
-//   <Diagram caption="The thing in motion">
-//     <MyDemo />
+// The scale-to-fit logic in Base.astro re-runs after move so the embed
+// scales up cleanly inside the overlay.
+//
+// Usage:
+//   <Diagram title="Problem inbox" naturalWidth={920}>
+//     <ProblemIntelApp />
 //   </Diagram>
-//
-// For complex/interactive embeds, write the embed in a separate .astro file
-// next to the post (prefixed with `_` so it stays a private partial), then
-// drop it into <Diagram>. The frame and the fullscreen handler are wired
-// once globally in Base.astro — nothing per-component needed.
 interface Props {
-  caption?: string
-  // For embeds with a fixed design width (e.g. a SaaS UI mock at 920px) that
-  // need to scale-to-fit the container instead of overflowing or reflowing.
-  // The slot's first element is sized to `naturalWidth` and transform-scaled
-  // to fit. ResizeObserver re-computes on container resize and on fullscreen
-  // toggle.
+  title?: string
   naturalWidth?: number
 }
-const { caption, naturalWidth } = Astro.props as Props
+const { title, naturalWidth } = Astro.props as Props
 const bodyAttrs = naturalWidth
   ? { "data-natural-width": String(naturalWidth) }
   : {}
 ---
 
 <figure class="diagram-frame not-prose">
-  <button
-    type="button"
-    class="diagram-fullscreen"
-    aria-label="Toggle fullscreen"
-  >
-    <svg
-      viewBox="0 0 16 16"
-      width="14"
-      height="14"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
+  <header class="diagram-topbar">
+    <span class="diagram-title">{title || ""}</span>
+    <button
+      type="button"
+      class="diagram-action"
+      data-diagram-action="open"
+      aria-label="Open fullscreen"
     >
-      <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
-    </svg>
-  </button>
+      <svg
+        viewBox="0 0 16 16"
+        width="13"
+        height="13"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+      </svg>
+    </button>
+  </header>
   <div class="diagram-body" {...bodyAttrs}>
     <slot />
   </div>
-  {caption && <figcaption class="diagram-caption">{caption}</figcaption>}
 </figure>

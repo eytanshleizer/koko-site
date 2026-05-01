@@ -60,74 +60,120 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
       // Scale-to-fit logic for embeds with a fixed design width. The
       // <Diagram naturalWidth={N}> prop sets data-natural-width on the body;
       // we set the child's intrinsic width to N px, measure its natural
-      // height, then apply a transform that scales it to fit the body —
-      // both in inline and fullscreen mode. ResizeObserver re-runs on
-      // container resize.
+      // height, then transform-scale it to fit container width. Same logic
+      // works inline and inside the fullscreen overlay (only the container
+      // width changes). If scaled height exceeds the container, the overlay
+      // scrolls — the embed itself never reflows.
       const scaleEmbed = (body: HTMLElement) => {
         const nw = parseFloat(body.getAttribute("data-natural-width") || "")
         if (!nw) return
         const child = body.firstElementChild as HTMLElement | null
         if (!child) return
 
-        // Set the child's intrinsic dimensions; transform handles the rest.
-        // flex-shrink: 0 because .diagram-body is `display: flex` — without
-        // it the child would shrink to the container width and our width
-        // setting wouldn't stick.
         child.style.width = nw + "px"
         child.style.flexShrink = "0"
         child.style.transformOrigin = "top left"
-        // Strip any prior transform before measuring height.
         child.style.transform = "none"
         const nh = child.offsetHeight
 
-        const frame = body.closest(".diagram-frame") as HTMLElement | null
-        const isFullscreen = !!frame?.classList.contains("is-fullscreen")
-
         const cw = body.clientWidth
-        const ch = body.clientHeight
-        const scale = isFullscreen
-          ? Math.min(cw / nw, ch / nh)
-          : Math.min(1, cw / nw)
+        const scale = Math.min(1, cw / nw)
+        child.style.transform = `scale(${scale})`
+        body.style.height = nh * scale + "px"
+      }
 
-        const renderedW = nw * scale
-        const renderedH = nh * scale
-        const tx = (cw - renderedW) / 2
-        const ty = isFullscreen ? (ch - renderedH) / 2 : 0
+      // ────────── Fullscreen overlay ──────────
+      // We *move* the .diagram-body element into the overlay (and back on
+      // close) so the embed's DOM and any running JS state survives the
+      // transition. The original spot gets a placeholder div.
+      let activeFrame: HTMLElement | null = null
+      let activePlaceholder: HTMLElement | null = null
 
-        child.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`
+      const openOverlay = (frame: HTMLElement) => {
+        if (activeFrame) closeOverlay() // only one at a time
+        const body = frame.querySelector<HTMLElement>(".diagram-body")
+        if (!body) return
+        const titleText =
+          frame.querySelector<HTMLElement>(".diagram-title")?.textContent || ""
 
-        if (!isFullscreen) {
-          body.style.height = renderedH + "px"
-        } else {
-          body.style.height = ""
+        // Build overlay
+        const overlay = document.createElement("div")
+        overlay.className = "diagram-overlay"
+        overlay.innerHTML = `
+          <header class="diagram-overlay-topbar">
+            <span class="diagram-overlay-title"></span>
+            <button type="button" class="diagram-action" data-diagram-action="close" aria-label="Close fullscreen">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 3l10 10M13 3L3 13"/>
+              </svg>
+            </button>
+          </header>
+          <div class="diagram-overlay-content"></div>
+        `
+        ;(overlay.querySelector(
+          ".diagram-overlay-title",
+        ) as HTMLElement).textContent = titleText
+        const content = overlay.querySelector(
+          ".diagram-overlay-content",
+        ) as HTMLElement
+
+        // Swap body for placeholder, move body to overlay
+        const placeholder = document.createElement("div")
+        placeholder.style.display = "none"
+        body.replaceWith(placeholder)
+        content.appendChild(body)
+        document.body.appendChild(overlay)
+        document.body.classList.add("diagram-overlay-open")
+
+        // Wire close handlers
+        overlay
+          .querySelector("[data-diagram-action='close']")
+          ?.addEventListener("click", closeOverlay)
+        // Click on dimmed margin (outside content area) closes too — the
+        // overlay-content is the visible "sheet"; a click on the bare
+        // overlay (not the content) closes.
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) closeOverlay()
+        })
+
+        activeFrame = frame
+        activePlaceholder = placeholder
+
+        // Re-scale to fill the new (wider) container.
+        requestAnimationFrame(() => {
+          if (body.hasAttribute("data-natural-width")) scaleEmbed(body)
+        })
+      }
+
+      const closeOverlay = () => {
+        if (!activeFrame || !activePlaceholder) return
+        const overlay = document.querySelector<HTMLElement>(".diagram-overlay")
+        const body = overlay?.querySelector<HTMLElement>(".diagram-body")
+        if (body) activePlaceholder.replaceWith(body)
+        overlay?.remove()
+        document.body.classList.remove("diagram-overlay-open")
+        const f = activeFrame
+        activeFrame = null
+        activePlaceholder = null
+        // Re-scale for original (narrower) container.
+        if (body && body.hasAttribute("data-natural-width")) {
+          requestAnimationFrame(() => scaleEmbed(body))
         }
       }
 
       const initDiagrams = async () => {
-        // Wire fullscreen toggle for every diagram frame on the page.
+        // Wire the open-fullscreen button on every frame.
         const frames = document.querySelectorAll<HTMLElement>(".diagram-frame")
         for (const frame of frames) {
           if ((frame as any).__diagramInit) continue
           ;(frame as any).__diagramInit = true
-          const btn = frame.querySelector<HTMLButtonElement>(".diagram-fullscreen")
-          if (btn) {
-            btn.addEventListener("click", () => {
-              frame.classList.toggle("is-fullscreen")
-              document.body.classList.toggle(
-                "diagram-overlay-open",
-                frame.classList.contains("is-fullscreen"),
-              )
-              // Re-scale the embed inside this frame after the layout settles.
-              const body = frame.querySelector<HTMLElement>(
-                ".diagram-body[data-natural-width]",
-              )
-              if (body) requestAnimationFrame(() => scaleEmbed(body))
-            })
-          }
+          const openBtn = frame.querySelector<HTMLButtonElement>(
+            "[data-diagram-action='open']",
+          )
+          openBtn?.addEventListener("click", () => openOverlay(frame))
         }
 
-        // Hook every scale-to-fit body to a ResizeObserver and run an initial
-        // pass so the embed fits before the user notices.
+        // Hook every scale-to-fit body to a ResizeObserver.
         const scalingBodies = document.querySelectorAll<HTMLElement>(
           ".diagram-body[data-natural-width]",
         )
@@ -136,7 +182,6 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
           ;(body as any).__scaleInit = true
           const ro = new ResizeObserver(() => scaleEmbed(body))
           ro.observe(body)
-          // Initial pass.
           requestAnimationFrame(() => scaleEmbed(body))
         }
 
@@ -173,14 +218,9 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
         }
       }
 
-      // ESC closes any open fullscreen diagram.
+      // ESC closes the active fullscreen overlay.
       document.addEventListener("keydown", (e) => {
-        if (e.key !== "Escape") return
-        const open = document.querySelector(".diagram-frame.is-fullscreen")
-        if (open) {
-          open.classList.remove("is-fullscreen")
-          document.body.classList.remove("diagram-overlay-open")
-        }
+        if (e.key === "Escape" && activeFrame) closeOverlay()
       })
 
       if (document.readyState === "loading") {

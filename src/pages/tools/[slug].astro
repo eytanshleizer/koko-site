@@ -1,0 +1,121 @@
+---
+import { getCollection, render } from "astro:content"
+import Base from "@/layouts/Base.astro"
+import CopyRaw from "@/components/tool/CopyRaw.tsx"
+import ToolMount from "@/components/tool/ToolMount.tsx"
+
+export async function getStaticPaths() {
+  const tools = await getCollection(
+    "tools",
+    ({ data }) => !data.draft && data.kind !== "link",
+  )
+  return tools.map((t) => ({ params: { slug: t.id }, props: { tool: t } }))
+}
+
+const { tool } = Astro.props
+const { Content } = await render(tool)
+
+// All markdown sources inside tool folders, eagerly inlined as raw text
+// so the doc-kind page can show + offer a copy button. The tool's own
+// `index.md` is included here too, but we filter by frontmatter.source.
+const sources = import.meta.glob("/src/content/tools/**/*.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>
+
+let rawSource: string | null = null
+
+if (tool.data.kind === "doc" && tool.data.source) {
+  const sourceRel = tool.data.source.replace(/^\.\//, "")
+  const key = `/src/content/tools/${tool.id}/${sourceRel}`
+  rawSource = sources[key] ?? null
+  if (rawSource === null) {
+    console.warn(`[tools] kind=doc source not found: ${key}`)
+  }
+}
+
+const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
+const link = (href: string) => base + href
+
+const kindLabel =
+  tool.data.kind === "app" ? "Application" : "Skill / Doc"
+---
+
+<Base
+  title={`${tool.data.title} · Tools`}
+  description={tool.data.excerpt}
+>
+  <article>
+    <header class="container-page pt-16 pb-10 md:pt-24 md:pb-14">
+      <a
+        class="inline-flex items-center gap-1 text-[13px] text-bone-300 transition hover:text-bone-0"
+        href={link("/tools")}
+      >
+        <span aria-hidden="true">←</span>
+        Tools
+      </a>
+
+      <div class="mt-10 max-w-3xl">
+        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+          {kindLabel}
+        </p>
+        <h1
+          class="mt-5 text-display font-semibold tracking-tighter text-bone-0"
+          style="text-wrap: balance;"
+        >
+          {tool.data.title}
+        </h1>
+        {tool.data.excerpt && (
+          <p class="mt-6 text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
+            {tool.data.excerpt}
+          </p>
+        )}
+        {tool.data.tags.length > 0 && (
+          <div class="mt-6 flex flex-wrap gap-1.5">
+            {tool.data.tags.map((tag) => (
+              <span class="rounded-full bg-bone-0/[0.06] px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em] text-bone-200">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    <div class="container-page"><div class="hairline"></div></div>
+
+    <div class="container-page py-14 md:py-20">
+      <div
+        class="prose prose-invert max-w-prose prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-[1.5rem] prose-p:text-[16.5px] prose-p:leading-[1.75] prose-p:text-bone-200 prose-strong:text-bone-0 prose-a:text-bone-0 prose-a:underline prose-a:underline-offset-4 prose-a:decoration-bone-500/40 hover:prose-a:decoration-bone-200 prose-li:text-bone-200"
+      >
+        <Content />
+      </div>
+
+      {tool.data.kind === "app" && (
+        <div class="mt-14">
+          <ToolMount slug={tool.id} client:only="react" />
+        </div>
+      )}
+
+      {tool.data.kind === "doc" && rawSource !== null && (
+        <div class="mt-14 max-w-prose">
+          <div class="flex items-center justify-between gap-4">
+            <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+              Source
+            </p>
+            <CopyRaw client:load source={rawSource} />
+          </div>
+          <pre
+            class="mt-4 max-h-[640px] overflow-auto whitespace-pre-wrap break-words rounded-md border border-bone-500/15 bg-ink-100 p-6 font-mono text-[13px] leading-[1.65] text-bone-100"
+          >{rawSource}</pre>
+        </div>
+      )}
+      {tool.data.kind === "doc" && rawSource === null && (
+        <p class="mt-10 max-w-prose font-mono text-[13px] text-bone-300">
+          [missing source file for this tool]
+        </p>
+      )}
+    </div>
+  </article>
+</Base>

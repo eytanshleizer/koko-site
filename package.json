@@ -8,18 +8,24 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync-blog": "node scripts/sync-blog.mjs"
+    "sync-blog": "node scripts/sync-blog.mjs",
+    "sync-tools": "node scripts/sync-tools.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
+    "@astrojs/react": "^5.0.4",
     "@astrojs/sitemap": "^3.2.0",
     "@astrojs/tailwind": "^5.1.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/d3": "^7.4.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@types/three": "^0.184.0",
     "astro": "^5.0.0",
     "d3": "^7.9.0",
     "mermaid": "^11.14.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "tailwindcss": "^3.4.0",
     "three": "^0.184.0",
     "unist-util-visit": "^5.1.0"

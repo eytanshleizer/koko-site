@@ -1,0 +1,49 @@
+---
+title: "What an AI-Native Loop Looks Like"
+excerpt: "Most of us are still using AI like a faster autocomplete. The real shift is in the shape of the loop — and what gets cheap."
+date: 2026-04-25
+---
+
+import Callout from "@/components/post/Callout.astro"
+import Figure from "@/components/post/Figure.astro"
+import diagram from "./diagram.svg?url"
+
+There's a pattern I keep seeing among people who get a lot out of AI — and people who don't.
+
+The ones who don't are running a familiar loop, with a faster autocomplete in the middle. They write, they ask, they read, they decide. The AI is a typing assistant.
+
+The ones who do are running a different loop entirely.
+
+## The shape of the new loop
+
+```mermaid
+flowchart LR
+  A[Frame] --> B[Generate]
+  B --> C{Read}
+  C -- aligned --> D[Keep]
+  C -- off --> E[Re-frame]
+  E --> A
+  D --> F[Ship]
+```
+
+Frame, generate, read, decide. Repeat. The frame is now an artifact you keep refining, not a one-time setup.
+
+<Callout title="The shift" variant="accent">
+The expensive thing isn't producing output anymore. It's reading output well, and re-framing fast when something's off. The skill of *reading* — what's right, what's missing, what's almost-right-but-wrong — is what's becoming valuable.
+</Callout>
+
+## Where the leverage actually is
+
+If you're spending most of your loop time generating, you're working in the old shape. The new shape spends most of the time in **frame** and **read** — the bookends. Generation collapses to seconds.
+
+<Figure caption="Where time goes in each loop">
+  <img src={diagram} alt="Old loop vs. new loop, showing time spent in each stage" class="mx-auto block w-full max-w-2xl" />
+</Figure>
+
+The orange band is generation. In the old loop it dominates. In the new loop it's a sliver, and the bookends are where the human's time and judgment actually live.
+
+## What I'm trying to do
+
+I'm trying to retrain my own loop. Less time typing. More time framing the question and reading the answer. The first version of any output is now a draft *to react to*, not a destination.
+
+The interesting work shifts from *making* to *choosing*.

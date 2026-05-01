@@ -1,0 +1,17 @@
+---
+// Margin-style aside — side label + dimmer italicized body. Useful for short
+// "by the way" digressions inside a post.
+interface Props {
+  label?: string
+}
+const { label = "Aside" } = Astro.props as Props
+---
+
+<div class="not-prose my-10 grid gap-4 md:grid-cols-[140px_1fr] md:gap-8">
+  <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-bone-300">
+    {label}
+  </p>
+  <div class="text-[15px] italic leading-[1.7] text-bone-300">
+    <slot />
+  </div>
+</div>

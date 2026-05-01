@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220" fill="none" stroke="#a3a3a3" stroke-linecap="round" stroke-linejoin="round" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" letter-spacing="2">
+  <!-- Old loop -->
+  <text x="0" y="14" fill="#a3a3a3" stroke="none">OLD LOOP</text>
+  <rect x="0" y="22" width="80" height="18" fill="#525252" stroke="none" />
+  <rect x="80" y="22" width="320" height="18" fill="#fafafa" stroke="none" />
+  <rect x="400" y="22" width="80" height="18" fill="#525252" stroke="none" />
+  <text x="0" y="58" fill="#737373" stroke="none" font-size="9">FRAME</text>
+  <text x="160" y="58" fill="#737373" stroke="none" font-size="9">GENERATE</text>
+  <text x="412" y="58" fill="#737373" stroke="none" font-size="9">READ</text>
+
+  <!-- Spacer -->
+  <line x1="0" y1="100" x2="480" y2="100" stroke="#3d3d3d" stroke-width="0.5" stroke-dasharray="2 4" />
+
+  <!-- New loop -->
+  <text x="0" y="130" fill="#fafafa" stroke="none">NEW LOOP</text>
+  <rect x="0" y="138" width="180" height="18" fill="#fafafa" stroke="none" />
+  <rect x="180" y="138" width="60" height="18" fill="#ff8a4c" stroke="none" />
+  <rect x="240" y="138" width="240" height="18" fill="#fafafa" stroke="none" />
+  <text x="0" y="174" fill="#737373" stroke="none" font-size="9">FRAME</text>
+  <text x="184" y="174" fill="#ff8a4c" stroke="none" font-size="9">GEN</text>
+  <text x="244" y="174" fill="#737373" stroke="none" font-size="9">READ + DECIDE</text>
+
+  <!-- Caption -->
+  <text x="0" y="210" fill="#525252" stroke="none" font-size="9">WIDTH ≈ TIME SPENT IN STAGE</text>
+</svg>

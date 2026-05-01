@@ -1,0 +1,28 @@
+---
+// Big-number block. Used inline in MDX:
+//   <Stat value="4×" label="quality bump from a 30-second framing pass" />
+//
+// Uses inline styles for the big number because the prose typography plugin's
+// `:where(p)` selector still applies to <p> descendants in some MDX
+// configurations even with `.not-prose` on the wrapper. Inline styles win
+// over any class-based rule and keep the visual stable.
+interface Props {
+  value: string
+  label?: string
+}
+const { value, label } = Astro.props as Props
+---
+
+<div class="not-prose my-12 border-y border-bone-500/15 py-10 text-center">
+  <p
+    class="font-semibold text-bone-0"
+    style="font-size: clamp(3rem, 9vw, 6rem); line-height: 1; letter-spacing: -0.045em;"
+  >
+    {value}
+  </p>
+  {label && (
+    <p class="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-300">
+      {label}
+    </p>
+  )}
+</div>

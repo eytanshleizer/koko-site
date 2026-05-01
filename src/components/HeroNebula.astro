@@ -32,7 +32,10 @@
     position: absolute;
     border-radius: 9999px;
     mix-blend-mode: screen;
-    filter: blur(70px);
+    /* No filter:blur — the radial gradients are already soft enough on
+       their own. Dropping the 70px blur removes the per-frame compositing
+       cost that scaled with the layer area, which was the most expensive
+       part of the nebula. */
     will-change: transform, opacity;
   }
 

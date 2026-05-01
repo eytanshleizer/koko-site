@@ -1,0 +1,28 @@
+---
+// Editorial callout — left border + small mono label, body in light prose.
+// Used inline in MDX posts: <Callout title="Note">…body…</Callout>
+interface Props {
+  title?: string
+  variant?: "default" | "accent"
+}
+const { title, variant = "default" } = Astro.props as Props
+const borderClass = variant === "accent"
+  ? "border-ember-300/60"
+  : "border-bone-500/40"
+---
+
+<aside
+  class:list={[
+    "not-prose my-10 border-l-2 py-2 pl-6",
+    borderClass,
+  ]}
+>
+  {title && (
+    <p class="mb-3 font-mono text-[11px] uppercase tracking-[0.2em] text-bone-300">
+      {title}
+    </p>
+  )}
+  <div class="text-[16px] leading-[1.65] text-bone-100">
+    <slot />
+  </div>
+</aside>

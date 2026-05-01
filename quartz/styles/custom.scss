@@ -1,8 +1,17 @@
 // Palantir-inspired dark theme customizations
 // Clean, technical, data-forward aesthetic
 
-// Force dark mode as default
+// Force dark mode as default by overriding Quartz's root variables
 :root {
+  --light: #0a0a0f !important;
+  --lightgray: #15151f !important;
+  --gray: #3a3a4a !important;
+  --darkgray: #8a8a9a !important;
+  --dark: #e8e8ec !important;
+  --secondary: #00d4aa !important;
+  --tertiary: #00a884 !important;
+  --highlight: rgba(0, 212, 170, 0.08) !important;
+  --textHighlight: rgba(0, 212, 170, 0.25) !important;
   --background-primary: #0a0a0f;
   --background-secondary: #111118;
   --border-subtle: rgba(255, 255, 255, 0.06);

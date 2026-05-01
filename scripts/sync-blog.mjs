@@ -9,8 +9,12 @@
 // Behavior:
 //   - Reads <source>/posts/** (markdown, mdx, plus any sibling assets)
 //   - Wipes <repo>/src/content/notebook/ (so removed posts disappear)
-//   - Copies files in, preserving folder structure
-//   - Skips macOS dotfiles (.DS_Store) and editor cruft (.swp, .tmp)
+//   - For .md files: transforms the simple "import + {Name}" convention
+//     into MDX and writes as .mdx. See transformMdToMdx below.
+//   - For .mdx files: rewrites .md import paths to .mdx (since their
+//     section partials get extension-changed) and copies through.
+//   - For other files (.astro, .svg, .png, …): copies as-is.
+//   - Skips macOS dotfiles (.DS_Store) and editor cruft (.swp, .tmp).
 //
 // Override the source via env var: BLOG_SOURCE_DIR=/path/to/blog
 //
@@ -38,10 +42,101 @@ const destDir = path.join(repoRoot, "src", "content", "notebook")
 
 const SKIP_NAMES = new Set([".DS_Store", ".git", "node_modules"])
 const SKIP_EXTS = new Set([".swp", ".tmp", ".bak"])
-// Folders or files starting with `_` (e.g. _template, _draft) are private to
-// the source folder and never synced. Use `_` to keep templates, drafts, or
-// scratch posts in iCloud without publishing them.
 const isPrivate = (name) => name.startsWith("_")
+
+const IMAGE_EXTS = new Set([".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"])
+const IMPORT_RE = /^\s*import\s+(\w+)\s+from\s+["']([^"']+)["']\s*;?\s*$/
+
+// Transform a `.md` source written in the simple authoring convention into
+// MDX. The convention:
+//
+//   1. Optional YAML frontmatter at the top.
+//   2. A block of `import Name from "./path"` lines (one per line, blank
+//      lines allowed between them). Parsing stops at the first non-import,
+//      non-blank line.
+//   3. Body prose. To render an imported artifact, place `{Name}` on its
+//      own line (with optional surrounding whitespace).
+//
+// The path extension determines how `{Name}` renders:
+//
+//   - .svg / .png / .jpg / .jpeg / .gif / .webp / .avif
+//       → `<img src={Name} alt="" class="block w-full" />`
+//         (import path gets `?url` appended so Vite returns a string URL)
+//   - .md
+//       → `<Name />` (and the import path is rewritten to .mdx because
+//         section partials are extension-changed during sync)
+//   - .astro / .mdx / bare specifier (e.g. @/components/post/Foo.astro)
+//       → `<Name />`
+function transformMdToMdx(source) {
+  const lines = source.split("\n")
+  let i = 0
+  const out = []
+
+  // Optional frontmatter.
+  if (lines[i] === "---") {
+    out.push(lines[i++])
+    while (i < lines.length && lines[i] !== "---") {
+      out.push(lines[i++])
+    }
+    if (i < lines.length) out.push(lines[i++]) // closing ---
+    out.push("")
+    while (i < lines.length && lines[i].trim() === "") i++
+  }
+
+  // Parse imports.
+  const importMap = new Map()
+  while (i < lines.length) {
+    const line = lines[i]
+    if (line.trim() === "") {
+      i++
+      continue
+    }
+    const m = IMPORT_RE.exec(line)
+    if (!m) break
+    const [, name, importPath] = m
+    const ext = path.extname(importPath).toLowerCase()
+    let resolvedPath = importPath
+    let replacement
+    if (IMAGE_EXTS.has(ext)) {
+      resolvedPath = importPath.includes("?") ? importPath : `${importPath}?url`
+      replacement = `<img src={${name}} alt="" class="block w-full" />`
+    } else if (ext === ".md") {
+      resolvedPath = importPath.replace(/\.md$/, ".mdx")
+      replacement = `<${name} />`
+    } else {
+      replacement = `<${name} />`
+    }
+    importMap.set(name, replacement)
+    out.push(`import ${name} from "${resolvedPath}"`)
+    i++
+  }
+
+  if (importMap.size > 0) out.push("")
+
+  // Body — replace `{Name}` on its own line with the rendered form.
+  const REF_RE = /^\{(\w+)\}$/
+  while (i < lines.length) {
+    const line = lines[i++]
+    const m = REF_RE.exec(line.trim())
+    if (m && importMap.has(m[1])) {
+      out.push(importMap.get(m[1]))
+    } else {
+      out.push(line)
+    }
+  }
+
+  return out.join("\n")
+}
+
+// In MDX files (e.g. an index.mdx that composes section partials), rewrite
+// any `./foo.md` import paths to `./foo.mdx`, since the partials are
+// extension-changed during sync. Only relative paths are touched.
+function rewriteMdImports(source) {
+  return source.replace(
+    /^(\s*import\s+\w+\s+from\s+["'])(\.[^"']+)\.md(["']\s*;?\s*)$/gm,
+    "$1$2.mdx$3",
+  )
+}
 
 async function exists(p) {
   try {
@@ -61,7 +156,7 @@ async function walk(dir, base = dir) {
   const out = []
   // Underscore-skip applies only at the top level of the source root.
   // - `_template/`, `_draft-thing/` at top level → never sync (templates/drafts).
-  // - `posts/<slug>/_01-intro.mdx` inside a post → DO sync. Astro's content
+  // - `posts/<slug>/_01-intro.md` inside a post → DO sync. Astro's content
   //   collection separately excludes _-prefixed files from being treated as
   //   their own post pages, so partials get synced into the repo and remain
   //   importable by index.mdx without ever generating a route.
@@ -79,6 +174,11 @@ async function walk(dir, base = dir) {
     }
   }
   return out
+}
+
+async function writeOut(destAbs, content) {
+  await fs.mkdir(path.dirname(destAbs), { recursive: true })
+  await fs.writeFile(destAbs, content)
 }
 
 async function copyFile(src, dest) {
@@ -103,22 +203,37 @@ async function main() {
   console.log(`→ Dest:   ${destDir}`)
   console.log(`→ ${files.length} file(s) to sync\n`)
 
-  // Wipe destination so removed posts disappear from the repo too.
   await rmTree(destDir)
   await fs.mkdir(destDir, { recursive: true })
 
   let mdCount = 0
   let assetCount = 0
   for (const f of files) {
-    const dest = path.join(destDir, f.rel)
-    await copyFile(f.abs, dest)
     const ext = path.extname(f.rel).toLowerCase()
-    if (ext === ".md" || ext === ".mdx") mdCount++
-    else assetCount++
-    console.log(`  ${f.rel}`)
+    if (ext === ".md") {
+      const src = await fs.readFile(f.abs, "utf8")
+      const transformed = transformMdToMdx(src)
+      const destRel = f.rel.replace(/\.md$/, ".mdx")
+      const dest = path.join(destDir, destRel)
+      await writeOut(dest, transformed)
+      mdCount++
+      console.log(`  ${f.rel}  →  ${destRel}`)
+    } else if (ext === ".mdx") {
+      const src = await fs.readFile(f.abs, "utf8")
+      const transformed = rewriteMdImports(src)
+      const dest = path.join(destDir, f.rel)
+      await writeOut(dest, transformed)
+      mdCount++
+      console.log(`  ${f.rel}`)
+    } else {
+      const dest = path.join(destDir, f.rel)
+      await copyFile(f.abs, dest)
+      assetCount++
+      console.log(`  ${f.rel}`)
+    }
   }
 
-  console.log(`\n✓ Synced ${mdCount} post(s) and ${assetCount} asset(s)`)
+  console.log(`\n✓ Synced ${mdCount} post file(s) and ${assetCount} asset(s)`)
   console.log(`  Next: review with \`git status\`, commit, push.`)
 }
 

@@ -49,17 +49,21 @@ src/content/notebook/                                        ← derived
 ### Authoring
 
 Write posts in `~/Library/.../CloudDocs/Blog/posts/`. **Each post is its
-own folder** with an `index.md` (or `index.mdx` for component embeds).
-The folder name becomes the URL slug:
+own folder** with an `index.md`. Section partials and assets sit
+alongside it, prefixed with `_` (so Astro doesn't treat them as routes):
 
 ```
 posts/some-slug/
-  index.md          ← or index.mdx for component embeds
-  diagram.svg       ← optional — referenced from the post
-  …
+  index.md          ← required entry point with frontmatter
+  _01-intro.md      ← optional section partials
+  _diagram.svg      ← optional assets
+  _embed.astro      ← optional interactive embeds
 ```
 
-`posts/some-slug/index.md` → `/notebook/some-slug`
+`posts/some-slug/index.md` → `/notebook/some-slug`. Inside an `.md` file,
+declare imports at the top and reference them with `{Name}` on its own
+line — see [POST-AUTHORING.md](./POST-AUTHORING.md) for the full
+convention.
 
 Frontmatter (see `src/content/config.ts`):
 
@@ -94,10 +98,12 @@ The GitHub Actions workflow picks up the push and deploys.
 
 ### Embeds
 
-Markdown posts (`.md`) get standard prose styling plus support for ` ```mermaid `
-fenced code blocks (rendered client-side). MDX posts (`.mdx`) can also
-import and use components — see `src/components/post/` for Callout, Stat,
-Aside, Figure.
+`.md` posts use the simple `import Name from "./_x.ext"` + `{Name}`
+convention to render images, section partials, and Astro components.
+Mermaid diagrams render client-side from ` ```mermaid ` fenced code
+blocks (no import needed). For posts where parameterized components like
+`Callout`/`Stat`/`Figure` would be heavy on one-off `.astro` wrappers,
+write `index.mdx` instead and use the components inline — both work.
 
 ### Overriding the blog source
 

@@ -173,6 +173,28 @@
   max-height: 100%;
 }
 
+/* Mermaid output: the remark plugin emits <pre class="mermaid">…</pre>
+   inside .diagram-body, and mermaid replaces the source with an <svg>
+   sized to its natural aspect (often wider than 16:9). Make the pre a
+   flex container so the SVG centers within the body — vertically when
+   shorter, horizontally when narrower. Selector targets .diagram-body
+   (not .diagram-frame) because the fullscreen handler moves the body
+   out of the frame, so .diagram-frame ancestors don't exist there. */
+.diagram-body pre.mermaid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0.75rem;
+  background: transparent;
+}
+.diagram-body pre.mermaid > svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 /* Scale-to-fit override: when the embed declares its natural width, JS
    takes over and sets the child's width + transform. We drop the aspect-
    ratio constraint and reset width:100%/height:100% so the JS-set width
@@ -241,6 +263,17 @@
   width: 100%;
   height: 100%;
   aspect-ratio: auto;
+}
+
+/* In fullscreen, allow the mermaid SVG to grow beyond the inline
+   `max-width` mermaid sets to its natural width — otherwise the diagram
+   stays at its source size in a huge canvas. !important is needed to
+   beat mermaid's inline style. */
+.diagram-overlay-content pre.mermaid > svg {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto;
+  height: auto;
 }
 
 /* Lock background page scroll while overlay is open. */

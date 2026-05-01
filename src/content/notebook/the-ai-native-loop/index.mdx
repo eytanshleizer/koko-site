@@ -4,9 +4,8 @@ excerpt: "Most of us are still using AI like a faster autocomplete. The real shi
 date: 2026-04-25
 ---
 
-import Callout from "@/components/post/Callout.astro"
-import Figure from "@/components/post/Figure.astro"
-import diagram from "./diagram.svg?url"
+import Shift from "./_callout-shift.astro"
+import Loops from "./_figure-loops.astro"
 
 There's a pattern I keep seeing among people who get a lot out of AI — and people who don't.
 
@@ -28,17 +27,13 @@ flowchart LR
 
 Frame, generate, read, decide. Repeat. The frame is now an artifact you keep refining, not a one-time setup.
 
-<Callout title="The shift" variant="accent">
-The expensive thing isn't producing output anymore. It's reading output well, and re-framing fast when something's off. The skill of *reading* — what's right, what's missing, what's almost-right-but-wrong — is what's becoming valuable.
-</Callout>
+<Shift />
 
 ## Where the leverage actually is
 
 If you're spending most of your loop time generating, you're working in the old shape. The new shape spends most of the time in **frame** and **read** — the bookends. Generation collapses to seconds.
 
-<Figure caption="Where time goes in each loop">
-  <img src={diagram} alt="Old loop vs. new loop, showing time spent in each stage" class="mx-auto block w-full max-w-2xl" />
-</Figure>
+<Loops />
 
 The orange band is generation. In the old loop it dominates. In the new loop it's a sliver, and the bookends are where the human's time and judgment actually live.
 

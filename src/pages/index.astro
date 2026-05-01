@@ -5,11 +5,12 @@
 //   2. WhyThisExists   — the personal arrival
 //   3. Questions       — the map of the inquiry
 //   4. Bet             — the thesis (the missing beat)
-//   5. Arc             — placeholder; framework still being drawn
-//   6. Interlude       — editorial break (visually distinct)
-//   7. Work            — the three doors
-//   8. Currents        — proof of life (latest posts)
-//   9. Closing         — the invitation
+//   5. Work            — the three doors
+//   6. Currents        — proof of life (latest posts)
+//   7. Closing         — the invitation
+//
+// Arc and Interlude were removed — Arc's framework was still being drawn,
+// Interlude was an editorial break that wasn't earning its weight.
 
 import Base from "@/layouts/Base.astro"
 
@@ -17,13 +18,9 @@ import Hero from "@/components/home/Hero.astro"
 import WhyThisExists from "@/components/home/WhyThisExists.astro"
 import Questions from "@/components/home/Questions.astro"
 import Bet from "@/components/home/Bet.astro"
-import Arc from "@/components/home/Arc.astro"
-import Interlude from "@/components/home/Interlude.astro"
 import Work from "@/components/home/Work.astro"
 import Currents from "@/components/home/Currents.astro"
 import Closing from "@/components/home/Closing.astro"
-
-const Hairline = () => null
 ---
 
 <Base
@@ -41,11 +38,6 @@ const Hairline = () => null
 
   <Bet />
   <div class="container-page"><div class="hairline"></div></div>
-
-  <Arc />
-  {/* Interlude has its own borders — no extra hairline before/after. */}
-
-  <Interlude />
 
   <Work />
   <div class="container-page"><div class="hairline"></div></div>

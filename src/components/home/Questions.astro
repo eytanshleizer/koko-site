@@ -24,7 +24,7 @@ const questions = [
     <div class="aurora-rose"></div>
   </div>
 
-  <div class="container-page relative z-10 pt-36 pb-24 md:pt-48 md:pb-32">
+  <div class="container-page relative z-10 pt-44 pb-28 md:pt-56 md:pb-36">
     <!-- Centered intro -->
     <div class="mx-auto max-w-3xl text-center">
       <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
@@ -73,11 +73,15 @@ const questions = [
     opacity: 0.4;
   }
 
+  /* Aurora layers are positioned so their bright centers sit IN the middle
+     of the section, not above the top edge. Previously aurora-warm was
+     pinned to top:-20%, which concentrated the warm glow above the
+     content and made the title feel pinned to the section's top. */
   .aurora-warm {
     width: 80%;
-    height: 90%;
-    left: -12%;
-    top: -20%;
+    height: 80%;
+    left: -10%;
+    top: 20%;
     background: radial-gradient(
       ellipse at center,
       rgba(255, 140, 70, 0.32) 0%,
@@ -87,9 +91,9 @@ const questions = [
   }
   .aurora-cool {
     width: 70%;
-    height: 90%;
+    height: 80%;
     right: -10%;
-    top: 10%;
+    top: 30%;
     background: radial-gradient(
       ellipse at center,
       rgba(80, 130, 230, 0.28) 0%,
@@ -99,9 +103,9 @@ const questions = [
   }
   .aurora-rose {
     width: 70%;
-    height: 80%;
+    height: 70%;
     left: 25%;
-    bottom: -20%;
+    bottom: -10%;
     background: radial-gradient(
       ellipse at center,
       rgba(225, 130, 200, 0.22) 0%,

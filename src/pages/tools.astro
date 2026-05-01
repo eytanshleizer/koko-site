@@ -1,27 +1,23 @@
 ---
 import Base from "@/layouts/Base.astro"
-import SectionLabel from "@/components/SectionLabel.astro"
 
 const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
 const link = (href: string) => base + href
 
 const tools = [
   {
-    fig: "FIG 2.1",
     title: "Problem Cartographer",
     excerpt:
       "A Claude skill that turns vague problem statements into a navigable map of terrain, edges, and unknowns.",
     status: "In use",
   },
   {
-    fig: "FIG 2.2",
     title: "Notebook Compiler",
     excerpt:
       "A small pipeline that pulls working notes from a folder, classifies their state, and surfaces the ones ready to publish.",
     status: "In use",
   },
   {
-    fig: "FIG 2.3",
     title: "Attention Loop",
     excerpt:
       "Tooling for compressing the review-and-redirect cycle when working with agents — small UI, big leverage.",
@@ -36,9 +32,8 @@ const tools = [
 >
   <section>
     <div class="container-page pt-16 pb-10 md:pt-24 md:pb-14">
-      <SectionLabel fig="FIG 2.0" title="Tools" />
       <h1
-        class="mt-6 max-w-3xl text-display font-semibold tracking-tighter text-bone-0"
+        class="max-w-3xl text-display font-semibold tracking-tighter text-bone-0"
         style="text-wrap: balance;"
       >
         Instruments for thinking, sharpened and named.
@@ -60,10 +55,9 @@ const tools = [
           tools.map((t) => (
             <li>
               <div class="grid gap-4 py-8 md:grid-cols-[160px_1fr_auto] md:items-baseline md:gap-10">
-                <div class="flex items-baseline gap-3 md:flex-col md:items-start md:gap-1">
-                  <p class="label-mono">{t.fig}</p>
-                  <p class="text-[12.5px] text-bone-300">{t.status}</p>
-                </div>
+                <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+                  {t.status}
+                </p>
                 <div>
                   <h2 class="text-[22px] font-semibold tracking-tight text-bone-0 md:text-[26px]">
                     {t.title}

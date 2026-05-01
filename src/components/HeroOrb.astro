@@ -78,7 +78,10 @@
       antialias: true,
       powerPreference: "high-performance",
     })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    // Cap pixel ratio at 1.5 — fragment work scales as DPR². On a retina
+    // display, capping at 1.5 instead of 2 removes ~44% of fragment shader
+    // work per frame with no perceptible quality loss for this scene.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
 
     function fit() {
       const rect = canvas.getBoundingClientRect()
@@ -105,10 +108,10 @@
 
     // Compose scene elements (more to come — beams, etc.)
     const star = buildStar(scene, { radius: 0.55 })
-    // Two thin Dyson rings spinning at different orientations and rates so the
-    // 3D orbital motion is visible (each ring's plane precesses around its own
-    // world-space spin axis).
-    const ringInner = buildRing(scene, {
+    // A single thin Dyson ring spinning around the star. Its plane precesses
+    // around an axis that's slightly off-vertical so the 3D orbital motion is
+    // visible from the camera angle.
+    const ring = buildRing(scene, {
       innerRadius: 0.84,
       outerRadius: 0.88,
       height: 0.10,
@@ -116,31 +119,32 @@
       spinAxis: new THREE.Vector3(0.15, 1.0, 0.0),
       spinSpeed: 0.22,
     })
-    const ringOuter = buildRing(scene, {
-      innerRadius: 1.14,
-      outerRadius: 1.18,
-      height: 0.12,
-      tilt: 0.30,
-      twist: 0.55,
-      spinAxis: new THREE.Vector3(1.0, 0.2, 0.0),
-      spinSpeed: -0.14,
-    })
 
-    const updaters = [star.update, ringInner.update, ringOuter.update]
+    const updaters = [star.update, ring.update]
 
-    let visible = true
+    // Animation loop. We fully cancel rAF when the canvas leaves the viewport
+    // (instead of just skipping render) — keeping rAF queued even when not
+    // rendering still wakes the main thread 60 times a second and noticeably
+    // slows the rest of the page once the user scrolls past the hero.
+    let rafId = 0
     const tick = () => {
-      requestAnimationFrame(tick)
-      if (!visible) return
       const t = performance.now() / 1000
       for (const u of updaters) u(t)
       renderer.render(scene, camera)
+      rafId = requestAnimationFrame(tick)
     }
-    tick()
+    rafId = requestAnimationFrame(tick)
 
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) visible = e.isIntersecting
+        for (const e of entries) {
+          if (e.isIntersecting && rafId === 0) {
+            rafId = requestAnimationFrame(tick)
+          } else if (!e.isIntersecting && rafId !== 0) {
+            cancelAnimationFrame(rafId)
+            rafId = 0
+          }
+        }
       },
       { threshold: 0 }
     )

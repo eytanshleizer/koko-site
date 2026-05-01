@@ -93,12 +93,15 @@ function makeBandRing(
   for (let i = 0; i < segments; i++) {
     const a = i * stride
     const b = (i + 1) * stride
-    // Top face (CCW from +Y)
-    indices.push(a + 0, b + 0, b + 1)
-    indices.push(a + 0, b + 1, a + 1)
-    // Bottom face (CCW from -Y)
-    indices.push(a + 2, a + 3, b + 3)
-    indices.push(a + 2, b + 3, b + 2)
+    // Top face — wound so the geometric normal points +Y (matches the
+    // declared vertex normals). In Three.js viewed from +Y, +X is right and
+    // +Z appears at the bottom of the screen, so CCW-from-above goes
+    // outer-current → inner-current → inner-next → outer-next.
+    indices.push(a + 0, a + 1, b + 1)
+    indices.push(a + 0, b + 1, b + 0)
+    // Bottom face — geometric normal -Y (matches declared vertex normals).
+    indices.push(a + 2, b + 2, b + 3)
+    indices.push(a + 2, b + 3, a + 3)
     // Outer wall (CCW from outside)
     indices.push(a + 4, b + 4, b + 5)
     indices.push(a + 4, b + 5, a + 5)
@@ -185,7 +188,9 @@ export function buildRing(scene: THREE.Scene, opts: RingOptions = {}): RingHandl
     normalMap,
     normalScale: new THREE.Vector2(0.4, 0.4),
   })
-  const mesh = new THREE.Mesh(makeBandRing(innerR, outerR, height, 192), mat)
+  // 96 segments is plenty for a thin band at this on-screen size — the
+  // silhouette reads as smoothly circular and triangle count is halved.
+  const mesh = new THREE.Mesh(makeBandRing(innerR, outerR, height, 96), mat)
   group.add(mesh)
 
   return {

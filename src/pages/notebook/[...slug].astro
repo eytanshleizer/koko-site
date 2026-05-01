@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from "astro:content"
 import Base from "@/layouts/Base.astro"
-import SectionLabel from "@/components/SectionLabel.astro"
 
 export async function getStaticPaths() {
   const posts = await getCollection("notebook", ({ data }) => !data.draft)
@@ -30,18 +29,17 @@ const fmt = (d: Date) =>
       </a>
 
       <div class="mt-10 max-w-3xl">
-        <SectionLabel fig={post.data.fig ?? "FIG 1.X"} title="Working note" />
+        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+          {fmt(post.data.date)}
+        </p>
         <h1
-          class="mt-6 text-display font-semibold tracking-tighter text-bone-0"
+          class="mt-5 text-display font-semibold tracking-tighter text-bone-0"
           style="text-wrap: balance;"
         >
           {post.data.title}
         </h1>
         <p class="mt-6 text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
           {post.data.excerpt}
-        </p>
-        <p class="mt-6 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-          {fmt(post.data.date)}
         </p>
       </div>
     </header>

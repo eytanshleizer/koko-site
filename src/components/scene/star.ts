@@ -116,7 +116,9 @@ export function buildStar(scene: THREE.Scene, opts: StarOptions = {}): StarHandl
       }
     `,
   })
-  const core = new THREE.Mesh(new THREE.SphereGeometry(radius, 96, 96), coreMat)
+  // 64 segments is more than enough for a smooth silhouette at this on-screen
+  // size — 96 was overkill (3× the triangle count for no visible gain).
+  const core = new THREE.Mesh(new THREE.SphereGeometry(radius, 64, 64), coreMat)
   group.add(core)
 
   /* -------------------- Glow planes (true radial bloom, no ring artifacts) -------------------- */

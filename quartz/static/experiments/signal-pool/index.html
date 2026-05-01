@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Signal Pool</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #06060a; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; }
+  .hint {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font: 11px/1.4 "JetBrains Mono", ui-monospace, monospace;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(220, 220, 240, 0.45);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hint">move · the field listens</div>
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  let w, h, dpr;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.clientWidth = window.innerWidth;
+    h = canvas.clientHeight = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const N = 220;
+  const points = [];
+  for (let i = 0; i < N; i++) {
+    points.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
+      hue: 260 + Math.random() * 60,
+      r: 0.8 + Math.random() * 1.6,
+    });
+  }
+
+  let mx = w / 2, my = h / 2, active = false;
+  function setPointer(x, y) { mx = x; my = y; active = true; }
+  window.addEventListener('mousemove', e => setPointer(e.clientX, e.clientY));
+  window.addEventListener('touchmove', e => {
+    if (e.touches[0]) setPointer(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  window.addEventListener('mouseleave', () => { active = false; });
+
+  function tick() {
+    ctx.fillStyle = 'rgba(6, 6, 10, 0.18)';
+    ctx.fillRect(0, 0, w, h);
+
+    for (const p of points) {
+      const dx = mx - p.x;
+      const dy = my - p.y;
+      const d2 = dx * dx + dy * dy;
+      const f = active ? Math.min(0.0009, 80 / (d2 + 800)) : 0;
+      p.vx += dx * f - p.vx * 0.012;
+      p.vy += dy * f - p.vy * 0.012;
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x += w; else if (p.x > w) p.x -= w;
+      if (p.y < 0) p.y += h; else if (p.y > h) p.y -= h;
+
+      const speed = Math.hypot(p.vx, p.vy);
+      const glow = 0.35 + Math.min(1, speed * 4);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue}, 90%, 70%, ${glow})`;
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = `hsla(${p.hue}, 90%, 65%, 0.8)`;
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

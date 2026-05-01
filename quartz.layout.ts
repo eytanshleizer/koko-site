@@ -4,8 +4,13 @@ import * as Component from "./quartz/components"
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
-  header: [],
-  afterBody: [],
+  header: [Component.NavBar()],
+  afterBody: [
+    Component.ConditionalRender({
+      component: Component.FeaturedTriptych(),
+      condition: (page) => page.fileData.slug === "index",
+    }),
+  ],
   footer: Component.Footer({
     links: {
       GitHub: "https://github.com/eytanshleizer",
@@ -31,20 +36,6 @@ export const defaultContentPageLayout: PageLayout = {
     Component.ConditionalRender({
       component: Component.TagList(),
       condition: (page) => page.fileData.slug !== "index",
-    }),
-    // On the index page, inject the recent posts list after the markdown content
-    Component.ConditionalRender({
-      component: Component.RecentNotes({
-        title: "Recent Posts",
-        limit: 10,
-        showTags: false,
-        filter: (f) =>
-          f.slug !== undefined &&
-          f.slug.startsWith("posts/") &&
-          !f.slug.endsWith("posts/index"),
-        linkToMore: "posts" as any,
-      }),
-      condition: (page) => page.fileData.slug === "index",
     }),
   ],
   left: [

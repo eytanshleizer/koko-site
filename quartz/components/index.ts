@@ -23,6 +23,8 @@ import Breadcrumbs from "./Breadcrumbs"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
+import NavBar from "./NavBar"
+import FeaturedTriptych from "./FeaturedTriptych"
 
 export {
   ArticleTitle,
@@ -50,4 +52,6 @@ export {
   Comments,
   Flex,
   ConditionalRender,
+  NavBar,
+  FeaturedTriptych,
 }

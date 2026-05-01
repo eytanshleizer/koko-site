@@ -1,3 +1,285 @@
-@use "./base.scss";
+// Palantir-inspired dark theme customizations
+// Clean, technical, data-forward aesthetic
 
-// put your custom CSS here!
+// Force dark mode as default
+:root {
+  --background-primary: #0a0a0f;
+  --background-secondary: #111118;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --glow-teal: rgba(0, 212, 170, 0.15);
+}
+
+// Body background with subtle texture
+body {
+  background: linear-gradient(180deg, #0a0a0f 0%, #0d0d14 100%);
+  min-height: 100vh;
+}
+
+// Page title styling - large, geometric
+.page-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  
+  a {
+    color: #e8e8ec !important;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #00d4aa !important;
+    }
+  }
+}
+
+// Article titles - strong presence
+.article-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: #e8e8ec;
+  margin-bottom: 0.5rem;
+}
+
+// Content meta - subtle, technical
+.content-meta {
+  color: #5a5a6a;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// Links with teal accent
+a {
+  color: #00d4aa;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #00f5c4;
+    text-shadow: 0 0 12px rgba(0, 212, 170, 0.3);
+  }
+}
+
+// Internal links
+a.internal-link {
+  color: #00d4aa;
+  background: rgba(0, 212, 170, 0.06);
+  border-radius: 4px;
+  padding: 0 4px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 212, 170, 0.3);
+  
+  &:hover {
+    background: rgba(0, 212, 170, 0.12);
+    border-bottom-color: #00d4aa;
+  }
+}
+
+// Tags styling
+tag {
+  background: rgba(0, 212, 170, 0.08) !important;
+  border: 1px solid rgba(0, 212, 170, 0.2) !important;
+  color: #00d4aa !important;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  padding: 2px 8px;
+  
+  &:hover {
+    background: rgba(0, 212, 170, 0.15) !important;
+    border-color: rgba(0, 212, 170, 0.4) !important;
+  }
+}
+
+// Search input
+.search input {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 6px;
+  font-family: "Inter", sans-serif;
+  
+  &:focus {
+    border-color: rgba(0, 212, 170, 0.4) !important;
+    box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.1);
+  }
+}
+
+// Explorer sidebar
+.explorer {
+  font-family: "Inter", sans-serif;
+  
+  .folder-title {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  
+  a:hover {
+    color: #00d4aa;
+  }
+}
+
+// Table of contents
+toc {
+  font-family: "Inter", sans-serif;
+  
+  a:hover {
+    color: #00d4aa;
+  }
+}
+
+// Headers with geometric feel
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #e8e8ec;
+}
+
+h1 {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin-top: 2rem;
+}
+
+// Code blocks - technical feel
+pre {
+  background: #111118 !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-family: "JetBrains Mono", monospace;
+}
+
+code {
+  font-family: "JetBrains Mono", monospace;
+  background: rgba(0, 212, 170, 0.06);
+  color: #00d4aa;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+// Blockquotes - subtle left border
+blockquote {
+  border-left: 2px solid #00d4aa;
+  background: rgba(0, 212, 170, 0.03);
+  border-radius: 0 6px 6px 0;
+}
+
+// Tables - clean, technical
+table {
+  border-collapse: collapse;
+  font-family: "Inter", sans-serif;
+  
+  th {
+    background: rgba(255, 255, 255, 0.03);
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: #8a8a9a;
+    border-bottom: 1px solid rgba(0, 212, 170, 0.2);
+  }
+  
+  td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  
+  tr:hover {
+    background: rgba(0, 212, 170, 0.02);
+  }
+}
+
+// Popover - dark, teal accent
+.popover {
+  background: #15151f !important;
+  border: 1px solid rgba(0, 212, 170, 0.15) !important;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 212, 170, 0.05);
+}
+
+// Footer styling
+footer {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  color: #3a3a4a;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  
+  a {
+    color: #5a5a6a;
+    
+    &:hover {
+      color: #00d4aa;
+    }
+  }
+}
+
+// Breadcrumbs
+.breadcrumb {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5a5a6a;
+}
+
+// List page titles
+.list-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+}
+
+// Backlinks section
+.backlinks {
+  h3 {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #5a5a6a;
+  }
+}
+
+// Selection highlight
+::selection {
+  background: rgba(0, 212, 170, 0.2);
+  color: #e8e8ec;
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a3a;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #3a3a4a;
+  }
+}
+
+// Mobile adjustments
+@media (max-width: 800px) {
+  .article-title {
+    font-size: 1.6rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+}

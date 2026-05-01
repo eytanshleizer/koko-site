@@ -10,26 +10,38 @@
 //   │                                                  │
 //   └──────────────────────────────────────────────────┘
 //
-// Click ⤢ → the body is *moved* into a fixed-position overlay with its own
-// topbar + X close button. Width fills the viewport; if the embed's natural
-// height exceeds it, the overlay scrolls vertically. ESC, X, or click on the
-// dimmed margin closes.
+// Three height modes (pick one):
+//   - default                  → body fits its content (mermaid, plain SVG)
+//   - aspectRatio="16/9"        → body has a fixed aspect ratio; child fills it
+//                                (good for D3, demos, anything that wants a
+//                                 video-like preview tile)
+//   - naturalWidth={920}        → body's child is sized to N px wide and then
+//                                transform-scaled to fit container width
+//                                (good for fixed-design SaaS-style mocks)
 //
-// The scale-to-fit logic in Base.astro re-runs after move so the embed
-// scales up cleanly inside the overlay.
+// Click ⤢ → the body is *moved* into a fixed-position overlay with its own
+// topbar + X close. Width fills the viewport; if content is taller, the
+// overlay scrolls. ESC, X, or click on the dimmed margin closes.
 //
 // Usage:
+//   <Diagram title="Concept map" aspectRatio="16/9">
+//     <ConceptGraph />
+//   </Diagram>
+//
 //   <Diagram title="Problem inbox" naturalWidth={920}>
 //     <ProblemIntelApp />
 //   </Diagram>
 interface Props {
   title?: string
   naturalWidth?: number
+  aspectRatio?: string  // CSS aspect-ratio value, e.g. "16/9", "4/3", "1/1"
 }
-const { title, naturalWidth } = Astro.props as Props
-const bodyAttrs = naturalWidth
-  ? { "data-natural-width": String(naturalWidth) }
-  : {}
+const { title, naturalWidth, aspectRatio } = Astro.props as Props
+
+const bodyAttrs: Record<string, string> = {}
+if (naturalWidth) bodyAttrs["data-natural-width"] = String(naturalWidth)
+if (aspectRatio) bodyAttrs["data-aspect-ratio"] = aspectRatio
+const bodyStyle = aspectRatio ? `aspect-ratio: ${aspectRatio};` : undefined
 ---
 
 <figure class="diagram-frame not-prose">
@@ -56,7 +68,7 @@ const bodyAttrs = naturalWidth
       </svg>
     </button>
   </header>
-  <div class="diagram-body" {...bodyAttrs}>
+  <div class="diagram-body" style={bodyStyle} {...bodyAttrs}>
     <slot />
   </div>
 </figure>

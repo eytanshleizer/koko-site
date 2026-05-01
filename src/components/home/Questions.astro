@@ -1,49 +1,126 @@
 ---
-// 3. The questions — the map of the inquiry. Shows the substance: these
-// are open threads, not theses. Demonstrates the inquiry is structured.
+// 3. The questions — the map of the inquiry. Six open threads, displayed
+// as glass cards over a soft aurora-style gradient backdrop. Restrained:
+// the cards are barely tinted, the gradient is low-saturation, the page
+// breathes around them.
 
 const questions = [
-  "How do I work with AI on a problem when it's better at solving than I am?",
-  "Can AI solve ill-structured problems, or only the ones we have already framed for it?",
-  "How do I structure a problem space so an agent can move through it productively?",
-  "What is a 'problem,' once a machine can dispatch most of them? Is the unit of work the problem, the framing, or the question behind it?",
-  "Are we transcending problem-solving for problem-finding? And if so, what does the new craft look like?",
+  "What does AI-native problem solving actually look like?",
+  "How do we structure problem context for an agent to actually use it?",
+  "What is a 'problem,' really?",
+  "What's our role when AI is better at solving than we are?",
+  "Can AI solve ill-structured problems, or only the well-framed ones?",
+  "Are we moving from problem-solving to problem-finding?",
 ]
 ---
 
-<section class="relative">
-  <div class="container-page py-24 md:py-32">
-    <div class="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-16">
-      <div>
-        <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-          The questions
-        </p>
-        <h2
-          class="mt-6 text-display-sm font-semibold tracking-tighter text-bone-0"
-          style="text-wrap: balance;"
-        >
-          Five threads I keep coming back to.
-        </h2>
-        <p class="mt-6 text-[14.5px] leading-relaxed text-bone-300">
-          None of them are settled. Each is a different way of asking the
-          same thing.
-        </p>
-      </div>
+<section class="relative overflow-hidden">
+  <!-- Aurora gradient backdrop. Three soft, low-saturation radial gradients
+       layered with mix-blend-mode: screen for an additive aurora glow that
+       reads as ambient light, not a hero scene. -->
+  <div class="aurora pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="aurora-warm"></div>
+    <div class="aurora-cool"></div>
+    <div class="aurora-rose"></div>
+  </div>
 
-      <ol class="space-y-7">
-        {
-          questions.map((q, i) => (
-            <li class="grid grid-cols-[auto_1fr] gap-6">
-              <span class="font-mono text-[12px] tracking-tight text-bone-300 mt-2">
-                0{i + 1}
-              </span>
-              <p class="max-w-[60ch] text-[18px] leading-[1.5] text-bone-100 md:text-[20px] md:leading-[1.45]">
-                {q}
-              </p>
-            </li>
-          ))
-        }
-      </ol>
+  <div class="container-page relative z-10 py-24 md:py-32">
+    <!-- Centered intro -->
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
+        The questions
+      </p>
+      <h2
+        class="mt-6 text-display-sm font-semibold tracking-tighter text-bone-0"
+        style="text-wrap: balance;"
+      >
+        Six threads I keep coming back to.
+      </h2>
+      <p class="mx-auto mt-6 max-w-[52ch] text-[15.5px] leading-relaxed text-bone-300">
+        None of them are settled. Each is a different way of asking the
+        same thing.
+      </p>
     </div>
+
+    <!-- 6 glass cards in a 2/3-column grid -->
+    <ul class="mt-16 grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
+      {
+        questions.map((q, i) => (
+          <li class="glass-card flex h-full flex-col gap-6 p-7 md:p-8">
+            <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-bone-300">
+              0{i + 1}
+            </p>
+            <p
+              class="text-[18px] leading-[1.4] tracking-tight text-bone-0 md:text-[19px] md:leading-[1.4]"
+              style="text-wrap: balance;"
+            >
+              {q}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </section>
+
+<style>
+  /* Aurora — three soft radial gradients, additively blended. No filter:blur,
+     no per-frame animation; the gradients themselves are the softness. */
+  .aurora > div {
+    position: absolute;
+    border-radius: 9999px;
+    mix-blend-mode: screen;
+    opacity: 0.55;
+  }
+
+  .aurora-warm {
+    width: 80%;
+    height: 90%;
+    left: -12%;
+    top: -20%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 140, 70, 0.32) 0%,
+      rgba(255, 140, 70, 0.12) 32%,
+      transparent 65%
+    );
+  }
+  .aurora-cool {
+    width: 70%;
+    height: 90%;
+    right: -10%;
+    top: 10%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(80, 130, 230, 0.28) 0%,
+      rgba(80, 130, 230, 0.1) 35%,
+      transparent 65%
+    );
+  }
+  .aurora-rose {
+    width: 70%;
+    height: 80%;
+    left: 25%;
+    bottom: -20%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(225, 130, 200, 0.22) 0%,
+      rgba(225, 130, 200, 0.08) 38%,
+      transparent 70%
+    );
+  }
+
+  /* Glass card — slightly translucent black with a thin warm-tinted hairline
+     border. Restrained: no heavy backdrop-blur, no big shadow, just enough
+     surface to read as a card. */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.045);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+</style>

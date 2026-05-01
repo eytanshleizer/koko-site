@@ -282,6 +282,250 @@ footer {
   }
 }
 
+// ============================================
+// LANDING PAGE HERO
+// ============================================
+
+// On the index page, hide the left panel entirely and give full width
+body[data-slug="index"] {
+  #quartz-body {
+    .left {
+      display: none !important;
+    }
+    .center {
+      grid-column: 1 / -1 !important;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .right {
+      display: none !important;
+    }
+  }
+  
+  // Hide the default h1 title on index (we have our own hero-name)
+  .article-title {
+    display: none;
+  }
+}
+
+// Hero section container
+.hero-section {
+  padding: 4rem 0 3rem;
+  
+  .hero-text {
+    max-width: 680px;
+  }
+}
+
+// Big name
+.hero-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: #e8e8ec;
+  margin: 0 0 0.5rem 0;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+// Tagline under name
+.hero-tagline {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.9rem;
+  color: #00d4aa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 1.5rem 0;
+}
+
+// Bio paragraph
+.hero-bio {
+  font-family: "Inter", sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #8a8a9a;
+  margin: 0 0 2rem 0;
+  max-width: 560px;
+}
+
+// CTA links row
+.hero-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #8a8a9a !important;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(0, 212, 170, 0.35);
+    color: #00d4aa !important;
+    background: rgba(0, 212, 170, 0.05);
+    text-shadow: none !important;
+  }
+}
+
+.hero-link-primary {
+  background: rgba(0, 212, 170, 0.1) !important;
+  border-color: rgba(0, 212, 170, 0.3) !important;
+  color: #00d4aa !important;
+  
+  &:hover {
+    background: rgba(0, 212, 170, 0.18) !important;
+    border-color: #00d4aa !important;
+  }
+}
+
+// Horizontal divider between hero and recent posts
+body[data-slug="index"] hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 2rem 0;
+}
+
+// "Recent Posts" section heading on index
+body[data-slug="index"] h2 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #5a5a6a;
+  margin-bottom: 1.5rem;
+}
+
+// Recent notes list on the index page
+body[data-slug="index"] .recent-notes {
+  h3 {
+    display: none; // we show our own "Recent Posts" heading above
+  }
+  
+  .recent-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  
+  .recent-li {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .desc h3 {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+      
+      a {
+        color: #e8e8ec !important;
+        text-decoration: none;
+        transition: color 0.15s ease;
+        background: none !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+        
+        &:hover {
+          color: #00d4aa !important;
+        }
+      }
+    }
+    
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      color: #5a5a6a;
+      margin: 0;
+    }
+  }
+}
+
+// ============================================
+// BLOG POST LEFT PANEL — Posts List
+// ============================================
+
+// Style the RecentNotes component when used as a sidebar posts list
+.left .recent-notes {
+  padding: 0;
+  
+  h3 {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #5a5a6a;
+    margin: 1.5rem 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  
+  .recent-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .recent-li {
+    .section {
+      padding: 0.5rem 0.75rem;
+      border-radius: 5px;
+      margin-bottom: 2px;
+      transition: background 0.15s ease;
+      
+      &:hover {
+        background: rgba(0, 212, 170, 0.06);
+      }
+    }
+    
+    .desc h3 {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin: 0 0 0.15rem 0;
+      
+      a {
+        color: #8a8a9a !important;
+        text-decoration: none;
+        background: none !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+        line-height: 1.4;
+        
+        &:hover {
+          color: #e8e8ec !important;
+        }
+      }
+    }
+    
+    .meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      color: #3a3a4a;
+    }
+  }
+}
+
 // Mobile adjustments
 @media (max-width: 800px) {
   .article-title {

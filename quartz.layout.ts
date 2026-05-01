@@ -20,31 +20,92 @@ export const defaultContentPageLayout: PageLayout = {
       component: Component.Breadcrumbs(),
       condition: (page) => page.fileData.slug !== "index",
     }),
-    Component.ArticleTitle(),
-    Component.ContentMeta(),
-    Component.TagList(),
+    Component.ConditionalRender({
+      component: Component.ArticleTitle(),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
+    Component.ConditionalRender({
+      component: Component.ContentMeta(),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
+    Component.ConditionalRender({
+      component: Component.TagList(),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
+    // On the index page, inject the recent posts list after the markdown content
+    Component.ConditionalRender({
+      component: Component.RecentNotes({
+        title: "Recent Posts",
+        limit: 10,
+        showTags: false,
+        filter: (f) =>
+          f.slug !== undefined &&
+          f.slug.startsWith("posts/") &&
+          !f.slug.endsWith("posts/index"),
+        linkToMore: "posts" as any,
+      }),
+      condition: (page) => page.fileData.slug === "index",
+    }),
   ],
   left: [
-    Component.PageTitle(),
-    Component.MobileOnly(Component.Spacer()),
-    Component.Flex({
-      components: [
-        {
-          Component: Component.Search(),
-          grow: true,
-        },
-        { Component: Component.Darkmode() },
-      ],
+    // On non-index pages: show the page title / search / darkmode
+    Component.ConditionalRender({
+      component: Component.PageTitle(),
+      condition: (page) => page.fileData.slug !== "index",
     }),
-    Component.Explorer(),
+    Component.ConditionalRender({
+      component: Component.MobileOnly(Component.Spacer()),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
+    Component.ConditionalRender({
+      component: Component.Flex({
+        components: [
+          {
+            Component: Component.Search(),
+            grow: true,
+          },
+          { Component: Component.Darkmode() },
+        ],
+      }),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
+    // On blog post pages: show the all-posts list in the left panel
+    Component.ConditionalRender({
+      component: Component.RecentNotes({
+        title: "All Posts",
+        limit: 50,
+        showTags: false,
+        filter: (f) =>
+          f.slug !== undefined &&
+          f.slug.startsWith("posts/") &&
+          !f.slug.endsWith("posts/index"),
+        linkToMore: false,
+      }),
+      condition: (page) =>
+        page.fileData.slug !== "index" &&
+        (page.fileData.slug?.startsWith("posts/") ?? false),
+    }),
+    // On non-post pages (other than index): show the explorer
+    Component.ConditionalRender({
+      component: Component.Explorer(),
+      condition: (page) =>
+        page.fileData.slug !== "index" &&
+        !(page.fileData.slug?.startsWith("posts/") ?? false),
+    }),
   ],
   right: [
-    Component.DesktopOnly(Component.TableOfContents()),
-    Component.Backlinks(),
+    Component.ConditionalRender({
+      component: Component.DesktopOnly(Component.TableOfContents()),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
+    Component.ConditionalRender({
+      component: Component.Backlinks(),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
   ],
 }
 
-// components for pages that display lists of pages  (e.g. tags or folders)
+// components for pages that display lists of pages (e.g. tags or folders)
 export const defaultListPageLayout: PageLayout = {
   beforeBody: [Component.Breadcrumbs(), Component.ArticleTitle(), Component.ContentMeta()],
   left: [

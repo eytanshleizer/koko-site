@@ -134,20 +134,21 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
     let width = 0
     let height = 0
 
-    const sim = forceSimulation<GraphNode>(nodes)
-      .force(
-        "link",
-        forceLink<GraphNode, GraphLink>(links)
-          .id((d) => d.id)
-          .distance(80)
-          .strength(0.7),
-      )
-      .force("charge", forceManyBody().strength(-260))
-      .force(
-        "collide",
-        forceCollide<GraphNode>().radius((d) => d.size + 14),
-      )
+    const linkForce = forceLink<GraphNode, GraphLink>(links)
+      .id((d) => d.id)
+      .strength(0.8)
+    const chargeForce = forceManyBody<GraphNode>()
+    const collideForce = forceCollide<GraphNode>().radius((d) => d.size + 12)
 
+    const sim = forceSimulation<GraphNode>(nodes)
+      .force("link", linkForce)
+      .force("charge", chargeForce)
+      .force("collide", collideForce)
+
+    // Force parameters scale with container size so the graph fills the
+    // visible area at any size — longer links + stronger repulsion in
+    // fullscreen, more compact in the inline frame. Without this, force
+    // params tuned for one size leave huge empty space in another.
     const updateLayout = () => {
       const rect = svg.getBoundingClientRect()
       const w = Math.max(200, Math.round(rect.width))
@@ -156,11 +157,26 @@ const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
       width = w
       height = h
       svg.setAttribute("viewBox", `0 0 ${w} ${h}`)
+
+      const minDim = Math.min(w, h)
+      const linkDist = Math.max(55, minDim * 0.18)
+      const chargeStrength = -Math.max(160, minDim * 0.6)
+      linkForce.distance(linkDist)
+      chargeForce.strength(chargeStrength)
+
       sim.force("center", forceCenter(w / 2, h / 2))
-      sim.alpha(0.4).restart()
+      sim.alpha(0.6).restart()
     }
 
     sim.on("tick", () => {
+      // Clamp each node so its circle (radius = size) and label
+      // (positioned -size-6 above the center) stay inside the SVG.
+      for (const n of nodes) {
+        const r = n.size
+        const padTop = r + 18 // extra room for the text label
+        n.x = Math.max(r + 4, Math.min(width - r - 4, n.x ?? width / 2))
+        n.y = Math.max(padTop, Math.min(height - r - 4, n.y ?? height / 2))
+      }
       linkSel
         .attr("x1", (d: any) => d.source.x)
         .attr("y1", (d: any) => d.source.y)

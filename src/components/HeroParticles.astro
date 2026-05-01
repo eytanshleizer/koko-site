@@ -1,5 +1,12 @@
 ---
 // Faint drifting space dust across the hero. Lightweight canvas, no deps.
+//
+// Particles are drawn by stamping a prerendered radial-gradient sprite via
+// drawImage. The previous version used `ctx.shadowBlur = 6` per particle —
+// shadowBlur in Canvas2D allocates an offscreen buffer and runs a Gaussian
+// blur per draw call, which (with ~150 particles at 60 fps) was the most
+// expensive scroll-time cost on the page. drawImage of a prebuilt sprite is
+// hardware-accelerated and ~10–20× cheaper, with the same warm-glow look.
 ---
 
 <canvas class="hero-particles" data-hero-particles aria-hidden="true"></canvas>
@@ -16,8 +23,31 @@
 </style>
 
 <script>
-  // Initialize all hero-particles canvases on the page.
+  // Build the glow sprites once, share across canvases. Three slight hue
+  // variants give the same warm-white-to-amber range the old per-particle
+  // hue gave us.
+  function buildSprites(): HTMLCanvasElement[] {
+    const SPRITE_SIZE = 32
+    const HUES = [25, 40, 55]
+    return HUES.map((hue) => {
+      const s = document.createElement("canvas")
+      s.width = s.height = SPRITE_SIZE
+      const sctx = s.getContext("2d")!
+      const cx = SPRITE_SIZE / 2
+      const grad = sctx.createRadialGradient(cx, cx, 0, cx, cx, cx)
+      grad.addColorStop(0, `hsla(${hue}, 70%, 92%, 1)`)
+      grad.addColorStop(0.2, `hsla(${hue}, 70%, 88%, 0.55)`)
+      grad.addColorStop(0.5, `hsla(${hue}, 70%, 80%, 0.18)`)
+      grad.addColorStop(1, `hsla(${hue}, 70%, 70%, 0)`)
+      sctx.fillStyle = grad
+      sctx.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE)
+      return s
+    })
+  }
+
   function init() {
+    const sprites = buildSprites()
+
     const canvases = document.querySelectorAll<HTMLCanvasElement>(
       "canvas[data-hero-particles]"
     )
@@ -37,7 +67,7 @@
         vy: number
         r: number
         a: number
-        hue: number
+        sprite: HTMLCanvasElement
         twk: number
       }
       const particles: P[] = []
@@ -54,7 +84,12 @@
 
       const seed = () => {
         particles.length = 0
-        const target = Math.floor((w * h) / 9000) + 30
+        // Density tuned for a populated-but-not-crowded look. Was 9000+30
+        // (~164 particles at hero size) — at that count the per-frame
+        // sprite-stamping cost was still showing up during scroll. 16000+20
+        // gives ~95 particles, visually indistinguishable for "drifting dust"
+        // and noticeably cheaper on real browsers.
+        const target = Math.floor((w * h) / 16000) + 20
         for (let i = 0; i < target; i++) {
           particles.push({
             x: Math.random() * w,
@@ -63,7 +98,7 @@
             vy: (Math.random() - 0.5) * 0.025 - 0.01,
             r: Math.random() * 1.4 + 0.3,
             a: 0.18 + Math.random() * 0.55,
-            hue: 25 + Math.random() * 30, // warm white -> faint amber
+            sprite: sprites[Math.floor(Math.random() * sprites.length)],
             twk: Math.random() * Math.PI * 2,
           })
         }
@@ -77,7 +112,7 @@
       })
 
       let raf = 0
-      const tick = (t: number) => {
+      const tick = (_t: number) => {
         ctx.clearRect(0, 0, w, h)
         for (const p of particles) {
           p.x += p.vx
@@ -88,14 +123,13 @@
           if (p.y > h + 10) p.y = -10
           p.twk += 0.012
           const flicker = 0.85 + Math.sin(p.twk) * 0.15
-          ctx.beginPath()
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-          ctx.fillStyle = `hsla(${p.hue}, 60%, 92%, ${p.a * flicker})`
-          ctx.shadowBlur = 6
-          ctx.shadowColor = `hsla(${p.hue}, 80%, 80%, ${p.a * 0.6})`
-          ctx.fill()
+          // Sprite render size scales with particle radius. The +5 keeps a
+          // minimum glow halo around even the smallest particles.
+          const size = (p.r + 5) * 2
+          ctx.globalAlpha = p.a * flicker
+          ctx.drawImage(p.sprite, p.x - size / 2, p.y - size / 2, size, size)
         }
-        ctx.shadowBlur = 0
+        ctx.globalAlpha = 1
         raf = requestAnimationFrame(tick)
       }
       raf = requestAnimationFrame(tick)

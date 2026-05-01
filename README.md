@@ -24,29 +24,82 @@ npm run dev
 
 The dev server runs at `http://localhost:4321/koko-site/`.
 
-## Content
+## Content workflow
 
-Notebook posts live in `src/content/notebook/` and follow this schema (see
-`src/content/config.ts`):
+The **iCloud Blog folder is the source of truth** for posts. The Astro
+content collection in `src/content/notebook/` is a derived mirror — what
+gets deployed.
+
+```
+~/Library/Mobile Documents/com~apple~CloudDocs/Blog/posts/   ← write here
+                       │
+                       │  npm run sync-blog
+                       ▼
+src/content/notebook/                                        ← derived
+                       │
+                       │  git push origin main
+                       ▼
+                 GitHub Pages                                ← live site
+```
+
+### Authoring
+
+Write posts in `~/Library/.../CloudDocs/Blog/posts/`. The folder structure
+mirrors the URL: `posts/some-slug.md` → `/notebook/some-slug`. For posts
+with images or component embeds, use a folder:
+
+```
+posts/some-slug/
+  index.md          ← or index.mdx for component embeds
+  diagram.svg       ← referenced from index.md(x)
+  ...
+```
+
+Frontmatter (see `src/content/config.ts`):
 
 ```yaml
 ---
-title: "Post title"
-excerpt: "One-line summary."
-date: 2026-01-01
-fig: "FIG 1.X"   # optional
-draft: false     # optional
+title: "Post title"           # required
+date: 2026-01-01              # required
+excerpt: "One-line summary."  # optional — used in listings
+draft: false                  # optional
 ---
 ```
 
-Each post is one of:
+### Syncing
 
-- A flat markdown file: `src/content/notebook/some-slug.md`
-- A folder with `index.md` and supporting files (images, components):
-  `src/content/notebook/some-slug/index.md`
+Before committing, run:
 
-Posts are accessible at `/notebook/<slug>`. Mermaid diagrams use the
-standard fenced-code syntax.
+```bash
+npm run sync-blog
+```
+
+This copies everything from `~/.../Blog/posts/` to `src/content/notebook/`
+(wiping the destination first, so removed posts disappear). Then commit
+the resulting changes and push:
+
+```bash
+git add src/content/notebook
+git commit -m "post: …"
+git push
+```
+
+The GitHub Actions workflow picks up the push and deploys.
+
+### Embeds
+
+Markdown posts (`.md`) get standard prose styling plus support for ` ```mermaid `
+fenced code blocks (rendered client-side). MDX posts (`.mdx`) can also
+import and use components — see `src/components/post/` for Callout, Stat,
+Aside, Figure.
+
+### Overriding the blog source
+
+If your blog folder is somewhere else, set `BLOG_SOURCE_DIR`:
+
+```bash
+BLOG_SOURCE_DIR=/path/to/posts npm run sync-blog
+```
 
 ## Deployment
 

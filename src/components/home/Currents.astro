@@ -51,9 +51,11 @@ const fmt = (d: Date) =>
                 <h3 class="text-[18px] font-medium text-bone-0 transition group-hover:text-bone-200 md:text-[20px]">
                   {post.data.title}
                 </h3>
-                <p class="mt-1.5 max-w-[60ch] text-[14px] leading-relaxed text-bone-300">
-                  {post.data.excerpt}
-                </p>
+                {post.data.excerpt && (
+                  <p class="mt-1.5 max-w-[60ch] text-[14px] leading-relaxed text-bone-300">
+                    {post.data.excerpt}
+                  </p>
+                )}
               </div>
               <span
                 aria-hidden="true"

@@ -38,9 +38,11 @@ const fmt = (d: Date) =>
         >
           {post.data.title}
         </h1>
-        <p class="mt-6 text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
-          {post.data.excerpt}
-        </p>
+        {post.data.excerpt && (
+          <p class="mt-6 text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
+            {post.data.excerpt}
+          </p>
+        )}
       </div>
     </header>
 

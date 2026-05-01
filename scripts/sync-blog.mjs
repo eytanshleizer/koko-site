@@ -59,9 +59,16 @@ async function rmTree(p) {
 async function walk(dir, base = dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true })
   const out = []
+  // Underscore-skip applies only at the top level of the source root.
+  // - `_template/`, `_draft-thing/` at top level → never sync (templates/drafts).
+  // - `posts/<slug>/_01-intro.mdx` inside a post → DO sync. Astro's content
+  //   collection separately excludes _-prefixed files from being treated as
+  //   their own post pages, so partials get synced into the repo and remain
+  //   importable by index.mdx without ever generating a route.
+  const isTopLevel = dir === base
   for (const e of entries) {
     if (SKIP_NAMES.has(e.name)) continue
-    if (isPrivate(e.name)) continue
+    if (isTopLevel && isPrivate(e.name)) continue
     const ext = path.extname(e.name).toLowerCase()
     if (SKIP_EXTS.has(ext)) continue
     const abs = path.join(dir, e.name)

@@ -1,0 +1,49 @@
+---
+// Generic frame for diagrams, embeds, and interactive demos. Same chrome as
+// the mermaid output: thin border, black bg, fullscreen toggle in the corner,
+// optional caption underneath.
+//
+// Usage in an .mdx post:
+//
+//   import Diagram from "@/components/post/Diagram.astro"
+//   import MyDemo from "./_my-demo.astro"
+//
+//   <Diagram caption="The thing in motion">
+//     <MyDemo />
+//   </Diagram>
+//
+// For complex/interactive embeds, write the embed in a separate .astro file
+// next to the post (prefixed with `_` so it stays a private partial), then
+// drop it into <Diagram>. The frame and the fullscreen handler are wired
+// once globally in Base.astro — nothing per-component needed.
+interface Props {
+  caption?: string
+}
+const { caption } = Astro.props as Props
+---
+
+<figure class="diagram-frame not-prose">
+  <button
+    type="button"
+    class="diagram-fullscreen"
+    aria-label="Toggle fullscreen"
+  >
+    <svg
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+    </svg>
+  </button>
+  <div class="diagram-body">
+    <slot />
+  </div>
+  {caption && <figcaption class="diagram-caption">{caption}</figcaption>}
+</figure>

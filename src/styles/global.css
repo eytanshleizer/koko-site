@@ -86,3 +86,120 @@
     @apply border-bone-500/30 bg-ink-100;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────
+   Diagram frame — used by both the remark-mermaid plugin output and the
+   <Diagram> component. Renders any visual inside a thin editorial frame
+   with a fullscreen toggle in the corner.
+
+   Visible-state machine:
+     .diagram-frame                  → inline, in flow
+     .diagram-frame.is-fullscreen    → fixed-positioned overlay
+     body.diagram-overlay-open       → page scroll locked behind overlay
+   ────────────────────────────────────────────────────────────────────── */
+.diagram-frame {
+  position: relative;
+  margin: 2.5rem auto;
+  border: 1px solid theme(colors.bone.500 / 18%);
+  border-radius: 6px;
+  background: #000;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+}
+
+.diagram-frame .diagram-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8rem;
+}
+
+.diagram-frame .diagram-body svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.diagram-frame .diagram-fullscreen {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
+  border: 1px solid theme(colors.bone.500 / 25%);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  color: theme(colors.bone.300);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.diagram-frame .diagram-fullscreen:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: theme(colors.bone.500 / 50%);
+  color: theme(colors.bone.0);
+}
+
+.diagram-frame .diagram-caption {
+  margin-top: 1rem;
+  text-align: center;
+  font-family: theme(fontFamily.mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: theme(colors.bone.300);
+}
+
+/* Fullscreen state: occupy the whole viewport. */
+.diagram-frame.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  padding: clamp(2rem, 6vh, 4rem);
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}
+.diagram-frame.is-fullscreen .diagram-body {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+/* In fullscreen, let the visual fill the available space, capped at 100% so
+   nothing overflows. Apply to mermaid's pre wrapper too — by default
+   <pre class="mermaid"> wraps the rendered SVG and constrains it. */
+.diagram-frame.is-fullscreen .diagram-body > *,
+.diagram-frame.is-fullscreen pre.mermaid {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+.diagram-frame.is-fullscreen pre.mermaid svg,
+.diagram-frame.is-fullscreen .diagram-body svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+.diagram-frame.is-fullscreen .diagram-fullscreen {
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* Lock background scroll while a diagram is fullscreened. */
+body.diagram-overlay-open {
+  overflow: hidden;
+}

@@ -48,39 +48,82 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
     <Footer />
 
     <!--
-      Mermaid is loaded only on pages that actually contain diagrams. The
-      remark-mermaid plugin transforms ```mermaid blocks into <pre class="mermaid">
-      elements; this script renders them client-side using a dark theme that
-      matches the editorial palette.
+      Diagrams (mermaid + the generic <Diagram> component) are wrapped in a
+      .diagram-frame with a fullscreen toggle. This script handles two things:
+        1. Render mermaid source into SVG with a dark theme (black bg, white
+           lines, white borders).
+        2. Wire the .diagram-fullscreen buttons so clicking them toggles
+           is-fullscreen on the parent .diagram-frame. ESC closes.
+      Both run on initial load AND after Astro view-transitions.
     -->
     <script>
-      const renderMermaid = async () => {
-        const nodes = document.querySelectorAll<HTMLElement>("pre.mermaid")
-        if (nodes.length === 0) return
-        const mermaid = (await import("mermaid")).default
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: "base",
-          themeVariables: {
-            background: "#000000",
-            primaryColor: "#1c1c1c",
-            primaryTextColor: "#fafafa",
-            primaryBorderColor: "#525252",
-            lineColor: "#a3a3a3",
-            secondaryColor: "#262626",
-            tertiaryColor: "#161616",
-            fontFamily: "Inter Tight, Inter, ui-sans-serif, system-ui",
-          },
-          securityLevel: "strict",
-        })
-        await mermaid.run({ nodes: Array.from(nodes) })
+      const initDiagrams = async () => {
+        // Wire fullscreen toggle for every diagram frame on the page.
+        const frames = document.querySelectorAll<HTMLElement>(".diagram-frame")
+        for (const frame of frames) {
+          if ((frame as any).__diagramInit) continue
+          ;(frame as any).__diagramInit = true
+          const btn = frame.querySelector<HTMLButtonElement>(".diagram-fullscreen")
+          if (btn) {
+            btn.addEventListener("click", () => {
+              frame.classList.toggle("is-fullscreen")
+              document.body.classList.toggle(
+                "diagram-overlay-open",
+                frame.classList.contains("is-fullscreen"),
+              )
+            })
+          }
+        }
+
+        // Render mermaid sources to SVG.
+        const mermaidNodes = document.querySelectorAll<HTMLElement>("pre.mermaid")
+        if (mermaidNodes.length === 0) return
+        try {
+          const mermaid = (await import("mermaid")).default
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: "base",
+            themeVariables: {
+              // Dark palette: black background, white lines and borders.
+              background: "#000000",
+              primaryColor: "#000000",          // node fill
+              primaryTextColor: "#fafafa",      // node text
+              primaryBorderColor: "#fafafa",    // node border (white)
+              lineColor: "#fafafa",             // edges (white)
+              edgeLabelBackground: "#000000",   // edge label background
+              secondaryColor: "#000000",
+              tertiaryColor: "#000000",
+              clusterBkg: "#000000",
+              clusterBorder: "#525252",
+              labelBoxBkgColor: "#000000",
+              labelBoxBorderColor: "#fafafa",
+              fontFamily: "Inter Tight, Inter, ui-sans-serif, system-ui",
+              fontSize: "13px",
+            },
+            securityLevel: "loose",
+          })
+          await mermaid.run({ nodes: Array.from(mermaidNodes) })
+        } catch (err) {
+          console.error("[mermaid] failed to render:", err)
+        }
       }
 
+      // ESC closes any open fullscreen diagram.
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return
+        const open = document.querySelector(".diagram-frame.is-fullscreen")
+        if (open) {
+          open.classList.remove("is-fullscreen")
+          document.body.classList.remove("diagram-overlay-open")
+        }
+      })
+
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", renderMermaid)
+        document.addEventListener("DOMContentLoaded", initDiagrams)
       } else {
-        renderMermaid()
+        initDiagrams()
       }
+      document.addEventListener("astro:page-load", initDiagrams)
     </script>
   </body>
 </html>

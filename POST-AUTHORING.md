@@ -165,12 +165,15 @@ You're optimizing the wrong thing. Reframe before generating.
 </Figure>
 ```
 
-## Diagrams
+## Diagrams and embeds
 
-Two ways:
+Every diagram and embed renders inside a **framed container** with a
+fullscreen toggle in the corner. Click the icon to view the diagram
+full-viewport; ESC or click again to exit.
 
-**Mermaid** — for flowcharts, sequence diagrams, mindmaps. Use a
-fenced code block:
+### Mermaid (flowcharts, sequence diagrams, mindmaps)
+
+Just write a fenced code block — the framing happens automatically:
 
 ````mdx
 ```mermaid
@@ -183,18 +186,48 @@ flowchart LR
 ```
 ````
 
-Renders client-side, themed to match the site.
+The site renders mermaid client-side with a dark theme: black background,
+white edges, white borders. No imports required.
 
-**Hand-drawn SVG** — for editorial diagrams. Drop the SVG file in the
-post folder and import it:
+### Hand-drawn SVG or other static visuals
+
+Wrap in `<Diagram>` (same frame as mermaid, fullscreen toggle included):
 
 ```mdx
+import Diagram from "@/components/post/Diagram.astro"
 import diagram from "./loop-shape.svg?url"
 
-<Figure caption="Where time goes">
-  <img src={diagram} alt="Old loop vs new loop" class="mx-auto block w-full max-w-2xl" />
-</Figure>
+<Diagram caption="Where time goes">
+  <img src={diagram} alt="Old loop vs new loop" class="block w-full" />
+</Diagram>
 ```
+
+### Interactive or complex embeds
+
+For anything that needs JSX, state, or its own logic (a custom demo, an
+interactive widget, a chart with controls): write the embed as a
+**separate `.astro` file in the post folder**, prefix it with `_` to mark
+it as private, and import it into your `index.mdx`. Then drop it inside
+`<Diagram>`:
+
+```
+posts/some-slug/
+  index.mdx
+  _retention-demo.astro    ← private partial; synced but not its own page
+```
+
+```mdx
+import Diagram from "@/components/post/Diagram.astro"
+import RetentionDemo from "./_retention-demo.astro"
+
+<Diagram caption="Retention loop in motion">
+  <RetentionDemo />
+</Diagram>
+```
+
+The frame and fullscreen button are wired globally — every `.diagram-frame`
+on the page picks up the same behavior. You don't need to wire anything
+per-component.
 
 ## Images
 

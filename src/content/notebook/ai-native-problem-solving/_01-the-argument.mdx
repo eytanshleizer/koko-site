@@ -1,0 +1,27 @@
+import Callout from "@/components/post/Callout.astro"
+
+## Why a system, not a model
+
+A model takes a prompt and returns a completion. That's a transaction. Real problem solving is not a transaction. It's a loop.
+
+The problems worth solving are:
+
+- **Ill-structured at the start.** The right question is itself part of the work. The first answer to "what's the problem?" is almost always wrong.
+- **Iterative.** What you find at step two changes what you ask at step three. There is no path you can pre-plan.
+- **Embedded.** They live in context the model doesn't have memorized — your data, your constraints, your prior work, the half-decisions made by people who left.
+- **Underdetermined.** There isn't one right answer; there's a set of answers ranked by criteria you may not have stated yet.
+
+Try to collapse all of that into a single prompt. You either pre-bake the entire solution into the prompt — which means you've already done the work and the model is just typing it for you — or you get a generic answer that doesn't fit your situation.
+
+<Callout title="The shift">
+The AI-native question isn't *which model is smart enough?* It's *which system is structured enough to let the model contribute on the parts where it can?*
+</Callout>
+
+To actually solve a non-trivial problem with AI, you need:
+
+1. A small cast of agents with distinct roles.
+2. Memory that persists between turns.
+3. Tools that observe the world.
+4. A loop that knows when to stop.
+
+Those four pieces are what the rest of this post is about.

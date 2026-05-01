@@ -1,0 +1,33 @@
+---
+title: "An AI-native problem-solving system"
+date: 2026-05-01
+excerpt: "What it actually takes to solve a problem with AI, beyond a single model call. Roles, memory, tools, and the loop they form — with a worked example."
+---
+
+import Argument from "./_01-the-argument.mdx"
+import Agents from "./_02-the-agents.mdx"
+import Substrate from "./_03-the-substrate.mdx"
+import Loop from "./_04-the-loop.mdx"
+import Example from "./_05-the-example.mdx"
+
+The most common AI demo I see takes the problem, feeds it to a strong model, and presents the answer. That works for problems where the answer is mostly autocomplete. It does not work for the kind of problem this notebook is about — the ill-structured, iterative, embedded ones where the answer changes the question.
+
+Solving those needs a *system*. This is what I think that system looks like, why each piece is there, and how it runs end-to-end through one example.
+
+<Argument />
+
+<Agents />
+
+<Substrate />
+
+<Loop />
+
+<Example />
+
+## Why this is the shape
+
+You'll notice nothing in this system is novel on its own. There are no exotic agents. No new model. No framework you have to adopt. The point is the *composition* — five small roles, three kinds of memory, a thin orchestration loop, a clear stopping rule.
+
+That composition is doing the work that a single LLM call cannot do, no matter how strong the model: holding the problem still long enough to be re-framed, gathering the context the model couldn't possibly know, separating "good idea" from "good idea *for this constraint*," and knowing when to stop.
+
+The next post in this thread will be about the Conductor specifically — the part most systems get wrong, and the part that determines whether the whole thing feels like a tool or like a colleague.

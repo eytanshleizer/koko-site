@@ -1,0 +1,40 @@
+import Aside from "@/components/post/Aside.astro"
+
+## What the agents need to work with
+
+Agents are LLM calls. They forget everything between turns unless something writes it down. The substrate is everything they need access to so they don't have to re-derive the world on each invocation.
+
+Three kinds of memory and a tool layer.
+
+### Working memory
+
+The state of the current run. The current frame, the candidates so far, the Critic's notes, the unresolved questions, the budget remaining. Held by the Conductor. Passed to each agent as part of every call.
+
+This is the smallest and most important memory. If the Conductor's working memory is messy, the whole system is messy. Most of the engineering of an AI-native system is good working-memory hygiene: trimming, summarizing, re-anchoring on the current frame after a re-frame.
+
+### Episodic memory
+
+Past *attempts* on similar problems. What was tried before, what the Critic flagged, what worked, what got re-framed and why. Searchable.
+
+The Surveyor reaches for this when starting a new problem. *"Have we seen this shape before?"* Episodic memory is where compounding leverage lives — every problem solved makes the next similar problem cheaper to solve. Without it, every run starts cold.
+
+### Semantic memory
+
+General knowledge. Documentation, prior art, reference material, codebases, runbooks. A vector index over the relevant corpus. The Surveyor and Critic both reach for this — the Surveyor to ground the frame in reality, the Critic to check candidates against established practice.
+
+This is the cheapest of the three to set up and the easiest to overfeed. Bigger isn't better. Curated is better.
+
+<Aside label="Common failure">
+The Surveyor returns 200 pages of vaguely-related documentation and the Solver has nothing to anchor to. Smaller, more relevant context outperforms larger, less relevant context every time.
+</Aside>
+
+### Tools
+
+Concrete actions the agents can take. Web search, code execution, data queries, file reads/writes, sending messages. Each tool has a clear contract: what goes in, what comes out, what side-effects happen.
+
+Two principles I keep returning to:
+
+1. **Read tools should be cheap and idempotent.** Surveyors and Critics use them constantly. If they cost money or have side-effects, the agents will be over-careful.
+2. **Write tools should be explicit and reviewable.** The Solver might write code, send email, change data. Every write should be either explicitly approved or fully reversible.
+
+Most production AI-native systems I've seen get the read side right and the write side wrong. The instinct is to give the agent more autonomy than it's earned.

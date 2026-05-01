@@ -1,0 +1,76 @@
+import Callout from "@/components/post/Callout.astro"
+
+## Walking through one
+
+Concrete example. The product manager says, in a thread:
+
+> *User retention is dropping.*
+
+That sentence wouldn't make it past the Conductor as-is. It's not a problem; it's a complaint. The system kicks in.
+
+### Frame, round 1
+
+The Framer asks the Conductor: *what does "dropping" mean? Drop relative to what? Which users? Over what window?*
+
+The Conductor surfaces those questions to the PM. Response:
+
+> *Weekly active users. The last six weeks. Mostly the new signups in their week 2.*
+
+The Framer outputs a frame:
+
+```yaml
+goal: understand what's driving week-2 churn for users who signed up in
+      the last six weeks.
+constraints:
+  - read-only investigation; nothing shipped without review
+  - finish in one working day
+  - cheap-to-test recommendation, not a code change
+success:
+  - a hypothesis that explains at least 60% of the observed drop
+  - a single experiment we can run within a week to verify
+```
+
+### Survey
+
+The Surveyor pulls everything related: retention dashboards, the last six weeks of product changes, support ticket volume by category, onboarding analytics, cohort breakdown by platform.
+
+It returns a structured summary:
+
+- Cohort drop is concentrated in **mobile** users (web cohorts are flat).
+- A small UI change shipped in **week 4 of the window**, on the onboarding "find your first project" screen.
+- Support ticket volume on "can't find X / can't create Y" is up **3.2× since week 4**, mobile-skewed.
+- Past investigations: a similar incident 11 months ago was traced to an onboarding regression. That history is in episodic memory.
+
+### Solve
+
+The Solver proposes three candidate hypotheses:
+
+1. **The onboarding UI change broke the discovery path on mobile.** Predicts: support tickets up, mobile-skewed, drop concentrated to week 2 of post-shipment cohorts.
+2. **A bug in the mobile build (week 4 release) is causing crashes during onboarding.** Predicts: mobile-skewed, but support tickets would skew toward "the app" rather than "can't find X."
+3. **Seasonality / signup-quality drift.** Predicts: drop should appear across all platforms, not mobile-only.
+
+### Critique
+
+The Critic ranks them against the frame's success criteria.
+
+- Hypothesis 1 explains the **mobile concentration**, the **support ticket signal**, and the **timing** (week 4 onward). Cheap test: revert the UI change for a 5% mobile holdout for one week, compare retention. ✓ Strong.
+- Hypothesis 2 explains the **mobile concentration** but not the **"can't find X" support tickets**. Crash bugs would show as "the app crashes." Inconsistent with evidence. ✗
+- Hypothesis 3 explains **none** of the platform skew. ✗
+
+The Critic flags Hypothesis 1 as the only candidate that explains the evidence and is cheaply testable.
+
+### Decide
+
+The Conductor's decision: ship Hypothesis 1 with the holdout test as the recommendation. Surface the alternative hypotheses as ruled out, with reasoning, so the PM can audit.
+
+<Callout title="What didn't happen" variant="accent">
+The system did not generate a code fix. It did not write a deploy script. It did not declare the problem "solved." It produced a clearer understanding of the problem, the most likely cause, and a small experiment to verify cheaply. That is what good problem-solving actually looks like. The fix comes after.
+</Callout>
+
+### What this run cost
+
+Counting roughly: ~12 model calls, 3 data queries, 1 episodic memory lookup, ~30 minutes of wall-clock time. The PM spent maybe two minutes answering the framing questions; everything else ran while they did other things.
+
+The cheapest version of this run *without* a system would be: paste the support tickets and a description of the problem into a model and ask "what's wrong?" That version produces a plausible-sounding answer that can't be tested and isn't grounded in the actual data.
+
+The system isn't a bigger model. It's a *thinner contract* between the model and the world.

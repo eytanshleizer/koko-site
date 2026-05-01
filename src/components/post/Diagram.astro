@@ -18,8 +18,17 @@
 // once globally in Base.astro — nothing per-component needed.
 interface Props {
   caption?: string
+  // For embeds with a fixed design width (e.g. a SaaS UI mock at 920px) that
+  // need to scale-to-fit the container instead of overflowing or reflowing.
+  // The slot's first element is sized to `naturalWidth` and transform-scaled
+  // to fit. ResizeObserver re-computes on container resize and on fullscreen
+  // toggle.
+  naturalWidth?: number
 }
-const { caption } = Astro.props as Props
+const { caption, naturalWidth } = Astro.props as Props
+const bodyAttrs = naturalWidth
+  ? { "data-natural-width": String(naturalWidth) }
+  : {}
 ---
 
 <figure class="diagram-frame not-prose">
@@ -42,7 +51,7 @@ const { caption } = Astro.props as Props
       <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
     </svg>
   </button>
-  <div class="diagram-body">
+  <div class="diagram-body" {...bodyAttrs}>
     <slot />
   </div>
   {caption && <figcaption class="diagram-caption">{caption}</figcaption>}

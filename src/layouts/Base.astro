@@ -57,6 +57,52 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
       Both run on initial load AND after Astro view-transitions.
     -->
     <script>
+      // Scale-to-fit logic for embeds with a fixed design width. The
+      // <Diagram naturalWidth={N}> prop sets data-natural-width on the body;
+      // we set the child's intrinsic width to N px, measure its natural
+      // height, then apply a transform that scales it to fit the body —
+      // both in inline and fullscreen mode. ResizeObserver re-runs on
+      // container resize.
+      const scaleEmbed = (body: HTMLElement) => {
+        const nw = parseFloat(body.getAttribute("data-natural-width") || "")
+        if (!nw) return
+        const child = body.firstElementChild as HTMLElement | null
+        if (!child) return
+
+        // Set the child's intrinsic dimensions; transform handles the rest.
+        // flex-shrink: 0 because .diagram-body is `display: flex` — without
+        // it the child would shrink to the container width and our width
+        // setting wouldn't stick.
+        child.style.width = nw + "px"
+        child.style.flexShrink = "0"
+        child.style.transformOrigin = "top left"
+        // Strip any prior transform before measuring height.
+        child.style.transform = "none"
+        const nh = child.offsetHeight
+
+        const frame = body.closest(".diagram-frame") as HTMLElement | null
+        const isFullscreen = !!frame?.classList.contains("is-fullscreen")
+
+        const cw = body.clientWidth
+        const ch = body.clientHeight
+        const scale = isFullscreen
+          ? Math.min(cw / nw, ch / nh)
+          : Math.min(1, cw / nw)
+
+        const renderedW = nw * scale
+        const renderedH = nh * scale
+        const tx = (cw - renderedW) / 2
+        const ty = isFullscreen ? (ch - renderedH) / 2 : 0
+
+        child.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`
+
+        if (!isFullscreen) {
+          body.style.height = renderedH + "px"
+        } else {
+          body.style.height = ""
+        }
+      }
+
       const initDiagrams = async () => {
         // Wire fullscreen toggle for every diagram frame on the page.
         const frames = document.querySelectorAll<HTMLElement>(".diagram-frame")
@@ -71,8 +117,27 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
                 "diagram-overlay-open",
                 frame.classList.contains("is-fullscreen"),
               )
+              // Re-scale the embed inside this frame after the layout settles.
+              const body = frame.querySelector<HTMLElement>(
+                ".diagram-body[data-natural-width]",
+              )
+              if (body) requestAnimationFrame(() => scaleEmbed(body))
             })
           }
+        }
+
+        // Hook every scale-to-fit body to a ResizeObserver and run an initial
+        // pass so the embed fits before the user notices.
+        const scalingBodies = document.querySelectorAll<HTMLElement>(
+          ".diagram-body[data-natural-width]",
+        )
+        for (const body of scalingBodies) {
+          if ((body as any).__scaleInit) continue
+          ;(body as any).__scaleInit = true
+          const ro = new ResizeObserver(() => scaleEmbed(body))
+          ro.observe(body)
+          // Initial pass.
+          requestAnimationFrame(() => scaleEmbed(body))
         }
 
         // Render mermaid sources to SVG.

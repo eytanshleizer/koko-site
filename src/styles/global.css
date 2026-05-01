@@ -114,6 +114,16 @@
   min-height: 8rem;
 }
 
+/* When an embed opts into scale-to-fit (data-natural-width="…") the body
+   becomes a plain block and its first child is sized to its natural width
+   then transform-scaled to fit. Flex centering would push the unscaled
+   layout box off to the side of the body and break the math. */
+.diagram-frame .diagram-body[data-natural-width] {
+  display: block;
+  overflow: hidden;
+  min-height: 0;
+}
+
 .diagram-frame .diagram-body svg {
   max-width: 100%;
   height: auto;

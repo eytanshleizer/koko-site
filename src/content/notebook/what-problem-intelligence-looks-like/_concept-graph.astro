@@ -1,0 +1,186 @@
+---
+// D3 force-directed graph of problem-intelligence concepts. Renders inside
+// a <Diagram> frame on the post; the SVG fills the frame and scales up
+// when fullscreened. Nodes are draggable; releasing them lets the
+// simulation re-settle.
+//
+// The graph data is co-located here so the embed is fully self-contained.
+// d3 is imported in the script tag — Astro's bundler tree-shakes the
+// modules we don't use.
+
+const id = "concept-graph-" + Math.random().toString(36).slice(2, 8)
+---
+
+<div class="concept-graph relative w-full" data-graph-id={id} style="min-height: 480px;">
+  <svg
+    class="block h-full w-full"
+    viewBox="0 0 800 480"
+    preserveAspectRatio="xMidYMid meet"
+    aria-label="Force-directed graph of problem-intelligence concepts"
+  ></svg>
+</div>
+
+<script>
+  import {
+    forceSimulation,
+    forceManyBody,
+    forceLink,
+    forceCenter,
+    forceCollide,
+    select,
+    drag,
+  } from "d3"
+
+  type GraphNode = {
+    id: string
+    group: number
+    size: number
+    x?: number
+    y?: number
+    fx?: number | null
+    fy?: number | null
+  }
+  type GraphLink = {
+    source: string | GraphNode
+    target: string | GraphNode
+  }
+
+  const nodes: GraphNode[] = [
+    { id: "Problem", group: 0, size: 13 },
+    { id: "Conductor", group: 0, size: 16 },
+    { id: "Frame", group: 1, size: 12 },
+    { id: "Survey", group: 1, size: 12 },
+    { id: "Solve", group: 1, size: 12 },
+    { id: "Critic", group: 1, size: 12 },
+    { id: "Goal", group: 2, size: 8 },
+    { id: "Constraints", group: 2, size: 8 },
+    { id: "Success criteria", group: 2, size: 9 },
+    { id: "Episodic memory", group: 3, size: 9 },
+    { id: "Semantic memory", group: 3, size: 9 },
+    { id: "Tools", group: 3, size: 9 },
+    { id: "Candidates", group: 4, size: 8 },
+    { id: "Gap analysis", group: 4, size: 8 },
+    { id: "Decision", group: 0, size: 11 },
+  ]
+
+  const links: GraphLink[] = [
+    { source: "Problem", target: "Conductor" },
+    { source: "Conductor", target: "Frame" },
+    { source: "Conductor", target: "Survey" },
+    { source: "Conductor", target: "Solve" },
+    { source: "Conductor", target: "Critic" },
+    { source: "Conductor", target: "Decision" },
+    { source: "Frame", target: "Goal" },
+    { source: "Frame", target: "Constraints" },
+    { source: "Frame", target: "Success criteria" },
+    { source: "Survey", target: "Episodic memory" },
+    { source: "Survey", target: "Semantic memory" },
+    { source: "Survey", target: "Tools" },
+    { source: "Solve", target: "Candidates" },
+    { source: "Critic", target: "Gap analysis" },
+    { source: "Critic", target: "Success criteria" },
+    { source: "Gap analysis", target: "Decision" },
+  ]
+
+  function initGraph(container: HTMLElement) {
+    if ((container as any).__graphInit) return
+    ;(container as any).__graphInit = true
+
+    const svg = container.querySelector("svg")!
+    const width = 800
+    const height = 480
+
+    const root = select(svg)
+    const linkGroup = root.append("g").attr("class", "links")
+    const nodeGroup = root.append("g").attr("class", "nodes")
+
+    const linkSel = linkGroup
+      .selectAll("line")
+      .data(links)
+      .enter()
+      .append("line")
+      .attr("stroke", "#fafafa")
+      .attr("stroke-opacity", 0.55)
+      .attr("stroke-width", 1)
+
+    const nodeSel = nodeGroup
+      .selectAll("g")
+      .data(nodes)
+      .enter()
+      .append("g")
+      .style("cursor", "grab")
+
+    nodeSel
+      .append("circle")
+      .attr("r", (d) => d.size)
+      .attr("fill", "#000")
+      .attr("stroke", "#fafafa")
+      .attr("stroke-width", 1.25)
+
+    nodeSel
+      .append("text")
+      .text((d) => d.id)
+      .attr("dy", (d) => -d.size - 6)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#fafafa")
+      .attr("font-size", 11)
+      .attr("font-family", "Inter Tight, ui-sans-serif, system-ui")
+      .attr("pointer-events", "none")
+
+    const sim = forceSimulation<GraphNode>(nodes)
+      .force(
+        "link",
+        forceLink<GraphNode, GraphLink>(links)
+          .id((d) => d.id)
+          .distance(80)
+          .strength(0.7),
+      )
+      .force("charge", forceManyBody().strength(-220))
+      .force(
+        "collide",
+        forceCollide<GraphNode>().radius((d) => d.size + 12),
+      )
+      .force("center", forceCenter(width / 2, height / 2))
+
+    sim.on("tick", () => {
+      linkSel
+        .attr("x1", (d: any) => d.source.x)
+        .attr("y1", (d: any) => d.source.y)
+        .attr("x2", (d: any) => d.target.x)
+        .attr("y2", (d: any) => d.target.y)
+      nodeSel.attr("transform", (d) => `translate(${d.x},${d.y})`)
+    })
+
+    // Drag handler — pin a node while dragging, release on drop.
+    nodeSel.call(
+      drag<SVGGElement, GraphNode>()
+        .on("start", (event, d) => {
+          if (!event.active) sim.alphaTarget(0.3).restart()
+          d.fx = d.x
+          d.fy = d.y
+        })
+        .on("drag", (event, d) => {
+          d.fx = event.x
+          d.fy = event.y
+        })
+        .on("end", (event, d) => {
+          if (!event.active) sim.alphaTarget(0)
+          d.fx = null
+          d.fy = null
+        }) as any,
+    )
+  }
+
+  function initAll() {
+    document
+      .querySelectorAll<HTMLElement>(".concept-graph")
+      .forEach((el) => initGraph(el))
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll)
+  } else {
+    initAll()
+  }
+  document.addEventListener("astro:page-load", initAll)
+</script>

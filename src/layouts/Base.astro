@@ -165,20 +165,19 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
         if (body) requestAnimationFrame(() => scaleEmbed(body))
       }
 
-      const initDiagrams = async () => {
-        // Wire the open-fullscreen button on every frame.
-        const frames = document.querySelectorAll<HTMLElement>(".diagram-frame")
-        for (const frame of frames) {
-          if ((frame as any).__diagramInit) continue
-          ;(frame as any).__diagramInit = true
-          const openBtn = frame.querySelector<HTMLButtonElement>(
-            "[data-diagram-action='open']",
-          )
-          openBtn?.addEventListener("click", () => openOverlay(frame))
-        }
+      // Hook a single body to a ResizeObserver + initial scale pass.
+      // Idempotent — safe to call repeatedly.
+      const wireScaling = (body: HTMLElement) => {
+        if ((body as any).__scaleInit) return
+        ;(body as any).__scaleInit = true
+        const ro = new ResizeObserver(() => scaleEmbed(body))
+        ro.observe(body)
+        requestAnimationFrame(() => scaleEmbed(body))
+      }
 
-        // Hook every body whose first child declares a natural width to
-        // a ResizeObserver. Embeds without the attribute use the default
+      const initDiagrams = async () => {
+        // Hook every body whose first child declares a natural width to a
+        // ResizeObserver. Embeds without the attribute use the default
         // 16/9 fill behavior (CSS only, no JS).
         const scalingBodies = Array.from(
           document.querySelectorAll<HTMLElement>(".diagram-body"),
@@ -187,13 +186,7 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
             b.firstElementChild instanceof HTMLElement &&
             b.firstElementChild.hasAttribute("data-embed-natural-width"),
         )
-        for (const body of scalingBodies) {
-          if ((body as any).__scaleInit) continue
-          ;(body as any).__scaleInit = true
-          const ro = new ResizeObserver(() => scaleEmbed(body))
-          ro.observe(body)
-          requestAnimationFrame(() => scaleEmbed(body))
-        }
+        for (const body of scalingBodies) wireScaling(body)
 
         // Render mermaid sources to SVG.
         const mermaidNodes = document.querySelectorAll<HTMLElement>("pre.mermaid")
@@ -240,6 +233,48 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && activeFrame) closeOverlay()
       })
+
+      // Delegate the open-fullscreen click. React islands (.jsx embeds
+      // mounted with client:only="react") render their .diagram-frame
+      // AFTER initDiagrams runs, so direct event binding inside the loop
+      // wouldn't see them. Delegation works for any frame, whenever it
+      // appears in the DOM.
+      document.addEventListener("click", (e) => {
+        const target = e.target as Element | null
+        const btn = target?.closest<HTMLElement>(
+          "[data-diagram-action='open']",
+        )
+        if (!btn) return
+        const frame = btn.closest<HTMLElement>(".diagram-frame")
+        if (frame) openOverlay(frame)
+      })
+
+      // Watch for late-arriving .diagram-body elements (added when a
+      // React island hydrates) and wire their scaling observer when
+      // they appear with a natural-width child.
+      const wireIfScalable = (body: HTMLElement) => {
+        if (
+          body.firstElementChild instanceof HTMLElement &&
+          body.firstElementChild.hasAttribute("data-embed-natural-width")
+        ) {
+          wireScaling(body)
+        }
+      }
+      const mo = new MutationObserver((records) => {
+        for (const r of records) {
+          for (const n of r.addedNodes) {
+            if (!(n instanceof HTMLElement)) continue
+            if (n.classList?.contains("diagram-body")) {
+              wireIfScalable(n)
+            } else {
+              n.querySelectorAll<HTMLElement>(".diagram-body").forEach(
+                wireIfScalable,
+              )
+            }
+          }
+        }
+      })
+      mo.observe(document.body, { childList: true, subtree: true })
 
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initDiagrams)

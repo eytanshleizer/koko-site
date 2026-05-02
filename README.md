@@ -1,7 +1,7 @@
-# koko-site
+# problem-intelligence
 
 Personal site of Eytan Shleizer — notebook, tools, about. Deployed at
-[eytanshleizer.github.io/koko-site](https://eytanshleizer.github.io/koko-site).
+[eytanshleizer.github.io/problem-intelligence](https://eytanshleizer.github.io/problem-intelligence).
 
 Built with [Astro 5](https://astro.build/) + Tailwind. The hero scene
 (animated star + Dyson rings + nebula) is a small Three.js composition; each
@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-The dev server runs at `http://localhost:4321/koko-site/`.
+The dev server runs at `http://localhost:4321/problem-intelligence/`.
 
 ## Content workflow
 
@@ -131,5 +131,5 @@ Astro site and publishes `dist/` to GitHub Pages.
 ## Archive
 
 The original Quartz-based version of this site lives on the
-[`archive/quartz`](https://github.com/eytanshleizer/koko-site/tree/archive/quartz)
+[`archive/quartz`](https://github.com/eytanshleizer/problem-intelligence/tree/archive/quartz)
 branch.

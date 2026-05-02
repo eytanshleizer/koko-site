@@ -25,7 +25,7 @@ export interface RemarkWikiLinksOptions {
   // Map of slugified-title → canonical post slug, so [[Reading the Map of a Problem]]
   // resolves even if the target doesn't match the slug exactly.
   titleToSlug?: Map<string, string>
-  // Site base path (e.g. "/koko-site"). Prepended to /notebook and /ideas.
+  // Site base path (e.g. "/problem-intelligence"). Prepended to /notebook and /ideas.
   base?: string
 }
 

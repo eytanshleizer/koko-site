@@ -51,7 +51,7 @@ const manifest = await loadPostManifest()
 
 export default defineConfig({
   site: "https://eytanshleizer.github.io",
-  base: "/koko-site",
+  base: "/problem-intelligence",
   trailingSlash: "ignore",
   integrations: [tailwind({ applyBaseStyles: false }), sitemap(), mdx(), react()],
   markdown: {
@@ -62,7 +62,7 @@ export default defineConfig({
         {
           postSlugs: manifest.slugs,
           titleToSlug: manifest.titleToSlug,
-          base: "/koko-site",
+          base: "/problem-intelligence",
         },
       ],
     ],

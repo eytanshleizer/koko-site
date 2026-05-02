@@ -1,0 +1,21 @@
+The workspace is not a factory line. It is a loop that tightens as the problem clarifies.
+
+Each layer has an owner and a trigger. Respect both or the system collapses.
+
+**Human → Raw.** The human dumps continuously. No structure required. This layer is always open.
+
+**Human + AI → Frame.** Collaborative, triggered only when enough raw material accumulates. The frame should not be built early. Wait until patterns emerge.
+
+**AI → Context.** Auto-summarized, triggered after the frame stabilizes. This is where the system extracts constraints, assumptions, and open questions without human friction.
+
+**AI → Work.** Solutions generate on explicit request. Never auto-run. The prompt should reference the current frame and context explicitly — no [[context-window leakage]].
+
+**Human → Review.** Judge, approve, reject. No delegation.
+
+If a solution fails Review, the loop feeds back — not always to Work, sometimes to Frame or even Context. The gradient of the error determines the restart point.
+
+> The cadence is non-linear. Early iterations leap across layers. Later iterations pulse in tight feedback loops between Work and Review.
+
+**90%** of wasted compute comes from running Work before Frame and Context are stable. The first pass through the loop is slow by design. Each subsequent pass accelerates.
+
+Speed is a side effect of alignment. Not the goal.

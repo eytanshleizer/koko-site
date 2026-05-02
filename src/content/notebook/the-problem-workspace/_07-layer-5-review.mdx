@@ -1,0 +1,15 @@
+Judgment requires a home. The Review layer is where you stop generating and start deciding.
+
+Every workspace needs a place for critical distance. In this layer, you compare candidate solutions, log why one path won and another died, and mark proposals as [[approved]] or [[rejected]]. Without it, the Work folder becomes a graveyard of half-baked attempts.
+
+> **Review** is the layer where the loop closes. It converts output into decision.
+
+Structure it simply. `critiques/` holds structured assessments of individual solutions. `comparisons/` hosts side-by-side analyses when multiple paths compete. `approved/` is your single source of truth — the only folder downstream processes should trust. Anything outside it is still speculative.
+
+Then there is the Meta folder. This is not another layer. It is the project's institutional memory, stored outside the generative pipeline so it persists across sessions.
+
+`meta/project-brief.md` is the handoff document. Any new agent reads it first. `meta/changelog.md` is human-curated — not an auto-log, but a record of decisions that mattered. `meta/agent-notes.md` is where you leave breadcrumbs for the next agent: "we tried X, failed because Y, consider Z instead."
+
+> The Meta folder is what prevents **100%** of prior work from vanishing when a context window resets. Without it, every agent starts from zero.
+
+Review and Meta together answer the hardest question in any problem-solving loop: what happens next?

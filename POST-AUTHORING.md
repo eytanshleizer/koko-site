@@ -1,204 +1,109 @@
 # Authoring posts
 
-The convention. Pure markdown for prose. Imports for artifacts. The sync
-script does the rest.
+The convention. Pure markdown for prose, in two layers: a tiny `index.md`
+that carries the metadata, and one or more body files that carry the
+content. AI-agent friendly — no MDX, no `.astro` files inside posts.
 
 ## TL;DR
 
 ```
 ~/Library/.../CloudDocs/Blog/posts/<slug>/
-  index.md           ← required entry point with frontmatter
-  _01-intro.md       ← optional: section partials (must start with `_`)
-  _diagram.svg       ← optional: assets, referenced via imports
-  _embed.astro       ← optional: interactive embeds
+  index.md         ← required: frontmatter + a single import of the body
+  _01-body.md      ← required: the actual prose (always at least one body file)
+  _02-section.md   ← optional: split long posts into more sections
+  _diagram.svg     ← optional: assets, referenced via imports
+  _embed.jsx       ← optional: interactive React embed (D3, mocks, etc.)
 ```
 
 After writing: `npm run sync-blog && git push`.
 
-## The folder rules
+## The three rules
 
-Every post is **a folder**. Not a flat file.
+1. **Every post is a folder.** The folder name is the URL slug (kebab-case).
+2. **`index.md` carries only metadata.** It has YAML frontmatter and an
+   import + reference for the body — nothing else. Even if the post is
+   short.
+3. **Everything else is `.md` or assets.** No `.mdx` files. No `.astro`
+   files inside post folders. Bodies are `.md`. Interactive embeds are
+   `.jsx` (React).
 
-```
-posts/<slug>/
-  index.md           required — the post's entry point + frontmatter
-  _*.md              optional — section partials, imported by index.md
-  _*.{svg,png,jpg}   optional — diagrams, images, referenced via imports
-  _*.astro           optional — interactive embeds or component wrappers
-```
-
-The folder name is the URL slug. Use **kebab-case** (`my-post-slug`).
-`posts/<slug>/index.md` → `/notebook/<slug>`.
-
-**Section partials and assets must start with `_`** (e.g. `_01-intro.md`,
-`_diagram.svg`). The underscore tells Astro's content collection to skip
-them as routes — they exist only to be imported by `index.md`.
-
-Top-level folders or files starting with `_` (`_template`, `_draft-foo`)
-are private — `npm run sync-blog` skips them entirely. Use `_` for scratch
-posts that aren't ready, and for templates.
-
-## Frontmatter schema
-
-```yaml
----
-title: "Post title"            # required, plain string
-date: 2026-01-01               # required, YYYY-MM-DD
-excerpt: "One-line summary."   # optional, used in listings
-draft: false                   # optional, default false
----
-```
-
-That's the whole schema. See `src/content/config.ts` for the source of
-truth.
-
-## The simple convention: `import` + `{Name}`
-
-Inside any `.md` file, you can declare imports at the top, then drop
-`{Name}` on its own line wherever you want the artifact to render.
+## `index.md` shape
 
 ```md
 ---
 title: "How to read a problem"
 date: 2026-04-30
+excerpt: "One-line summary."   # optional
+draft: false                   # optional, default false
+fig: "FIG 1.4"                 # optional
 ---
 
-import Diagram from "./_diagram.svg"
-import Intro from "./_01-intro.md"
+import Body from "./_01-body.md"
 
-When you hand a problem to an agent, you're not just transferring a task.
-You're transferring a worldview.
-
-{Intro}
-
-## Where time goes
-
-Most of the loop is in the bookends.
-
-{Diagram}
-
-The interesting work shifts from making to choosing.
+{Body}
 ```
 
-That's it. Pure markdown body. Imports declare artifacts; `{Name}` on its
-own line says "render here."
+That's the whole file. Frontmatter, one import, one ref. The frontmatter
+`title` already renders the H1 — don't repeat it in the body.
 
-**Don't write an `# H1` heading at the top of the body** — the page
-already renders the title from frontmatter. Start with prose, then `## H2`
-for sections.
+## Body files
 
-## What can be imported
+Body files are plain markdown with two extensions:
 
-The path's file extension determines how `{Name}` renders:
+- **`import Name from "./path"`** at the top → declares an asset / partial.
+- **`{Name}` on its own line** in the body → renders the imported thing.
 
-| Extension | Renders as | Notes |
-|---|---|---|
-| `.svg`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.avif` | `<img>` | The sync adds `?url` so Vite returns a string; the image renders full-width inside the post column. |
-| `.astro` | The component | Use this for any interactive embed, custom layout, or pre-baked component wrapper (see "Components with props" below). |
-| `.md` | The composed section | The partial gets converted to MDX during sync; its own imports + `{Name}` refs work too. |
+The path's extension determines how `{Name}` renders:
 
-Component imports (e.g. `import Foo from "@/components/post/Foo.astro"`)
-work the same way — `{Foo}` renders `<Foo />`. But components that take
-props or children don't fit on one line; see below.
+| Extension | Renders as |
+|---|---|
+| `.svg` `.png` `.jpg` `.jpeg` `.gif` `.webp` `.avif` | An `<img>` taking the column width |
+| `.md` | The composed section partial (recursively) |
+| `.jsx` `.tsx` | A React component, hydrated client-side |
 
-## Components with props (the escape hatch)
+Body files start with a `_` prefix so Astro's content collection ignores
+them as routes. Use a numbered prefix (`_01-body.md`, `_02-context.md`,
+…) so they sort naturally and adding more is painless.
 
-The site has a small set of editorial components in `src/components/post/`
-that take props or children: `Callout`, `Stat`, `Aside`, `Figure`,
-`Diagram`. These don't fit the `{Name}` slot pattern.
+## Inline styling — plain markdown only
 
-The convention is to **wrap each use in a one-off `.astro` file** in the
-post folder, then import and reference it like any other artifact:
+Posts don't use bespoke components. The site styles standard markdown
+nicely; reach for:
 
-```astro
----
-// posts/the-ai-native-loop/_callout-shift.astro
-import Callout from "@/components/post/Callout.astro"
----
+| What you want | Use |
+|---|---|
+| A pull-quote / callout | A `>` blockquote (the site renders an ember left border) |
+| Emphasis on a stat | **bold** for the number, plain prose for the rest |
+| A margin note / aside | An `*italic paragraph*` |
+| A figure with caption | The image ref + an italic line right below |
+| A flowchart | A ` ```mermaid ` fenced code block (optionally with `title="…"`) |
+| An interactive demo | A `_embed.jsx` React component, imported and referenced |
 
-<Callout title="The shift" variant="accent">
-  The expensive thing isn't producing output anymore. It's reading output
-  well, and re-framing fast when something's off.
-</Callout>
-```
+Examples:
 
 ```md
-import Shift from "./_callout-shift.astro"
+> **The shift.** The expensive thing isn't producing output anymore —
+> it's reading output well, and re-framing fast when something's off.
 
-prose…
+**4×** — quality bump from a 30-second framing pass.
 
-{Shift}
+*Common case: you're asking the agent to optimize something, but the
+thing you actually want is not what's being optimized.*
+
+import Loop from "./_loop.svg"
+
+{Loop}
+
+*Where time goes in each loop. The orange band is generation; in the
+old loop it dominates, in the new loop it's a sliver.*
 ```
 
-The `_` prefix keeps the wrapper out of routing.
+## Mermaid diagrams
 
-If a post is heavy on parameterized components and one-off `.astro` files
-feel like noise, you can fall back to writing `index.mdx` instead of
-`index.md` and use the components inline with full MDX. Both work. Pick
-the lighter syntax for the post.
-
-## Two flavors
-
-### Flavor 1 — Short post: everything in `index.md`
-
-This is the default. Most posts should look like this.
-
-```
-posts/some-slug/
-  index.md
-  _diagram.svg     (optional)
-```
-
-### Flavor 2 — Long post: `index.md` composes section partials
-
-When a post is long enough that one file is unwieldy, split sections into
-separate `.md` files (each prefixed with `_` so it's not its own route)
-and compose them in `index.md`:
-
-```
-posts/long-post/
-  index.md
-  _01-intro.md
-  _02-context.md
-  _03-method.md
-  _04-findings.md
-```
-
-In `index.md`:
-
-```md
----
-title: "…"
-date: 2026-04-30
----
-
-import Intro from "./_01-intro.md"
-import Context from "./_02-context.md"
-import Method from "./_03-method.md"
-import Findings from "./_04-findings.md"
-
-{Intro}
-
-{Context}
-
-{Method}
-
-{Findings}
-```
-
-Each section can have its own imports and `{Name}` refs. Single-file
-posts are easier to edit; reach for partials only when the file has
-become painful.
-
-## Diagrams
-
-### Mermaid
-
-Just write a fenced code block. Mermaid is rendered client-side and the
-site auto-frames it with a fullscreen toggle:
+Just a fenced code block. Title is optional via the fence info:
 
 ````md
-```mermaid
+```mermaid title="The new loop"
 flowchart LR
   A[Frame] --> B[Generate]
   B --> C{Read}
@@ -208,67 +113,95 @@ flowchart LR
 ```
 ````
 
-The frame's topbar shows "Diagram" by default. To give a specific title,
-add `title="…"` to the fence info string:
+The site renders mermaid client-side with a dark theme and wraps it in
+a framed container with a fullscreen toggle.
 
-````md
-```mermaid title="The new loop"
-flowchart LR
-  A[Frame] --> B[Generate]
+## Interactive React embeds
+
+For anything that needs JavaScript (force graphs, app mocks, custom
+canvas), write a `_name.jsx` (React) in the post folder:
+
+```jsx
+// posts/my-post/_my-demo.jsx
+import { useEffect, useRef } from "react"
+
+export default function MyDemo() {
+  const ref = useRef(null)
+  useEffect(() => {
+    // …d3 / canvas / whatever…
+  }, [])
+  return <div ref={ref} className="my-demo" />
+}
 ```
-````
 
-### SVG / image diagrams
+If you want it inside the framed-with-fullscreen chrome, render the
+frame yourself in the component:
 
-Drop the file in the post folder, prefix it with `_`, import it, drop the
-ref:
+```jsx
+return (
+  <figure className="diagram-frame not-prose">
+    <header className="diagram-topbar">
+      <span className="diagram-title">My demo</span>
+      <button
+        type="button"
+        className="diagram-action"
+        data-diagram-action="open"
+        aria-label="Open fullscreen"
+      >
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="none"
+             stroke="currentColor" strokeWidth="1.5"
+             strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+        </svg>
+      </button>
+    </header>
+    <div className="diagram-body">
+      {/* your embed */}
+    </div>
+  </figure>
+)
+```
+
+Then in the body:
 
 ```md
-import Map from "./_problem-map.svg"
+import MyDemo from "./_my-demo.jsx"
 
-{Map}
+{MyDemo}
 ```
 
-If you want a caption beneath the image, wrap it in a `_figure-*.astro`
-that uses `<Figure caption="…">…`.
+The sync emits `<MyDemo client:only="react" />` so the component skips
+SSR and hydrates fully in the browser — important for anything that
+touches `window`, `requestAnimationFrame`, d3, etc.
 
-### Interactive embeds
+## Wiki-links
 
-Write a `.astro` component in the post folder, prefix with `_`, import,
-ref. If you want the framed-with-fullscreen container, wrap the inner
-component in `<Diagram title="…">` inside the wrapper:
-
-```astro
----
-// posts/some-slug/_concept-graph.astro
-import Diagram from "@/components/post/Diagram.astro"
-import Graph from "./_graph-impl.astro"
----
-
-<Diagram title="Concept map · drag the nodes">
-  <Graph />
-</Diagram>
-```
+Cross-reference posts and concepts inline with double brackets:
 
 ```md
-import ConceptGraph from "./_concept-graph.astro"
-
-{ConceptGraph}
+[[reading-the-problem-map]]
+[[reading-the-problem-map|read this first]]
+[[Frame]]
 ```
+
+- Targets that match an existing post slug (or its slugified title) link
+  to `/notebook/<slug>`.
+- Targets that don't match any post become **concept stubs** in the
+  graph at `/ideas`. They're not 404s — they get their own node and a
+  list of which posts reference them.
+
+The single pipe `|` lets you set custom display text without changing
+the target.
 
 ## Code blocks
 
-Standard fenced code blocks work. Add a language for syntax highlighting:
+Standard fenced code blocks. Add a language for syntax highlighting:
 
 ````md
 ```ts
 function frame(problem: Problem): Frame { … }
 ```
 ````
-
-## Internal links
-
-Cross-reference posts by URL: `[some-other-post](/notebook/some-other-post)`.
 
 ## Templates
 
@@ -280,8 +213,7 @@ cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/Blog/posts
 cp -r _template my-new-post
 ```
 
-Then edit `my-new-post/index.md`. When ready: `npm run sync-blog`,
-commit, push.
+Then edit `my-new-post/index.md` (frontmatter) and `_01-body.md` (prose).
 
 ## What sync does
 
@@ -291,13 +223,17 @@ commit, push.
 2. For each `.md` file: parses leading `import` lines, replaces `{Name}`
    refs with the appropriate JSX (image, component, partial), writes as
    `.mdx` so Astro/MDX can render it.
-3. For each `.mdx` file (the escape hatch): rewrites any `.md` import
-   paths to `.mdx` (since partials get extension-changed) and copies it
-   through.
-4. For other files (`.svg`, `.astro`, …): copies as-is.
+3. For `.jsx` / `.tsx`: copies through. Imports of these in body files
+   render with `client:only="react"`.
+4. For other files (`.svg`, `.png`, …): copies as-is.
 
-Then commit `src/content/notebook` and push. The GitHub Actions workflow
+Then commit `src/content/notebook/` and push. The GitHub Actions workflow
 deploys.
+
+> **Source of truth:** anything you want in the published site must live
+> in `~/Library/.../CloudDocs/Blog/posts/`. The repo's `src/content/notebook/`
+> is overwritten by sync. Files added there directly will be wiped on the
+> next sync.
 
 ## Agent system prompt
 
@@ -310,28 +246,53 @@ You're authoring a blog post for an Astro site at
 
 Conventions:
 
-1. The post is a folder. The folder name is the URL slug (kebab-case).
-2. The folder must contain index.md with YAML frontmatter:
+1. Every post is a folder. The folder name is the URL slug (kebab-case).
+2. The folder MUST contain index.md with YAML frontmatter:
    - title (string, required)
    - date (YYYY-MM-DD, required)
    - excerpt (one-line summary, optional)
-3. index.md is pure markdown. To embed an artifact, declare an import at
-   the top:  import Name from "./_path.svg"
-   then drop  {Name}  on its own line where it should render.
-4. Imports resolve by extension:
-     .svg/.png/.jpg/etc.  → renders as <img>
-     .astro               → renders as the component
-     .md                  → renders as a composed section partial
-5. Section partials and assets MUST be prefixed with _ (underscore) —
-   _01-intro.md, _diagram.svg, _embed.astro. Otherwise Astro treats them
+   - fig, draft (optional)
+   index.md has frontmatter, one import, and one {ref}. Nothing else:
+
+       ---
+       title: "..."
+       date: 2026-01-01
+       excerpt: "..."
+       ---
+
+       import Body from "./_01-body.md"
+
+       {Body}
+
+3. The actual prose lives in _01-body.md (and _02-...md, etc. for long
+   posts). These are plain markdown files starting with an underscore.
+4. Inside body files, declare imports at the top:
+       import Name from "./_path.ext"
+   then drop {Name} on its own line where it should render.
+5. Imports resolve by extension:
+       .svg/.png/.jpg/etc.  → renders as <img>
+       .jsx                 → renders as a React island (client:only)
+       .md                  → renders as a composed section partial
+6. Section partials and assets MUST be prefixed with _ (underscore) —
+   _01-body.md, _diagram.svg, _embed.jsx. Otherwise Astro treats them
    as their own posts.
-6. Don't write an H1 heading at the top of the body — the page renders
+7. NEVER write .mdx or .astro files inside a post folder. The author-side
+   format is .md only. Interactive embeds are .jsx (React).
+8. Don't write an H1 heading at the top of the body — the page renders
    the title from frontmatter. Start with prose, then ## H2 sections.
-7. For mermaid, just write a ```mermaid fenced code block. No import.
-8. For inline editorial callouts/stats/asides/figures with props, wrap
-   each use in a one-off _wrapper.astro file (importing from
-   @/components/post/) and reference it like any artifact.
-9. Don't fabricate images. If a visual is needed but you can't generate
-   it, leave a TODO note describing what should go there.
-10. Keep prose tight. Editorial voice. Short sentences. No padding.
+9. For mermaid, just write a ```mermaid fenced code block. No import.
+   Optional title via fence info: ```mermaid title="The new loop"
+10. For inline styling, use plain markdown:
+      > blockquote      → callout-style highlight
+      **bold**          → emphasis on a stat
+      *italic*          → margin note / aside
+      ![alt](url) +     → figure with caption (image followed by
+       *caption text*      italic line)
+11. Cross-reference posts and concepts with [[double brackets]]:
+      [[some-post-slug]]            → link to that post
+      [[Frame]]                     → concept stub (graph node)
+      [[some-post|display label]]   → custom display text
+12. Don't fabricate images. If a visual is needed but you can't generate
+    it, leave a TODO note describing what should go there.
+13. Keep prose tight. Editorial voice. Short sentences. No padding.
 ```

@@ -1,5 +1,3 @@
-import Aside from "@/components/post/Aside.astro"
-
 ## What the agents need to work with
 
 Agents are LLM calls. They forget everything between turns unless something writes it down. The substrate is everything they need access to so they don't have to re-derive the world on each invocation.
@@ -24,9 +22,7 @@ General knowledge. Documentation, prior art, reference material, codebases, runb
 
 This is the cheapest of the three to set up and the easiest to overfeed. Bigger isn't better. Curated is better.
 
-<Aside label="Common failure">
-The Surveyor returns 200 pages of vaguely-related documentation and the Solver has nothing to anchor to. Smaller, more relevant context outperforms larger, less relevant context every time.
-</Aside>
+> *Common failure: the Surveyor returns 200 pages of vaguely-related documentation and the Solver has nothing to anchor to. Smaller, more relevant context outperforms larger, less relevant context every time.*
 
 ### Tools
 

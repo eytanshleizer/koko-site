@@ -103,6 +103,11 @@ function transformMdToMdx(source) {
     } else if (ext === ".md") {
       resolvedPath = importPath.replace(/\.md$/, ".mdx")
       replacement = `<${name} />`
+    } else if (ext === ".jsx" || ext === ".tsx") {
+      // React components — render as a client island. `client:only="react"`
+      // skips SSR (which doesn't work for components that touch window /
+      // d3 / canvas) and hydrates fully in the browser.
+      replacement = `<${name} client:only="react" />`
     } else {
       replacement = `<${name} />`
     }

@@ -1,0 +1,42 @@
+When you hand a problem to an agent, you're not just transferring a task. You're transferring a worldview — the boundary, the vocabulary, the success criterion. Most of the bad outputs I see come from a mis-shape of that handoff, not from the model. This is upstream of [[the-ai-native-loop|the loop itself]] — the [[Frame]] is what the loop iterates against.
+
+## What gets lost in the handoff
+
+Three things, almost always.
+
+> **Note.** The agent only sees what's in the prompt. Anything that lives in your head — the constraints you take for granted, the audience you're speaking to, the trade-off you've already made — has to be made explicit.
+
+The first is **the boundary**. You know what's in scope and what's not. The agent doesn't.
+
+The second is **the vocabulary**. Every domain has terms with precise meaning. "User" doesn't mean the same thing in payments as it does in marketing copy.
+
+The third is **the test**. You usually have a fuzzy sense of "I'll know it when I see it." That isn't enough.
+
+## A small frame
+
+I find it useful to write out four things — [[Goal]], [[Inputs]], [[Constraints]], and [[Test]] — before starting any non-trivial agent task:
+
+```
+Goal:        what would "done" look like?
+Inputs:      what does the agent have access to?
+Constraints: what's off-limits, and why?
+Test:        how will we know we got it right?
+```
+
+That's not a process; it's a lens. Even thirty seconds of writing those four lines changes the quality of the output enough to be worth the time.
+
+**4×** — quality bump from a 30-second framing pass.
+
+## When the frame is wrong
+
+Sometimes the frame is wrong before the work starts, and no agent in the world can recover from that.
+
+*Common case: you're asking the agent to optimize something, but the thing you actually want is not what's being optimized. Reframe what "good" means before generating anything.*
+
+The fix isn't to keep iterating the prompt. It's to step back to the frame and check whether the problem you've handed over is the problem you actually have.
+
+> The frame is the unit of the new work.
+
+## The work, more carefully
+
+The promise of working with AI isn't that it solves more problems. It's that we get to spend the saved time *thinking better about which problems to solve, and how*. The map matters more than the move.

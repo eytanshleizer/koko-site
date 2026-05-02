@@ -1,5 +1,3 @@
-import Callout from "@/components/post/Callout.astro"
-
 ## How it actually runs
 
 The Conductor's state machine. Read this as: at every step, the Conductor decides what to do next based on the current state.
@@ -35,9 +33,7 @@ The decision node is the entire game. The Conductor reads the Critic's gap analy
 4. **Retry.** The frame is right and the context is sufficient, but the candidates aren't good enough. Loop back to Solve, possibly with new instructions.
 5. **Stop.** Out of budget. Surface what we have. Don't pretend we're done.
 
-<Callout title="The hardest part" variant="accent">
-Most failed AI systems I've seen got the first four agents right and got the Conductor wrong. The Conductor is mostly bookkeeping plus a decision rule. The decision rule is where taste lives.
-</Callout>
+> **The hardest part.** Most failed AI systems I've seen got the first four agents right and got the Conductor wrong. The Conductor is mostly bookkeeping plus a decision rule. The decision rule is where taste lives.
 
 A good Conductor:
 

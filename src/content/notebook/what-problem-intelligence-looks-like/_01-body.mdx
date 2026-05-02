@@ -1,0 +1,42 @@
+import ProblemIntelApp from "./_problem-intel-app.jsx"
+import ConceptGraph from "./_concept-graph.jsx"
+
+The interesting product category that hasn't been built yet is the one that helps you decide *which* problem to work on. Not project management. Not analytics. Something more like a notebook for the upstream half of work — where problems get caught, [[Frame|framed]], ranked, and handed off.
+
+Call it [[Problem intelligence]]. This is a sketch of what it might feel like to use one.
+
+## The inbox
+
+Problems arrive from many places — support volume, dashboards, conversations, half-formed observations. Most of them aren't yet problems; they're complaints, signals, hunches. The first job is to catch them and let them sit somewhere visible while they take shape.
+
+<ProblemIntelApp client:only="react" />
+
+A few things are deliberate in this view:
+
+- **State as a first-class field.** A problem has a *framing* state, then *surveying*, then *framed*, then *solving*. The state isn't a label you set; it's where the problem actually is in the work. Most ticketing systems treat status as either "open" or "done." That's missing the whole upstream half.
+- **Detail is metadata, not free text.** The line under each title is structured — number of hypotheses, related problems, signals correlated. The system can compute most of it; the human curates.
+- **Frames are reusable.** Once you've framed "user retention is dropping" four times, the framing template is itself an object you can reach for.
+
+> **The shift.** This isn't an AI product. It's an interface for the human side of an AI-native workflow — the part where you decide what to point the agents at, and where you keep track of what came back.
+
+## The map
+
+The other view that matters is structural — how problems and concepts connect. Same data, different camera. Drag the nodes around if you want.
+
+<ConceptGraph client:only="react" />
+
+A force-directed graph isn't a deep insight, but it is the right *shape* for this content. Problems aren't a list. They're a network with weak connections, dependencies, shared context. Some clusters are solvable units; some are vague terrain you keep coming back to. Seeing the network changes which problems you pick up next.
+
+A few things this view does well that a list doesn't:
+
+- **It surfaces clusters.** When five problems all link to the same node, that node is probably worth its own frame.
+- **It exposes orphans.** Problems with no connections are usually either trivial or deeply important — both are worth a look.
+- **It handles partial structure.** You don't have to know how everything connects to start. Add an edge as you notice it.
+
+## What's actually different
+
+Most software for "thinking work" is either an editor or a dashboard. Problem intelligence is neither. It's an interface for the *between* state — when something is more than a thought and less than a project, when the right move is to keep noticing it rather than to act.
+
+The pieces aren't novel. Inbox views, graph views, structured notes have all been done. What's new is the assumption that **the upstream half of work is now the work** — and that it deserves its own first-class tool, not a shared corner of Notion.
+
+The next post in this thread will be about the framing primitives themselves: what data structure a "frame" actually is, how it gets composed, and what an agent can do with one once it exists.

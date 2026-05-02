@@ -1,79 +1,323 @@
 ---
 import Base from "@/layouts/Base.astro"
+import { getCollection, render } from "astro:content"
+import IdeasGraph from "@/components/ideas/IdeasGraph.tsx"
+import { buildWikiGraph, slugify } from "@/lib/wiki-graph.ts"
+
+// Auto-derive the graph from notebook posts. Each post is a node; every
+// `[[target]]` wiki-link in a post body is an edge to that target. If
+// the target doesn't match a post, it becomes a "concept stub" node —
+// no detail page yet, but the graph picks it up the moment something
+// links to it.
+const posts = await getCollection("notebook", ({ data }) => !data.draft)
+
+// Notebook still uses Astro's legacy `type: "content"` collection so the
+// canonical URL identifier is `entry.slug` (e.g. "reading-the-problem-map")
+// — `entry.id` would give "reading-the-problem-map/index.mdx", which
+// breaks resolution when a post says `[[reading-the-problem-map]]`.
+const graph = buildWikiGraph(
+  posts.map((p) => ({
+    id: p.slug,
+    title: p.data.title,
+    body: p.body ?? "",
+    excerpt: p.data.excerpt,
+    date: p.data.date,
+  })),
+)
+
+// Reverse-edge index so concept-stub panels can show "linked from N posts".
+const backlinks = new Map<string, string[]>()
+for (const link of graph.links) {
+  if (!backlinks.has(link.target)) backlinks.set(link.target, [])
+  backlinks.get(link.target)!.push(link.source)
+}
 
 const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
 const link = (href: string) => base + href
+
+// Map slug → post entry so we can resolve backlink ids to titles + hrefs.
+const postById = new Map(posts.map((p) => [p.slug, p]))
+
+// Pre-render every post's body into a Content component. Stored in a
+// map so the panel iteration below can look them up by slug. Doing it
+// up front keeps the JSX tidy and lets Astro batch the renders.
+const postContent = new Map<string, any>()
+for (const p of posts) {
+  const { Content } = await render(p)
+  postContent.set(p.slug, Content)
+}
+
+const initialSlug = ""
+
+// Pre-render basic info for every node into the right panel. For posts:
+// title + excerpt + "Read post →" link. For concept stubs: title +
+// "<n> post(s) reference this" + a list of those posts.
+type PanelEntry = {
+  id: string
+  title: string
+  kind: "post" | "concept"
+  excerpt?: string
+  href?: string
+  date?: Date
+  backlinks: { id: string; title: string; href: string }[]
+}
+
+const panelEntries: PanelEntry[] = graph.nodes.map((n) => {
+  const blIds = backlinks.get(n.id) ?? []
+  const bl = blIds
+    .map((id) => {
+      const p = postById.get(id)
+      if (!p) return null
+      return { id, title: p.data.title, href: link(`/notebook/${id}`) }
+    })
+    .filter((x): x is { id: string; title: string; href: string } => x !== null)
+  return {
+    id: n.id,
+    title: n.title,
+    kind: n.kind,
+    excerpt: n.excerpt,
+    href: n.kind === "post" ? link(`/notebook/${n.id}`) : undefined,
+    date: n.date,
+    backlinks: bl,
+  }
+})
+
+const dateFmt = (d?: Date) =>
+  d ? d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : ""
 ---
 
 <Base
   title="Ideas · Eytan Shleizer"
-  description="A working map of the concepts in this notebook — how they connect, build on each other, and pull in new directions."
+  description="A working graph of the concepts in this notebook — auto-built from wiki-links between posts."
+  footer={false}
 >
-  <section>
-    <div class="container-page pt-16 pb-10 md:pt-24 md:pb-14">
-      <span
-        class="inline-flex items-center gap-2 rounded-full border border-ember-300/60 bg-ember-300/[0.06] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ember-300"
-      >
-        <span class="inline-block h-1.5 w-1.5 rounded-full bg-ember-300"></span>
-        Work in progress
-      </span>
-      <h1
-        class="mt-6 max-w-3xl text-display font-semibold tracking-tighter text-bone-0"
-        style="text-wrap: balance;"
-      >
-        A map of the ideas, not just the writing.
-      </h1>
-      <p class="mt-6 max-w-2xl text-[17px] leading-[1.65] text-bone-300 md:text-[18px]">
-        The notebook is the trail; this is the terrain. A working graph of how
-        the concepts connect — what builds on what, and where new threads start.
-      </p>
-    </div>
-  </section>
-
-  <div class="container-page"><div class="hairline"></div></div>
-
-  <section>
-    <div class="container-page py-24 md:py-32">
-      <div class="mx-auto max-w-2xl text-center">
-        <!-- Placeholder graph illustration — three clusters of connected nodes -->
-        <svg
-          viewBox="0 0 320 200"
-          fill="none"
-          stroke="currentColor"
-          class="mx-auto h-48 w-auto text-bone-300"
-          aria-hidden="true"
+  <section
+    id="ideas-section"
+    class="flex h-[calc(100vh-3.5rem)] flex-col lg:flex-row"
+  >
+    <div class="relative flex-1 bg-ink-0">
+      {graph.nodes.length > 0 ? (
+        <IdeasGraph
+          nodes={graph.nodes.map((n) => ({ id: n.id, title: n.title, kind: n.kind }))}
+          links={graph.links.map((l) => ({ source: l.source, target: l.target }))}
+          initialSelected={initialSlug}
+          client:only="react"
+        />
+      ) : (
+        <p
+          class="absolute inset-0 flex items-center justify-center font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300"
         >
-          <line x1="60" y1="60" x2="140" y2="100" stroke-width="0.8" />
-          <line x1="60" y1="60" x2="100" y2="140" stroke-width="0.8" />
-          <line x1="100" y1="140" x2="180" y2="160" stroke-width="0.8" />
-          <line x1="140" y1="100" x2="220" y2="80" stroke-width="0.8" />
-          <line x1="220" y1="80" x2="270" y2="130" stroke-width="0.8" />
-          <line x1="180" y1="160" x2="270" y2="130" stroke-width="0.8" />
-          <line x1="140" y1="100" x2="180" y2="160" stroke-width="0.8" />
-          <circle cx="60" cy="60" r="6" fill="currentColor" />
-          <circle cx="140" cy="100" r="9" fill="currentColor" />
-          <circle cx="100" cy="140" r="5" fill="currentColor" />
-          <circle cx="220" cy="80" r="7" fill="currentColor" />
-          <circle cx="180" cy="160" r="4" fill="currentColor" />
-          <circle cx="270" cy="130" r="6" fill="currentColor" />
-        </svg>
-
-        <p class="mt-12 font-mono text-[12px] uppercase tracking-[0.18em] text-bone-300">
-          In progress
+          No links yet — add wiki-links like [[some-other-post]] in your posts
         </p>
-        <p class="mt-4 text-[16.5px] leading-[1.65] text-bone-200">
-          The interactive graph view is being built. It will let you wander the
-          concepts in this notebook the way they actually live in the head —
-          connected, partial, and re-routable.
-        </p>
-        <a
-          class="mt-8 inline-flex items-center gap-1 text-[13px] text-bone-0 underline underline-offset-4 decoration-bone-500/40 hover:decoration-bone-200"
-          href={link("/notebook")}
-        >
-          Read the notebook in the meantime
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
+      )}
     </div>
+
+    <aside
+      id="ideas-panel"
+      class="relative h-1/2 flex-none overflow-y-auto border-t border-bone-500/15 bg-ink-50 px-8 py-10 lg:h-full lg:w-[560px] lg:border-l lg:border-t-0"
+      hidden
+    >
+      <button
+        type="button"
+        id="ideas-panel-close"
+        class="absolute right-5 top-5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-bone-500/20 text-bone-300 transition hover:border-bone-200/40 hover:text-bone-0"
+        aria-label="Close panel"
+      >
+        ×
+      </button>
+      {
+        panelEntries.map((entry) => {
+          const PostContent = entry.kind === "post" ? postContent.get(entry.id) : null
+          return (
+            <div class="ideas-panel-item" data-slug={entry.id} hidden>
+              <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-bone-300">
+                {entry.kind === "post" ? "Notebook post" : "Concept"}
+              </p>
+              <h2
+                class="mt-3 text-[26px] font-semibold tracking-tight text-bone-0 md:text-[28px]"
+                style="text-wrap: balance;"
+              >
+                {entry.title}
+              </h2>
+
+              {entry.kind === "post" && entry.date && (
+                <p class="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-300">
+                  {dateFmt(entry.date)}
+                </p>
+              )}
+
+              {entry.kind === "post" && entry.excerpt && (
+                <p class="mt-4 text-[15.5px] leading-[1.55] text-bone-200">
+                  {entry.excerpt}
+                </p>
+              )}
+
+              {entry.kind === "post" && entry.href && (
+                <a
+                  href={entry.href}
+                  class="mt-5 inline-flex items-center gap-1.5 rounded-full border border-bone-500/30 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-bone-50 transition hover:border-bone-200/40 hover:text-bone-0"
+                >
+                  Open in notebook
+                  <span aria-hidden="true">→</span>
+                </a>
+              )}
+
+              {entry.kind === "concept" && (
+                <p class="mt-3 text-[15px] leading-[1.55] text-bone-300">
+                  A concept that{" "}
+                  <strong class="text-bone-0">{entry.backlinks.length}</strong>{" "}
+                  post{entry.backlinks.length === 1 ? "" : "s"} link
+                  {entry.backlinks.length === 1 ? "s" : ""} to. It will become a
+                  first-class node here as soon as anything points at it.
+                </p>
+              )}
+
+              {/* Full post body, rendered inline. Tighter typography than
+                  the standalone /notebook page so it fits the side panel. */}
+              {entry.kind === "post" && PostContent && (
+                <div class="mt-8 border-t border-bone-500/15 pt-8">
+                  <div
+                    class="prose prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-8 prose-h2:text-[1.15rem] prose-h3:text-[1rem] prose-p:text-[14.5px] prose-p:leading-[1.7] prose-p:text-bone-200 prose-strong:text-bone-0 prose-a:text-bone-0 prose-a:underline prose-a:underline-offset-4 prose-a:decoration-bone-500/40 hover:prose-a:decoration-bone-200 prose-li:text-bone-200 prose-li:text-[14.5px] prose-blockquote:border-l-2 prose-blockquote:border-ember-300/60 prose-blockquote:pl-4 prose-blockquote:text-bone-100 prose-blockquote:not-italic prose-code:text-[13px] prose-pre:text-[12.5px]"
+                  >
+                    <PostContent />
+                  </div>
+                </div>
+              )}
+
+              {entry.backlinks.length > 0 && (
+                <div class="mt-10 border-t border-bone-500/15 pt-6">
+                  <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-bone-300">
+                    {entry.kind === "concept" ? "Linked from" : "Backlinks"}
+                  </p>
+                  <ul class="mt-3 space-y-2">
+                    {entry.backlinks.map((b) => (
+                      <li>
+                        <button
+                          type="button"
+                          data-related-slug={b.id}
+                          class="text-left text-[14.5px] leading-snug text-bone-100 underline underline-offset-4 decoration-bone-500/30 transition hover:text-bone-0 hover:decoration-bone-200"
+                        >
+                          {b.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )
+        })
+      }
+    </aside>
   </section>
 </Base>
+
+<script>
+  const panel = document.getElementById("ideas-panel")
+  const closeBtn = document.getElementById("ideas-panel-close")
+
+  // Mermaid diagrams in the panel render at page load while the panel
+  // is hidden — every dimension is 0, so the SVG ends up tiny. When a
+  // panel item becomes visible, we re-run mermaid on any mermaid block
+  // inside it that hasn't been rendered to a proper size.
+  async function rerenderMermaidIn(item: HTMLElement) {
+    const pres = item.querySelectorAll<HTMLElement>("pre.mermaid")
+    if (pres.length === 0) return
+    const needs: HTMLElement[] = []
+    for (const pre of Array.from(pres)) {
+      const svg = pre.querySelector("svg")
+      const w = svg?.getBoundingClientRect().width ?? 0
+      if (svg && w >= 100) continue // already rendered at a real size
+      // Reset textContent from the stashed source set in Base.astro,
+      // so mermaid.run can re-process the element from scratch.
+      const source = pre.dataset.source
+      if (typeof source === "string" && source.trim().length > 0) {
+        pre.textContent = source
+      }
+      pre.removeAttribute("data-processed")
+      needs.push(pre)
+    }
+    if (needs.length === 0) return
+    try {
+      const mermaid = (await import("mermaid")).default
+      await mermaid.run({ nodes: needs })
+    } catch (err) {
+      console.error("[ideas] failed to re-render mermaid:", err)
+    }
+  }
+
+  function show(slug: string) {
+    if (!panel) return
+    let visible: HTMLElement | null = null
+    document
+      .querySelectorAll<HTMLElement>(".ideas-panel-item")
+      .forEach((el) => {
+        const match = el.dataset.slug === slug
+        el.hidden = !match
+        if (match) visible = el
+      })
+    panel.hidden = false
+    panel.scrollTo({ top: 0, behavior: "smooth" })
+    // After the panel is on screen, give the layout one frame to settle
+    // (so getBoundingClientRect reports real sizes), then re-run mermaid.
+    if (visible) {
+      const target = visible
+      requestAnimationFrame(() => {
+        rerenderMermaidIn(target)
+      })
+    }
+  }
+
+  function hide() {
+    if (!panel) return
+    panel.hidden = true
+    document
+      .querySelectorAll<HTMLElement>(".ideas-panel-item")
+      .forEach((el) => {
+        el.hidden = true
+      })
+    document.dispatchEvent(
+      new CustomEvent("idea:select", { detail: { slug: "" } }),
+    )
+  }
+
+  document.addEventListener("idea:select", ((e: CustomEvent) => {
+    const slug = e.detail?.slug
+    if (slug) show(slug)
+  }) as EventListener)
+
+  closeBtn?.addEventListener("click", hide)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !panel?.hidden) hide()
+  })
+
+  // Clicking a backlink in the panel jumps to that node in the graph.
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement | null
+    const btn = target?.closest<HTMLElement>("[data-related-slug]")
+    if (!btn) return
+    const slug = btn.dataset.relatedSlug
+    if (!slug) return
+    document.dispatchEvent(
+      new CustomEvent("idea:select", { detail: { slug } }),
+    )
+  })
+
+  // Honour ?focus=<slug> deep links from wiki-links inside posts.
+  // Show the panel immediately, and re-dispatch after a beat to give the
+  // React graph time to hydrate (its `idea:select` listener registers
+  // during its useEffect, which can land after this script runs).
+  const params = new URLSearchParams(location.search)
+  const focusSlug = params.get("focus")
+  if (focusSlug) {
+    show(focusSlug)
+    const dispatchFocus = () =>
+      document.dispatchEvent(
+        new CustomEvent("idea:select", { detail: { slug: focusSlug } }),
+      )
+    dispatchFocus()
+    // Re-fire after hydration so the graph picks up the selection too.
+    requestAnimationFrame(() => requestAnimationFrame(dispatchFocus))
+    setTimeout(dispatchFocus, 250)
+  }
+</script>

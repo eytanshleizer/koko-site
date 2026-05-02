@@ -7,12 +7,18 @@ interface Props {
   title?: string
   description?: string
   ogImage?: string
+  // Granular chrome control. /ideas keeps the top Nav for site
+  // navigation but drops the Footer to give the graph the full canvas.
+  nav?: boolean
+  footer?: boolean
 }
 
 const {
   title = "Eytan Shleizer",
   description = "Problem exploration, AI, and the shape of what's coming.",
   ogImage,
+  nav = true,
+  footer = true,
 } = Astro.props as Props
 
 const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shleizer`
@@ -41,11 +47,11 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
     />
   </head>
   <body class="bg-ink-0 text-bone-0 antialiased">
-    <Nav />
+    {nav && <Nav />}
     <main>
       <slot />
     </main>
-    <Footer />
+    {footer && <Footer />}
 
     <!--
       Diagrams (mermaid + the generic <Diagram> component) are wrapped in a
@@ -192,6 +198,14 @@ const fullTitle = title === "Eytan Shleizer" ? title : `${title} — Eytan Shlei
         // Render mermaid sources to SVG.
         const mermaidNodes = document.querySelectorAll<HTMLElement>("pre.mermaid")
         if (mermaidNodes.length === 0) return
+        // Stash the source text on each pre BEFORE mermaid replaces it
+        // with rendered SVG. /ideas pages render mermaid inside hidden
+        // panels — when those panels become visible we need to re-run
+        // mermaid against a properly sized container, and the source
+        // text would otherwise be gone.
+        for (const pre of Array.from(mermaidNodes)) {
+          if (!pre.dataset.source) pre.dataset.source = pre.textContent ?? ""
+        }
         try {
           const mermaid = (await import("mermaid")).default
           mermaid.initialize({

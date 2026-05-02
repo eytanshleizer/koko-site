@@ -173,6 +173,32 @@
   max-height: 100%;
 }
 
+/* ──────────────────────────────────────────────────────────────────────
+   Wiki-links — output of the remark-wikilinks plugin. Two flavors:
+   - .wiki-link (resolves to a real post): styled like prose links.
+   - .wiki-stub (concept that has no post yet): dimmer with a dashed
+     underline, à la Obsidian's "unresolved link" treatment.
+   ────────────────────────────────────────────────────────────────────── */
+.wiki-link {
+  color: theme(colors.bone.0);
+  text-decoration: underline;
+  text-decoration-color: theme(colors.bone.500 / 40%);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 150ms ease;
+}
+.wiki-link:hover {
+  text-decoration-color: theme(colors.bone.200);
+}
+.wiki-stub {
+  color: theme(colors.bone.200);
+  text-decoration-style: dashed;
+  text-decoration-color: theme(colors.bone.500 / 40%);
+}
+.wiki-stub:hover {
+  color: theme(colors.bone.0);
+  text-decoration-color: theme(colors.ember.300 / 60%);
+}
+
 /* Mermaid output: the remark plugin emits <pre class="mermaid">…</pre>
    inside .diagram-body, and mermaid replaces the source with an <svg>
    sized to its natural aspect (often wider than 16:9). Make the pre a

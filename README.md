@@ -35,7 +35,7 @@ content collection in `src/content/notebook/` is a derived mirror — what
 gets deployed.
 
 ```
-~/Library/Mobile Documents/com~apple~CloudDocs/Blog/posts/   ← write here
+~/Library/Mobile Documents/com~apple~CloudDocs/My Site/Notebook/   ← write here
                        │
                        │  npm run sync-blog
                        ▼
@@ -48,7 +48,7 @@ src/content/notebook/                                        ← derived
 
 ### Authoring
 
-Write posts in `~/Library/.../CloudDocs/Blog/posts/`. **Each post is its
+Write posts in `~/Library/.../CloudDocs/My Site/Notebook/`. **Each post is its
 own folder** with an `index.md`. Section partials and assets sit
 alongside it, prefixed with `_` (so Astro doesn't treat them as routes):
 
@@ -84,7 +84,7 @@ Before committing, run:
 npm run sync-blog
 ```
 
-This copies everything from `~/.../Blog/posts/` to `src/content/notebook/`
+This copies everything from `~/.../My Site/Notebook/` to `src/content/notebook/`
 (wiping the destination first, so removed posts disappear). Then commit
 the resulting changes and push:
 

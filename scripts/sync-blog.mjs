@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-// Sync blog posts from the iCloud Blog folder into the Astro content
-// collection.
+// Sync notebook posts from the iCloud My Site/Notebook folder into the
+// Astro content collection.
 //
-// Source of truth = the iCloud Blog folder (default path below). The Astro
+// Source of truth = ~/Library/.../CloudDocs/My Site/Notebook/ (default
+// path below). Override with BLOG_SOURCE_DIR=/path/to/notebook. The Astro
 // content collection is derived from it on demand. Writers edit there;
 // `npm run sync-blog` mirrors what's there into the repo before commit.
 //
@@ -29,8 +30,8 @@ const DEFAULT_SOURCE = path.join(
   "Library",
   "Mobile Documents",
   "com~apple~CloudDocs",
-  "Blog",
-  "posts",
+  "My Site",
+  "Notebook",
 )
 
 const sourceDir = process.env.BLOG_SOURCE_DIR

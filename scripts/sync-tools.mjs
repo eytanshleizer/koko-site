@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Sync tools from the iCloud Tools folder into the Astro content collection.
+// Sync tools from the iCloud My Site/Tools folder into the Astro content
+// collection.
 //
 // Mirrors what sync-blog.mjs does for posts, but simpler — tool folders
 // are copied verbatim. No `.md` → `.mdx` transform, no import-rewriting:
@@ -7,7 +8,7 @@
 // statically by the detail route via `import.meta.glob`.
 //
 // Source layout:
-//   ~/Library/Mobile Documents/com~apple~CloudDocs/Tools/<slug>/
+//   ~/Library/Mobile Documents/com~apple~CloudDocs/My Site/Tools/<slug>/
 //     tool.md         ← required, frontmatter + description
 //     App.jsx         ← for kind=app
 //     prompt.md       ← for kind=doc (or any *.md the frontmatter `source` references)
@@ -27,6 +28,7 @@ const DEFAULT_SOURCE = path.join(
   "Library",
   "Mobile Documents",
   "com~apple~CloudDocs",
+  "My Site",
   "Tools",
 )
 

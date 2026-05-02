@@ -7,7 +7,7 @@ content. AI-agent friendly — no MDX, no `.astro` files inside posts.
 ## TL;DR
 
 ```
-~/Library/.../CloudDocs/Blog/posts/<slug>/
+~/Library/.../CloudDocs/My Site/Notebook/<slug>/
   index.md         ← required: frontmatter + a single import of the body
   _01-body.md      ← required: the actual prose (always at least one body file)
   _02-section.md   ← optional: split long posts into more sections
@@ -205,11 +205,11 @@ function frame(problem: Problem): Frame { … }
 
 ## Templates
 
-A `_template/` folder lives in `~/.../Blog/posts/_template/`. Copy it to
-start a new post:
+A `_template/` folder lives in `~/.../My Site/Notebook/_template/`. Copy it
+to start a new post:
 
 ```bash
-cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/Blog/posts
+cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/My\ Site/Notebook
 cp -r _template my-new-post
 ```
 
@@ -231,7 +231,7 @@ Then commit `src/content/notebook/` and push. The GitHub Actions workflow
 deploys.
 
 > **Source of truth:** anything you want in the published site must live
-> in `~/Library/.../CloudDocs/Blog/posts/`. The repo's `src/content/notebook/`
+> in `~/Library/.../CloudDocs/My Site/Notebook/`. The repo's `src/content/notebook/`
 > is overwritten by sync. Files added there directly will be wiped on the
 > next sync.
 
@@ -242,7 +242,7 @@ authoring posts here:
 
 ```
 You're authoring a blog post for an Astro site at
-~/Library/Mobile Documents/com~apple~CloudDocs/Blog/posts/<kebab-slug>/.
+~/Library/Mobile Documents/com~apple~CloudDocs/My Site/Notebook/<kebab-slug>/.
 
 Conventions:
 

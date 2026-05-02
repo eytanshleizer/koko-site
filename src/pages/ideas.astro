@@ -5,11 +5,33 @@ import IdeasGraph from "@/components/ideas/IdeasGraph.tsx"
 import { buildWikiGraph, slugify } from "@/lib/wiki-graph.ts"
 
 // Auto-derive the graph from notebook posts. Each post is a node; every
-// `[[target]]` wiki-link in a post body is an edge to that target. If
-// the target doesn't match a post, it becomes a "concept stub" node —
-// no detail page yet, but the graph picks it up the moment something
-// links to it.
+// `[[target]]` wiki-link in any of the post's body files becomes an edge
+// to that target. If the target doesn't match a post, it becomes a
+// "concept stub" node — no detail page yet, but the graph picks it up
+// the moment something links to it.
 const posts = await getCollection("notebook", ({ data }) => !data.draft)
+
+// Posts split their content into `index.mdx` (frontmatter only) plus one
+// or more `_NN-body.mdx` partials. The collection only sees `index.mdx`,
+// so `entry.body` no longer carries the prose where wiki-links live.
+// Glob every .mdx in the notebook tree as raw text and concatenate by
+// post folder, so the graph parser can scan the actual post content.
+const allRaw = import.meta.glob("/src/content/notebook/**/*.{md,mdx}", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>
+
+const bodyBySlug = new Map<string, string>()
+for (const [path, raw] of Object.entries(allRaw)) {
+  // Path looks like "/src/content/notebook/<slug>/index.mdx" or
+  // "/src/content/notebook/<slug>/_01-body.mdx". Extract <slug>.
+  const m = path.match(/\/notebook\/([^/]+)\//)
+  if (!m) continue
+  const slug = m[1]
+  const prev = bodyBySlug.get(slug) ?? ""
+  bodyBySlug.set(slug, prev + "\n\n" + raw)
+}
 
 // Notebook still uses Astro's legacy `type: "content"` collection so the
 // canonical URL identifier is `entry.slug` (e.g. "reading-the-problem-map")
@@ -19,7 +41,7 @@ const graph = buildWikiGraph(
   posts.map((p) => ({
     id: p.slug,
     title: p.data.title,
-    body: p.body ?? "",
+    body: bodyBySlug.get(p.slug) ?? p.body ?? "",
     excerpt: p.data.excerpt,
     date: p.data.date,
   })),

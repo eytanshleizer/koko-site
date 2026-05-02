@@ -175,28 +175,40 @@
 
 /* ──────────────────────────────────────────────────────────────────────
    Wiki-links — output of the remark-wikilinks plugin. Two flavors:
-   - .wiki-link (resolves to a real post): styled like prose links.
-   - .wiki-stub (concept that has no post yet): dimmer with a dashed
+   - .wiki-link (resolves to a real post): ember-toned link.
+   - .wiki-stub (concept that has no post yet): muted gray with a dashed
      underline, à la Obsidian's "unresolved link" treatment.
+   `!important` on the resolved-link color/decoration is to defeat the
+   `prose-a:*` utilities applied to anchors inside `.prose` containers,
+   which otherwise re-paint these in bone-color and beat us on specificity.
    ────────────────────────────────────────────────────────────────────── */
 .wiki-link {
-  color: theme(colors.bone.0);
-  text-decoration: underline;
-  text-decoration-color: theme(colors.bone.500 / 40%);
-  text-underline-offset: 4px;
-  transition: text-decoration-color 150ms ease;
+  color: theme(colors.ember.300) !important;
+  text-decoration: underline !important;
+  text-decoration-color: theme(colors.ember.300 / 50%) !important;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 150ms ease, text-decoration-color 150ms ease;
 }
 .wiki-link:hover {
-  text-decoration-color: theme(colors.bone.200);
+  color: theme(colors.ember.200) !important;
+  text-decoration-color: theme(colors.ember.300) !important;
 }
+
+/* Stub overrides the resolved style above. Stubs are less inviting on
+   purpose — a subtle gray dashed underline says "this isn't a page
+   yet, but the concept is acknowledged." */
 .wiki-stub {
-  color: theme(colors.bone.200);
-  text-decoration-style: dashed;
-  text-decoration-color: theme(colors.bone.500 / 40%);
+  color: theme(colors.bone.300) !important;
+  text-decoration: underline !important;
+  text-decoration-style: dashed !important;
+  text-decoration-color: theme(colors.bone.500 / 50%) !important;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 .wiki-stub:hover {
-  color: theme(colors.bone.0);
-  text-decoration-color: theme(colors.ember.300 / 60%);
+  color: theme(colors.bone.100) !important;
+  text-decoration-color: theme(colors.bone.300) !important;
 }
 
 /* Mermaid output: the remark plugin emits <pre class="mermaid">…</pre>

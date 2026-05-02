@@ -1,6 +1,13 @@
 ---
-// 7. The work — the three doors. Notebook / Tools / Ideas. These are the
+// 7. The work — the three doors. Notebook / Tools / Graph. These are the
 // outputs of the bet stated above. Each door speaks to a different reader.
+//
+// Icons share a design language: 80×80 viewBox, currentColor stroke at
+// width 1.25, no fill (except node dots in Graph). Each is composed of
+// the same family of primitives — circles and straight lines — and
+// occupies the same visual extent (~60×60 inside the 80×80 box). Cards
+// flex-column with mt-auto on the link so all three CTAs sit on the
+// same baseline regardless of paragraph length above.
 const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "")
 const link = (href: string) => base + href
 ---
@@ -24,24 +31,30 @@ const link = (href: string) => base + href
     </div>
 
     <div class="mt-12 grid gap-px bg-bone-500/15 md:grid-cols-3">
-      <!-- Notebook -->
+      <!-- Notebook — nested squares (concentric frame + rotated inner) -->
       <a
-        class="group block bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
+        class="group flex flex-col bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
         href={link("/notebook")}
       >
-        <div class="mb-10 h-24 w-full">
+        <div class="mb-10 flex h-24 w-full items-center">
           <svg
-            viewBox="0 0 120 80"
+            viewBox="0 0 80 80"
             fill="none"
             stroke="currentColor"
             stroke-width="1.25"
             stroke-linecap="round"
-            class="h-full w-auto text-bone-200 transition group-hover:text-bone-0"
+            stroke-linejoin="round"
+            class="h-20 w-20 text-bone-200 transition group-hover:text-bone-0"
             aria-hidden="true"
           >
-            <path d="M 8 22 Q 40 10, 70 22 T 112 28" />
-            <path d="M 8 40 Q 40 28, 70 40 T 112 46" />
-            <path d="M 8 58 Q 40 46, 70 58 T 112 64" />
+            <rect x="14" y="14" width="52" height="52" />
+            <rect
+              x="14"
+              y="14"
+              width="52"
+              height="52"
+              transform="rotate(45 40 40)"
+            />
           </svg>
         </div>
         <h3 class="text-[1.15rem] font-semibold text-bone-0">Notebook</h3>
@@ -49,32 +62,30 @@ const link = (href: string) => base + href
           Working notes on the questions above — what problems mean now,
           how to frame them for AI, and where the practice is heading.
         </p>
-        <span class="mt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
+        <span class="mt-auto pt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
           Read the notebook
           <span class="transition group-hover:translate-x-0.5" aria-hidden="true">→</span>
         </span>
       </a>
 
-      <!-- Tools -->
+      <!-- Tools — circle with inscribed triangle (instrument abstraction) -->
       <a
-        class="group block bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
+        class="group flex flex-col bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
         href={link("/tools")}
       >
-        <div class="mb-10 h-24 w-full">
+        <div class="mb-10 flex h-24 w-full items-center">
           <svg
-            viewBox="0 0 120 80"
+            viewBox="0 0 80 80"
             fill="none"
             stroke="currentColor"
             stroke-width="1.25"
             stroke-linecap="round"
-            class="h-full w-auto text-bone-200 transition group-hover:text-bone-0"
+            stroke-linejoin="round"
+            class="h-20 w-20 text-bone-200 transition group-hover:text-bone-0"
             aria-hidden="true"
           >
-            <circle cx="60" cy="40" r="26" />
-            <line x1="60" y1="6" x2="60" y2="74" />
-            <line x1="26" y1="40" x2="94" y2="40" />
-            <line x1="36" y1="16" x2="84" y2="64" />
-            <line x1="84" y1="16" x2="36" y2="64" />
+            <circle cx="40" cy="40" r="26" />
+            <polygon points="40,18 60,53 20,53" />
           </svg>
         </div>
         <h3 class="text-[1.15rem] font-semibold text-bone-0">Tools</h3>
@@ -83,48 +94,43 @@ const link = (href: string) => base + href
           spaces for agents, design problems that solve themselves, and tighten
           the review-and-redirect loop. For you, your agent, or both.
         </p>
-        <span class="mt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
+        <span class="mt-auto pt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
           See the tools
           <span class="transition group-hover:translate-x-0.5" aria-hidden="true">→</span>
         </span>
       </a>
 
-      <!-- Ideas -->
+      <!-- Graph — triangle of connected nodes (network abstraction) -->
       <a
-        class="group block bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
+        class="group flex flex-col bg-ink-0 p-8 transition hover:bg-ink-50 md:p-10"
         href={link("/ideas")}
       >
-        <div class="mb-10 h-24 w-full">
+        <div class="mb-10 flex h-24 w-full items-center">
           <svg
-            viewBox="0 0 120 80"
+            viewBox="0 0 80 80"
             fill="none"
             stroke="currentColor"
-            stroke-width="1.1"
+            stroke-width="1.25"
             stroke-linecap="round"
-            class="h-full w-auto text-bone-200 transition group-hover:text-bone-0"
+            stroke-linejoin="round"
+            class="h-20 w-20 text-bone-200 transition group-hover:text-bone-0"
             aria-hidden="true"
           >
-            <line x1="20" y1="22" x2="55" y2="42" />
-            <line x1="55" y1="42" x2="35" y2="64" />
-            <line x1="55" y1="42" x2="90" y2="28" />
-            <line x1="90" y1="28" x2="100" y2="58" />
-            <line x1="100" y1="58" x2="65" y2="66" />
-            <line x1="35" y1="64" x2="65" y2="66" />
-            <circle cx="20" cy="22" r="3" fill="currentColor" />
-            <circle cx="55" cy="42" r="4.5" fill="currentColor" />
-            <circle cx="35" cy="64" r="2.5" fill="currentColor" />
-            <circle cx="90" cy="28" r="3.5" fill="currentColor" />
-            <circle cx="100" cy="58" r="3" fill="currentColor" />
-            <circle cx="65" cy="66" r="2.5" fill="currentColor" />
+            <line x1="40" y1="18" x2="18" y2="58" />
+            <line x1="40" y1="18" x2="62" y2="58" />
+            <line x1="18" y1="58" x2="62" y2="58" />
+            <circle cx="40" cy="18" r="4" fill="currentColor" stroke="none" />
+            <circle cx="18" cy="58" r="4" fill="currentColor" stroke="none" />
+            <circle cx="62" cy="58" r="4" fill="currentColor" stroke="none" />
           </svg>
         </div>
-        <h3 class="text-[1.15rem] font-semibold text-bone-0">Ideas</h3>
+        <h3 class="text-[1.15rem] font-semibold text-bone-0">Graph</h3>
         <p class="mt-3 text-[14.5px] leading-relaxed text-bone-300">
           A working map of the concepts in this notebook — how they connect,
           build on each other, and pull in new directions. The same questions,
           seen visually.
         </p>
-        <span class="mt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
+        <span class="mt-auto pt-6 inline-flex items-center gap-1 text-[13px] text-bone-50">
           Open the map
           <span class="transition group-hover:translate-x-0.5" aria-hidden="true">→</span>
         </span>

@@ -25,7 +25,7 @@ const link = (href: string) => (href === "/" ? base + "/" : base + href)
         <ul class="mt-3 space-y-2 text-[14px] text-bone-200">
           <li><a class="hover:text-bone-0" href={link("/notebook")}>Notebook</a></li>
           <li><a class="hover:text-bone-0" href={link("/tools")}>Tools</a></li>
-          <li><a class="hover:text-bone-0" href={link("/ideas")}>Ideas</a></li>
+          <li><a class="hover:text-bone-0" href={link("/ideas")}>Graph</a></li>
           <li><a class="hover:text-bone-0" href={link("/about")}>About</a></li>
         </ul>
       </div>
@@ -33,14 +33,6 @@ const link = (href: string) => (href === "/" ? base + "/" : base + href)
       <div>
         <p class="label-mono">Elsewhere</p>
         <ul class="mt-3 space-y-2 text-[14px] text-bone-200">
-          <li>
-            <a
-              class="hover:text-bone-0"
-              href="https://github.com/eytanshleizer"
-              target="_blank"
-              rel="noopener">GitHub</a
-            >
-          </li>
           <li>
             <a
               class="hover:text-bone-0"

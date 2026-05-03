@@ -57,10 +57,19 @@ const tree = [
   {
     key: "01-frames", kind: "folder", layer: "frame", label: "01-frames", children: [
       {
-        key: "frame-01-retention", kind: "folder", layer: "frame", label: "frame-01-retention", children: [
+        key: "frame-01-ux-friction", kind: "folder", layer: "frame", label: "frame-01-ux-friction", children: [
           { key: "problem.md",      kind: "file", layer: "frame", label: "problem.md" },
           { key: "constraints.md",  kind: "file", layer: "frame", label: "constraints.md" },
           { key: "stakeholders.md", kind: "file", layer: "frame", label: "stakeholders.md" },
+          { key: "questions.md",    kind: "file", layer: "frame", label: "questions.md" },
+        ],
+      },
+      {
+        key: "frame-02-wrong-audience", kind: "folder", layer: "frame", label: "frame-02-wrong-audience", children: [
+          { key: "problem2.md",      kind: "file", layer: "frame", label: "problem.md" },
+          { key: "constraints2.md",  kind: "file", layer: "frame", label: "constraints.md" },
+          { key: "stakeholders2.md", kind: "file", layer: "frame", label: "stakeholders.md" },
+          { key: "questions2.md",    kind: "file", layer: "frame", label: "questions.md" },
         ],
       },
       { key: "active-frame",    kind: "folder", layer: "frame", label: "active-frame" },
@@ -73,6 +82,7 @@ const tree = [
       { key: "facts.md",     kind: "file", layer: "context", label: "facts.md" },
       { key: "decisions.md", kind: "file", layer: "context", label: "decisions.md" },
       { key: "patterns.md",  kind: "file", layer: "context", label: "patterns.md" },
+      { key: "summary.md",   kind: "file", layer: "context", label: "summary.md" },
     ],
   },
   {

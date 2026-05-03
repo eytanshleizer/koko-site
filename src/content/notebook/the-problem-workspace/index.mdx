@@ -5,29 +5,41 @@ date: 2026-05-03
 excerpt: "Why dumping context into a chat window fails on hard problems — and the research-backed, five-layer model that fixes it. A complete framework for structuring folders, files, and governance so AI agents can actually help you solve complex, ill-structured problems."
 ---
 
-import Premise from "./_01-the-premise.mdx"
+import Introduction from "./_00-introduction.mdx"
+import Research from "./_01-the-research.mdx"
+import Premise from "./_02-the-premise.mdx"
 import LayeredModel from "./_02-the-layered-model.mdx"
+import ResearchMapping from "./_research-mapping.jsx"
+import WorkspaceLayers from "./_workspace-layers.jsx"
+import GovernanceMatrix from "./_governance-matrix.jsx"
 import Raw from "./_03-layer-1-raw.mdx"
 import Frame from "./_04-layer-2-frame.mdx"
 import ContextIntro from "./_05-layer-3-context.mdx"
 import ContextLong from "./_06-layer-3-context.mdx"
+import BeforeAfter from "./_before-after.jsx"
 import Work from "./_06-layer-4-work.mdx"
+import FolderTree from "./_folder-tree.jsx"
 import ReviewIntro from "./_07-layer-5-review.mdx"
 import ReviewLong from "./_08-layer-5-review.mdx"
+import FeedbackGradient from "./_feedback-gradient.jsx"
 import CadenceIntro from "./_08-the-cadence.mdx"
 import CadenceLong from "./_09-the-cadence.mdx"
-import Conclusion from "./_10-conclusion.mdx"
-import WorkspaceLayers from "./_workspace-layers.jsx"
-import BeforeAfter from "./_before-after.jsx"
-import FolderTree from "./_folder-tree.jsx"
-import FeedbackGradient from "./_feedback-gradient.jsx"
 import CadenceFlow from "./_cadence-flow.jsx"
+import Conclusion from "./_10-conclusion.mdx"
+
+<Introduction />
+
+<Research />
 
 <Premise />
 
 <LayeredModel />
 
+<ResearchMapping client:only="react" />
+
 <WorkspaceLayers client:only="react" />
+
+<GovernanceMatrix client:only="react" />
 
 <Raw />
 

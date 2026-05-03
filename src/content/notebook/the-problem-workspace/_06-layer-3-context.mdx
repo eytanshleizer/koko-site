@@ -1,0 +1,120 @@
+## Layer 3: Context — The Weapon, Not the Archive
+
+Context is not memory. Context is a weapon — and the difference matters.
+
+Memory is everything you have ever stored. Context is the *selection* that makes the next action effective. An agent with access to a hundred files has memory. An agent with access to five curated files that contain exactly what it needs to reason about *this* problem, at *this* stage, has context. The first produces noise. The second produces leverage.
+
+> Context is the minimum knowledge an agent needs to be useful *here*, on *this* problem, at *this* stage of understanding.
+
+Not the raw dump from Layer 1. Not the problem frame from Layer 2. Context answers one question: **what does something reading this folder absolutely need to know to do good work?**
+
+This is the OODA loop's Orient phase made concrete. Boyd argued that orientation — the synthesis of observations through existing mental models — is the most neglected and most important step in decision-making. The Context layer is where orientation lives. It is where raw observations are processed through the lens of the problem frame, reconciled with prior decisions, and distilled into the curated knowledge that makes AI-generated work meaningful.
+
+The layer contains five living files:
+
+```
+02-context/
+├── glossary.md       — terms defined once, referenced everywhere
+├── facts.md          — claims that have been verified, with sources
+├── decisions.md      — why X won over Y, timestamped
+├── patterns.md       — insights that keep recurring across iterations
+└── summary.md        — current state of the workspace, auto-updated
+```
+
+This layer is maintained by the AI and reviewed by the human. The agent updates `facts.md` after every research pass. It appends to `decisions.md` when you choose a direction. It identifies recurring themes and logs them in `patterns.md`. The human checks for hallucinations. The human corrects definitions. The human decides which facts are actually verified and which are plausible but unconfirmed.
+
+### Context in Practice
+
+After the product team establishes their two frames and begins investigating, the AI builds and maintains the Context layer. Here is what `facts.md` looks like after the first week:
+
+```markdown
+## Verified Facts
+
+### Conversion Data
+- Trial-to-paid conversion was 12.1% (avg) for Q4 2025, measured as 
+  paid subscription within 14-day trial window. 
+  Source: Stripe dashboard export, cross-referenced with Mixpanel.
+- Conversion dropped to 7.2% for weeks 1-8 of Q1 2026. 
+  Source: same methodology, same export.
+- The redesign launched March 3. The campaign channel shift started 
+  February 18 — two weeks earlier.
+  Source: marketing team changelog, confirmed with VP Marketing.
+
+### User Behavior
+- Heatmap data shows 73% fewer clicks on "Integrations" menu item in 
+  new UI vs. old UI. Source: Hotjar, compared Feb vs. April sessions.
+- Average time-to-first-integration increased from 4.2 min to 11.7 min 
+  post-redesign. Source: Mixpanel event timing.
+- 3 of 3 interviewed churned users cited inability to find Stripe 
+  setup as primary frustration. Source: interview transcripts in 
+  00-raw/interviews/.
+
+### Audience Data  
+- Paid social campaigns began Feb 18, now account for 38% of trial 
+  signups (up from 4%). Source: attribution data in Google Analytics.
+- Paid social trial users have 23% lower activation rate (defined as 
+  completing onboarding checklist) than organic users. 
+  Source: cohort analysis in Mixpanel.
+
+## Unverified / Needs Confirmation
+- [ ] Do paid social users have different intent profiles, or are they 
+      the same users acquired through a different channel?
+- [ ] Is the 73% heatmap drop due to fewer users trying, or the same 
+      users failing?
+- [ ] The old UI had a persistent sidebar with "Integrations" visible; 
+      the new UI nests it under Settings → Advanced. Confirm this is 
+      accurate by comparing screenshots.
+```
+
+And here is `decisions.md` after the team reviews the first round of analysis:
+
+```markdown
+## Decision Log
+
+### 2026-04-15: Pursue both frames simultaneously
+- **Decision:** Do not commit to Frame 01 (UX) or Frame 02 (audience) 
+  yet. Evidence supports both. Run a cohort-controlled analysis to 
+  isolate variables.
+- **Rationale:** The campaign shift and redesign are confounded. 
+  Committing to one frame without disentangling them risks solving 
+  the wrong problem.
+- **Dissent:** Engineering lead argued for reverting the UI immediately 
+  as a "no-regret move." Team decided the revert cost (2 weeks eng 
+  time + user confusion) was too high without stronger evidence.
+
+### 2026-04-18: Integration discoverability is a confirmed issue
+- **Decision:** Regardless of which frame is primary, the Integrations 
+  path in the new UI is objectively worse. Treat this as a 
+  "fix regardless" item, not dependent on frame resolution.
+- **Rationale:** 73% drop in clicks + 2.8x increase in time-to-integration 
+  + unanimous user interview feedback = sufficient evidence.
+- **Action:** File a UX fix ticket independent of the broader investigation.
+```
+
+### Why Five Files, Not One
+
+You might wonder why Context needs five separate files instead of a single `context.md`. The answer is governance and cognitive load.
+
+A single context file becomes a sprawling document that mixes definitions, facts, decisions, and observations into one stream. The AI cannot update it precisely — it rewrites large sections to add a small fact, risking regressions. The human cannot review it efficiently — they have to re-read everything to find what changed.
+
+Five focused files let the AI make surgical updates. "Add a verified fact to `facts.md`" is a precise operation. "Update the context document" is not. The separation also helps the human review selectively. After a research session, you check `facts.md` for accuracy. After a decision meeting, you check `decisions.md` for completeness. You do not re-read the glossary every time.
+
+> Storage hoards. Context prepares.
+
+The difference is outcome. An agent reading a hundred raw files produces noise. An agent reading five curated context files produces signal. This layer is the signal.
+
+### The Context Layer and Sensemaking
+
+Weick's sensemaking framework helps explain why Context is so critical. Sensemaking is not about finding the right answer — it is about constructing a plausible narrative from ambiguous evidence. The Context layer is where that narrative lives.
+
+The `decisions.md` file is particularly important here. It captures not just *what* was decided but *why* — including dissenting opinions, rejected alternatives, and the evidence that tipped the balance. This is sensemaking infrastructure. When a new team member (or a new AI session) reads the decisions log, they are not just learning what happened. They are absorbing the team's evolving understanding of the problem. They are inheriting orientation.
+
+Without this log, every new session starts from scratch. The AI re-derives conclusions that were already reached, re-proposes approaches that were already rejected, and fails to benefit from the accumulated judgment of previous sessions. The decisions log is what prevents the wheel from being reinvented on every iteration.
+
+### Anti-Patterns
+
+**The everything bucket.** Context grows to include every piece of information the team has encountered. The glossary has fifty terms. The facts file has a hundred entries. The summary is three pages long. Context should be *minimum viable* — just enough for the AI to reason well, not a comprehensive knowledge base. If you would not expect a new team member to read and remember it in fifteen minutes, it is too large.
+
+**Unreviewed auto-updates.** The AI maintains Context automatically, and the human never checks. Three weeks later, the facts file contains two hallucinated statistics and a definition that subtly drifts from the team's actual understanding. The fix: review Context at least weekly. The AI maintains; the human validates. Both roles are essential.
+
+**Static context.** The Context layer is written once and never updated. As the investigation progresses and understanding deepens, the context files still reflect the team's knowledge from week one. The AI works with outdated orientation, producing work that is technically competent but strategically stale. Context must be *living* — updated as frames shift, facts are verified, and decisions are made.

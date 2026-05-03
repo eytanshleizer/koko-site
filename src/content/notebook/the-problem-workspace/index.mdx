@@ -1,19 +1,26 @@
 ---
 title: "The Problem Workspace"
-date: 2026-05-02
-excerpt: "How to structure folders, files, and context so AI agents can actually help you solve complex problems."
+subtitle: "A Structured Architecture for Human-AI Collaboration on Complex Problems"
+date: 2026-05-03
+excerpt: "Why dumping context into a chat window fails on hard problems — and the research-backed, five-layer model that fixes it. A complete framework for structuring folders, files, and governance so AI agents can actually help you solve complex, ill-structured problems."
 ---
 
 import Premise from "./_01-the-premise.mdx"
 import LayeredModel from "./_02-the-layered-model.mdx"
 import Raw from "./_03-layer-1-raw.mdx"
 import Frame from "./_04-layer-2-frame.mdx"
-import Context from "./_05-layer-3-context.mdx"
+import ContextIntro from "./_05-layer-3-context.mdx"
+import ContextLong from "./_06-layer-3-context.mdx"
 import Work from "./_06-layer-4-work.mdx"
-import Review from "./_07-layer-5-review.mdx"
-import Cadence from "./_08-the-cadence.mdx"
+import ReviewIntro from "./_07-layer-5-review.mdx"
+import ReviewLong from "./_08-layer-5-review.mdx"
+import CadenceIntro from "./_08-the-cadence.mdx"
+import CadenceLong from "./_09-the-cadence.mdx"
+import Conclusion from "./_10-conclusion.mdx"
 import WorkspaceLayers from "./_workspace-layers.jsx"
+import BeforeAfter from "./_before-after.jsx"
 import FolderTree from "./_folder-tree.jsx"
+import FeedbackGradient from "./_feedback-gradient.jsx"
 import CadenceFlow from "./_cadence-flow.jsx"
 
 <Premise />
@@ -26,14 +33,26 @@ import CadenceFlow from "./_cadence-flow.jsx"
 
 <Frame />
 
-<Context />
+<ContextIntro />
+
+<ContextLong />
+
+<BeforeAfter client:only="react" />
 
 <Work />
 
 <FolderTree client:only="react" />
 
-<Review />
+<ReviewIntro />
 
-<Cadence />
+<ReviewLong />
+
+<FeedbackGradient client:only="react" />
+
+<CadenceIntro />
+
+<CadenceLong />
 
 <CadenceFlow client:only="react" />
+
+<Conclusion />

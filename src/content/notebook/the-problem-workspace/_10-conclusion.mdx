@@ -1,0 +1,84 @@
+## Putting It Into Practice
+
+You have read the theory. You have seen the example. Now the question is: do you actually set this up?
+
+Here is the honest answer: **you do not need a Problem Workspace for simple problems.** If you are asking an AI to write a function, draft an email, or summarize a document, the dump-and-prompt approach works fine. These are tame problems — well-defined, bounded, with clear success criteria. A conversation is the right interface for them.
+
+You need a workspace when the problem is *ill-structured*: when the definition is ambiguous, the data is conflicting, there are multiple stakeholders with competing interests, and the solution requires iterating across multiple sessions. You need it when the cost of getting it wrong is high enough that "the AI sounded smart" is not a sufficient quality bar.
+
+### The Minimum Viable Workspace
+
+If the five-layer model feels heavy, start with three things:
+
+**Separate your inputs from your work.** Create a `raw/` folder for things you collected and a `work/` folder for things the AI generated. This single distinction — human-authored evidence versus machine-generated output — prevents contamination and makes review possible. It takes thirty seconds.
+
+**Write a problem statement before prompting.** One file. Three paragraphs. What you are solving, what you cannot change, and what success looks like. Reference it in every prompt. This is a minimal Frame, and it prevents the most common failure mode: generating solutions to an undefined problem.
+
+**Keep a decisions log.** After every significant AI interaction, append one entry: what was decided, why, and what was rejected. This file costs two minutes per session and saves twenty minutes of re-derivation next session. It is the highest-leverage practice in the entire model.
+
+These three practices — separation of inputs, explicit framing, and decision logging — capture perhaps 70% of the value of the full five-layer model. Start here. Add layers as the problem demands them.
+
+### The Full Setup
+
+For complex, multi-week investigations — the kind where the full model earns its weight — here is the folder structure:
+
+```
+problem-workspace/
+├── 00-raw/
+│   ├── interviews/
+│   ├── research/
+│   ├── screenshots/
+│   ├── bookmarks/
+│   └── notes/
+├── 01-frames/
+│   ├── frame-01-[name]/
+│   │   ├── problem.md
+│   │   ├── constraints.md
+│   │   ├── stakeholders.md
+│   │   └── questions.md
+│   ├── active-frame/
+│   └── archived-frames/
+├── 02-context/
+│   ├── glossary.md
+│   ├── facts.md
+│   ├── decisions.md
+│   ├── patterns.md
+│   └── summary.md
+├── 03-work/
+│   └── iterations/
+│       ├── iteration-01/
+│       │   ├── design/
+│       │   ├── prototype/
+│       │   └── analysis.md
+│       └── iteration-02/
+├── 04-review/
+│   ├── critiques/
+│   ├── comparisons/
+│   └── approved/
+└── meta/
+    ├── project-brief.md
+    ├── changelog.md
+    └── agent-notes.md
+```
+
+Copy it. Adapt it. The specific subfolder names matter less than the layer boundaries. What matters is that Raw, Frame, Context, Work, and Review are distinct directories with distinct governance rules.
+
+One practical note: the governance rules — which layers the AI can write to, what it should read before generating work, how it should handle the meta folder — need to be communicated to the agent at the start of each session. This can be a system prompt, a project-level instructions file (like a `CLAUDE.md` or `.cursorrules`), or the `meta/project-brief.md` itself. The workspace structure carries semantic meaning, but the agent still needs to be told the protocol. Think of the folder structure as the schema and the instructions file as the API contract.
+
+### Addressing the Skepticism
+
+Three objections come up consistently.
+
+**"This is too much process."** It is less process than you think. The setup takes ten minutes. The ongoing maintenance — updating context, writing critiques, logging decisions — takes five to ten minutes per session. Compare this to the alternative: spending thirty minutes every session re-explaining the problem, re-establishing context, and re-deriving conclusions that were already reached. The workspace trades ten minutes of structure for thirty minutes of re-work. The math is favorable.
+
+**"The AI should be able to figure this out from my data."** This is the context-as-magic fallacy. Models are powerful, but they cannot distinguish between verified facts and raw speculation, between your problem definition and someone else's, between settled decisions and open questions — unless you give them structural signals. The workspace provides those signals. It is not dumbing down the AI. It is giving it the information architecture it needs to be smart.
+
+**"My problem does not fit neatly into five layers."** It does not need to. The layers are a starting framework, not a straitjacket. Some problems have thin Raw layers (you already know the domain) and thick Frame layers (the definition is genuinely contested). Some problems have minimal Review needs (solo work) and extensive Context needs (complex domain). Adjust the weight of each layer to match your problem. The principle — structured governance of information — is universal. The implementation is flexible.
+
+### The Broader Implication
+
+The Problem Workspace is one instance of a larger pattern. As AI agents become more capable — as they gain the ability to read file systems, execute code, and take multi-step actions — the interface between human and machine shifts from *conversation* to *environment.* The agent does not need better prompts. It needs a better-organized world to operate in.
+
+The workspace is a bet on that future: that the people who learn to structure problems for AI collaboration will get dramatically more value than the people who continue to dump context into chat windows and hope. Not because the AI is better for them, but because the structure makes the AI's existing intelligence *usable*.
+
+Rittel was right: the hard part is not finding the answer. It is defining the question. The workspace gives you a place to do that work — and to do it with an AI partner that can actually help, because you have told it exactly where it stands.

@@ -1,0 +1,113 @@
+## Layer 5: Review — Where You Stop Generating and Start Deciding
+
+Judgment requires a home. The Review layer is where you stop generating and start deciding.
+
+Every workspace needs a place for critical distance. Without it, the Work folder becomes a graveyard of half-baked attempts that were never formally evaluated, never compared, and never explicitly approved or rejected. The absence of judgment is worse than bad judgment — at least bad judgment is traceable.
+
+> **Review** is the layer where the loop closes. It converts output into decision.
+
+```
+04-review/
+├── critiques/
+│   ├── iteration-01-critique.md
+│   └── iteration-02-critique.md
+├── comparisons/
+│   └── comparison-iter01-vs-iter02.md
+└── approved/
+    └── approved-change-01-integration-nav.md
+```
+
+Structure it simply. `critiques/` holds structured assessments of individual iterations. `comparisons/` hosts side-by-side analyses when multiple solutions compete. `approved/` is the single source of truth — the only folder downstream processes should trust. Anything outside it is still speculative.
+
+### The Critique Structure
+
+A critique is not a thumbs-up or thumbs-down. It is a structured assessment that answers four questions:
+
+1. **Does it solve the stated problem?** Check the iteration against the win condition in the active frame. Not "is this good?" but "does this move the number we said we cared about?"
+2. **What assumptions does it make?** Every solution smuggles in assumptions. Surface them. The UX fix assumes that users who cannot find Integrations would have converted if they could. That is testable. Is it tested?
+3. **What does it break?** Second-order effects. Moving Integrations back to the sidebar addresses discoverability but reverses the "clean sidebar" that the redesign was specifically trying to achieve. How does the CEO feel about that?
+4. **What is the confidence level?** On a scale of "hypothesis" to "proven," where does this solution sit? If it is still a hypothesis, what would move it to proven?
+
+### Review in Practice
+
+The product team reviews iteration-01 (the UX audit). Here is their critique:
+
+```markdown
+## Critique: Iteration 01 — Integration Discoverability
+
+### Does it solve the stated problem?
+Partially. The analysis correctly identifies that the integration path 
+doubled in click depth. Change #1 (surface Integrations in primary nav) 
+directly addresses this. However, the analysis does not account for 
+Frame 02 — if the conversion drop is primarily audience-driven, even 
+perfect UX will not restore conversion to 11%.
+
+### Assumptions
+- Assumes click depth is the primary friction, not visual design or 
+  copy. Heatmap data supports this but is not conclusive.
+- Assumes trial users know they want integrations. Some may not 
+  understand the product well enough to know integrations are the 
+  key value driver.
+- Assumes the Stripe setup flow itself is unchanged. Needs verification.
+
+### What does it break?
+- Moving Integrations to primary nav reverses the design decision to 
+  reduce sidebar clutter. CEO explicitly requested this. Political risk.
+- Contextual prompts (change #2) may annoy users who are exploring 
+  rather than converting. Could increase trial churn if aggressive.
+
+### Confidence Level
+Medium. Strong qualitative evidence (interviews), strong behavioral 
+evidence (heatmaps), but no controlled test. Recommend A/B test 
+before full rollout.
+
+### Decision
+- Change #1: APPROVED for A/B test, not full rollout.
+- Change #2: APPROVED for implementation in the A/B variant.
+- Change #3: DEFERRED — revisit after Settings redesign scoping.
+- ADDITIONAL: Request iteration-02 to address Frame 02 (audience 
+  analysis) before committing further to Frame 01 solutions.
+```
+
+### The Feedback Gradient
+
+This is where the Cynefin insight becomes operational. When a solution fails Review, the feedback does not always go back to Work. Where it goes depends on *what kind of failure* occurred:
+
+**Technical failure → back to Work.** The solution was the right idea but the execution was flawed. A better iteration can fix it. Example: "The A/B test design is sound but the statistical power calculation is wrong — redo with corrected sample size."
+
+**Framing failure → back to Frame.** The solution does not solve the real problem because the problem was mis-specified. Example: "We optimized for click depth but users report they do not understand what Integrations *are* — this is a comprehension problem, not a navigation problem."
+
+**Context failure → back to Context.** The solution used outdated or incorrect information. Example: "The analysis assumed the Stripe setup flow is unchanged, but engineering shipped a new flow two weeks ago. Facts file needs updating."
+
+**Fundamental failure → back to Raw.** The entire framing is wrong. You need new observations. Example: "Both frames assume the issue is product-side. But three new support tickets suggest the problem is a billing error that prevents the payment step. We need more raw data."
+
+The gradient of the error determines the restart point. This prevents the common failure mode of always iterating on Work when the real problem is upstream. A team stuck in a Work → Review → Work loop, producing better and better solutions to the wrong problem, is a team that has not used the feedback gradient.
+
+### The Meta Folder
+
+Then there is the Meta folder. This is not another layer. It is the project's institutional memory, stored outside the generative pipeline so it persists across sessions, across agents, and across context window resets.
+
+```
+meta/
+├── project-brief.md    — the handoff document
+├── changelog.md        — human-curated decision history
+└── agent-notes.md      — breadcrumbs for the next session
+```
+
+`meta/project-brief.md` is the onboarding document. Any new agent — or any team member returning after a week away — reads this first. It contains the current state of the investigation, the active frame, the most important decisions made so far, and what the next steps are. Think of it as a living executive summary that is updated every time the workspace state changes significantly.
+
+`meta/changelog.md` is human-curated. Not an auto-log, but a record of the decisions that *mattered.* "April 15: Decided to pursue both frames simultaneously. April 18: Confirmed integration discoverability as a fix-regardless item. April 22: A/B test for nav change approved, targeting 2-week run."
+
+`meta/agent-notes.md` is where you leave breadcrumbs for the next AI session: "We tried audience segmentation in iteration-02 but the data was insufficient — need at least 4 weeks of cohort data for statistical significance. Consider revisiting after May 15. The CEO is sensitive about sidebar changes — frame recommendations carefully."
+
+> The Meta folder is what prevents **100%** of prior work from vanishing when a context window resets. Without it, every agent starts from zero.
+
+Weick would recognize this as sensemaking infrastructure. The meta folder preserves the narrative — not just what happened, but what it means and what should happen next. It is the bridge between sessions, the thing that makes a series of disconnected AI conversations into a coherent investigation.
+
+### Anti-Patterns
+
+**Review as rubber stamp.** Every iteration is approved. No critique is serious. The Review layer exists formally but does not actually gate anything. The fix: if nothing has been rejected or significantly revised in the last five iterations, Review is not working. Good Review kills bad work. That is its job.
+
+**Missing feedback gradient.** Every review rejection bounces back to Work. The team never questions whether the Frame or Context is the issue. They iterate endlessly on solutions without asking if they are solving the right problem. The fix: for every rejection, explicitly categorize the failure type. Is this a Work failure, a Frame failure, a Context failure, or a Raw failure?
+
+**No Meta folder.** The team relies on the AI's memory (it has none between sessions) or on human memory (it is unreliable). Each new session re-derives conclusions, re-proposes rejected ideas, and wastes the first thirty minutes of every conversation getting back to where the last one ended. The Meta folder costs five minutes to maintain. It saves hours.

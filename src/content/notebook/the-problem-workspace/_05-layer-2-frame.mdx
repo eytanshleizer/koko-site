@@ -1,0 +1,101 @@
+## Layer 2: Frame — Defining What You Are Actually Solving
+
+The Frame is the most expensive layer. A bad frame wastes **100%** of everything that follows. Every hour of AI-generated analysis, every iteration of work, every review cycle — all of it optimizes for the wrong objective if the frame is wrong.
+
+> A frame is a selected way of seeing a problem — the boundaries, the rules, and the win condition.
+
+This is where raw material becomes a problem statement. Not one problem statement — potentially several. The workspace holds multiple frames simultaneously because ambiguity is real. It does not collapse just because you want closure. Rittel and Webber's insight about wicked problems applies directly here: the problem cannot be definitively stated, and every attempt at stating it excludes relevant perspectives.
+
+The structure is deliberate:
+
+```
+01-frames/
+├── frame-01-ux-friction/
+│   ├── problem.md
+│   ├── constraints.md
+│   ├── stakeholders.md
+│   └── questions.md
+├── frame-02-wrong-audience/
+│   ├── problem.md
+│   ├── constraints.md
+│   ├── stakeholders.md
+│   └── questions.md
+├── active-frame/       → symlink or copy of the current working frame
+└── archived-frames/    → frames that were explored and set aside
+```
+
+Every frame folder contains the same template. `problem.md` states what you are solving and why. `constraints.md` lists what you cannot change — budget, timeline, technical debt, organizational politics. `stakeholders.md` maps who cares and what they want. `questions.md` records what you still do not know — the open uncertainties that the frame does not yet resolve.
+
+### Framing the Conversion Problem
+
+The product team, after reviewing their raw material, recognizes that there are at least two plausible framings of their conversion drop. They create two frame folders.
+
+**Frame 01: UX Friction** — `frame-01-ux-friction/problem.md`:
+
+```markdown
+## Problem Statement
+
+Trial-to-paid conversion dropped 40% (from 12% to 7.2%) in the 8 weeks 
+following the March dashboard redesign. User interviews and heatmap data 
+suggest that key conversion actions — particularly Stripe integration setup 
+and team invitation — are significantly harder to discover and complete in 
+the new UI.
+
+## Hypothesis
+
+The redesign optimized for visual appeal and information density at the 
+cost of task discoverability. Users who signed up with a specific intent 
+(connect payments, invite team) cannot find the path to complete that 
+intent within the trial window.
+
+## Win Condition
+
+Restore trial-to-paid conversion to ≥11% within 60 days without reverting 
+the full redesign.
+```
+
+**Frame 02: Wrong Audience** — `frame-02-wrong-audience/problem.md`:
+
+```markdown
+## Problem Statement
+
+Trial-to-paid conversion dropped 40% coincident with a marketing campaign 
+shift that changed the primary acquisition channel from organic search 
+(high-intent users) to paid social (exploratory users). The redesign 
+launch and campaign shift happened within two weeks of each other, making 
+attribution ambiguous.
+
+## Hypothesis
+
+The conversion drop is primarily an audience quality issue, not a UX issue. 
+The new trial cohort has different intent profiles than the cohort the 
+original conversion rate was measured against.
+
+## Win Condition
+
+Isolate the contribution of audience shift vs. UX change to the conversion 
+drop. If audience is the primary driver, adjust acquisition strategy. If UX 
+is the primary driver, proceed with Frame 01.
+```
+
+Notice the difference. Frame 01 assumes the UI is the cause and focuses on fixing it. Frame 02 questions that assumption entirely and focuses on diagnosis. A team that only considers Frame 01 might spend months optimizing a UI that was never the real problem. The workspace forces you to articulate both, sit with the tension, and gather evidence before committing.
+
+### The AI's Role in Framing
+
+The human writes the first frame. The AI critiques it. Specifically, the AI does three things:
+
+**It asks the questions you forgot.** Given a problem statement and constraints, the AI can systematically probe for missing assumptions, unstated dependencies, and implicit beliefs. "You list timeline as a constraint but not engineering capacity — is capacity unlimited?" "Your win condition is conversion rate, but your Frame 02 suggests the denominator (trial signups) may have changed — should the win condition account for that?"
+
+**It finds the constraints you assumed away.** Humans systematically underestimate constraints, especially political and organizational ones. The AI can read the stakeholders map and ask: "The VP of Marketing launched the campaign shift. If the data shows the campaign is the problem, is the team politically able to recommend reversing it?"
+
+**It stress-tests logical consistency.** "Your problem statement says the drop happened in 8 weeks, but your hypothesis points to feature discoverability. If the features were always hard to find, why didn't conversion decline immediately? Is there a delayed effect you should account for?"
+
+The AI does not write the frame. It makes the frame better by finding its weaknesses. This is the collaborative governance model: human-led, AI-assisted. The human retains authority over the problem definition. The AI adds rigor.
+
+### Anti-Patterns
+
+**Premature convergence.** The team commits to a single frame before gathering enough evidence. They spend weeks optimizing for the wrong problem. The fix: require at least two frames for any wicked problem. If you cannot articulate a second frame, you have not thought hard enough.
+
+**Frame as decoration.** The team writes a problem statement because the process requires it, but no one actually reads or references it during Work. The frame exists on paper but does not constrain behavior. The fix: every Work iteration must explicitly reference which frame it is solving for. If the iteration cannot point to a frame, it is unanchored.
+
+**The AI-written frame.** The team asks the AI to define the problem for them. The AI produces a coherent-sounding problem statement that reflects its training distribution, not the team's actual situation. The fix: the human writes first. Always. The AI critiques, never originates, at this layer.

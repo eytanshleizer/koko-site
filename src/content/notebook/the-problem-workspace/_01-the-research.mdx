@@ -1,0 +1,71 @@
+## The Research Behind the Model
+
+The Problem Workspace did not emerge from prompt engineering. It emerged from a question: **what does existing research say about how humans (and now machines) should approach problems that resist easy definition?**
+
+The answer, it turns out, is a lot. Researchers across decision science, military strategy, organizational theory, and design thinking have spent decades developing frameworks for exactly this kind of work. The workspace model synthesizes five key traditions, each of which solves a piece of the puzzle.
+
+### Wicked Problems: Why Definition Is the Hard Part
+
+In 1973, Horst Rittel and Melvin Webber published a paper that changed how planners think about complex problems. They introduced the concept of **wicked problems** — problems that cannot be definitively formulated, have no stopping rule, and where every attempt at a solution changes the problem itself.
+
+Their key insight was that wicked problems are not hard because the solution is hard to find. They are hard because **the problem is hard to define.** Every stakeholder sees a different problem. Every framing excludes relevant information. The act of proposing a solution reveals new dimensions of the problem that were previously invisible.
+
+Our trial-to-paid conversion drop is a textbook wicked problem. Is it a UX problem? A pricing problem? A positioning problem? An onboarding problem? The data supports multiple framings simultaneously, and the team's choice of frame will determine what solutions they even consider. If they frame it as "the new UI is confusing," they will redesign screens. If they frame it as "we attracted the wrong trial users," they will change marketing. Both frames are defensible. Neither is obviously correct.
+
+The workspace addresses this directly. **The Frame layer exists because Rittel was right**: you cannot solve a problem you have not defined, and the act of definition is itself a creative, contested process that deserves its own dedicated space. The workspace holds multiple frames simultaneously, because premature convergence on a single definition is how teams waste months solving the wrong problem.
+
+### Problem Structuring Methods: Making Mess Navigable
+
+Jonathan Rosenhead and John Mingers formalized a family of approaches called **Problem Structuring Methods (PSMs)** — techniques for making complex, multi-stakeholder situations navigable without pretending they are simple. Methods like Strategic Options Development and Analysis (SODA), Soft Systems Methodology (SSM), and Strategic Choice all share a common insight: **the first job is not to solve, but to structure.**
+
+Structuring means separating what you know from what you assume. It means mapping stakeholders and their competing objectives. It means identifying constraints that are real versus constraints that are political. It means surfacing the questions you have not yet asked.
+
+PSMs treat structuring as a distinct phase with its own practices, not something that happens implicitly on the way to a solution. The Problem Workspace borrows this principle wholesale. The separation between Raw (unprocessed input), Frame (problem definition), and Context (curated knowledge) is a direct application of the PSM insight that **structuring is work, not overhead.**
+
+### The OODA Loop: Orientation Is Everything
+
+Colonel John Boyd's **OODA loop** — Observe, Orient, Decide, Act — is often simplified into a speed-of-decision framework. But Boyd's actual insight was subtler. He argued that the **Orient** phase is the most important and the most neglected. Orientation is where you synthesize observations through the lens of your existing mental models, cultural traditions, prior experience, and the current situation. It is where raw data becomes actionable understanding.
+
+Most people skip orientation. They observe and then act. In the context of AI collaboration, this manifests as: paste data, get response, act on response. The Orient phase — where you reconcile new information with what you already know, update your mental models, and decide what the information *means* — is compressed to zero.
+
+The workspace reintroduces orientation as a structural requirement. The Context layer *is* orientation. It is where observations from Raw are processed through the lens of the Frame, reconciled with prior decisions, and distilled into the curated knowledge that makes action meaningful. Without it, every interaction with the AI is a cold start — all observation, no orientation.
+
+The loop structure of the workspace — where Review feeds back to Frame or Context, not just to Work — mirrors Boyd's insight that orientation must be continuously updated. Your mental model of the problem should change as you learn, and the workspace makes that change explicit and traceable.
+
+### Cynefin: Matching Method to Complexity
+
+Dave Snowden's **Cynefin framework** distinguishes between four types of situations: simple (clear cause and effect), complicated (cause and effect discoverable through analysis), complex (cause and effect only visible in retrospect), and chaotic (no discernible cause and effect).
+
+The critical insight for our purposes is that **complex problems require a probe-sense-respond approach**, not an analyze-plan-execute approach. You cannot analyze your way to understanding a complex system. You must act, observe the result, and adjust. This is fundamentally different from complicated problems, where sufficient expertise and analysis will yield a correct answer.
+
+Most AI workflows implicitly assume the problem is complicated — that if you give the model enough context, it will analyze its way to an answer. But the problems worth solving with AI assistance are usually complex. The conversion drop might have seven contributing factors that interact in ways no amount of upfront analysis can predict. You need to probe: try a hypothesis, see what the data says, adjust your frame.
+
+The workspace supports this. The iteration structure in the Work layer is not a waterfall — it is a probe-sense-respond cycle. Each iteration is a probe. The Review layer is where you sense. The feedback to Frame or Context is the response. The workspace does not assume you will get it right on the first pass. It assumes you will not.
+
+### Sensemaking: Constructing Meaning from Ambiguity
+
+Karl Weick's **sensemaking** framework describes how people construct understanding of ambiguous situations. Sensemaking is not analysis — it is the process of creating a plausible narrative from incomplete, conflicting, and evolving information. It is retrospective (you understand what you did only after doing it), social (meaning is constructed through interaction), and enactive (your actions change the environment you are trying to understand).
+
+Weick's insight explains why the "dump and prompt" approach fails so completely. Sensemaking requires iteration between action and interpretation. You do something, observe what happens, and then revise your understanding. A single-shot interaction with an AI model cannot support this. You need a persistent structure that accumulates understanding over time, that preserves the history of what was tried and what was learned, and that allows you to revise your framing as new information emerges.
+
+The workspace's Meta folder — with its changelog, agent notes, and project brief — is sensemaking infrastructure. It ensures that understanding is not lost when a context window resets, when a new team member joins, or when you return to the problem after a week away. The decisions log in Context captures not just what was decided but *why*, creating the narrative backbone that sensemaking requires.
+
+---
+
+### From Research to Architecture
+
+Each of these traditions solves a piece of the puzzle:
+
+| Research Tradition | Core Insight | Workspace Element |
+|---|---|---|
+| Wicked Problems | Definition is the hard part | Frame layer holds multiple problem definitions |
+| Problem Structuring Methods | Structuring is work, not overhead | Separation of Raw → Frame → Context |
+| OODA Loop | Orientation is everything | Context layer as persistent orientation |
+| Cynefin | Complex problems need probe-sense-respond | Iterative Work → Review → Frame feedback |
+| Sensemaking | Understanding is constructed, not discovered | Meta folder preserves narrative across sessions |
+
+The Problem Workspace is not any one of these frameworks. It is the architecture that emerges when you ask: **what would it look like to apply all of these insights to the specific challenge of human-AI collaboration?**
+
+The answer is a layered structure with explicit governance — a system where information flows through defined stages, each with clear ownership, and where the boundaries between stages are enforced precisely because crossing them carelessly is how complex problem-solving fails.
+
+The research tells us *what* good problem-solving requires. The next question is practical: how do you encode those requirements into the actual interface between you and an AI agent? The answer, it turns out, starts with something unexpectedly mundane — your file system.

@@ -1,0 +1,113 @@
+## Layer 4: Work — Where Things Get Built
+
+This is where things get built. Finally.
+
+But notice how much has happened before we got here. The team collected raw material, defined two competing problem frames, built a living context of verified facts and logged decisions, and only *now* asks the AI to generate solutions. This sequence is not ceremony. It is the difference between work that solves and work that decorates.
+
+Solutions live in `iterations/`, not in root, not in drafts. The naming convention matters. Drafts are temporary. Iterations are committed attempts.
+
+```
+03-work/
+└── iterations/
+    ├── iteration-01/
+    │   ├── design/
+    │   ├── prototype/
+    │   └── analysis.md
+    ├── iteration-02/
+    │   ├── design/
+    │   ├── prototype/
+    │   └── analysis.md
+    └── iteration-03/
+```
+
+Each iteration contains what was tried, what was learned, and what failed. The folder holds designs, code, analyses, models, or documents — whatever the Work produces. The `analysis.md` file records the post-mortem before you move on.
+
+The language is intentional. A draft is cheap. An iteration costs attention. When you name something `iteration-03`, you are making a claim: this was a real attempt, informed by the frame and context, that produced an artifact worth evaluating. The naming convention creates accountability. It prevents the proliferation of `draft-v2-final-FINAL-revised.md` files that no one can navigate.
+
+### Work in Practice
+
+The product team, armed with their frames and context, asks the AI to generate the first iteration. The prompt is specific — it references the active frame, the verified facts, and the open questions:
+
+> "Based on Frame 01 (UX friction) and the verified facts in context/facts.md, generate a UX audit of the new dashboard focusing on integration discoverability. Compare the old and new information architecture for the Integrations flow. Propose three specific design changes ranked by expected impact on time-to-first-integration. Document your reasoning."
+
+The AI produces `iteration-01/analysis.md`:
+
+```markdown
+## Iteration 01: UX Audit — Integration Discoverability
+
+### Frame Reference
+Solving for Frame 01 (UX Friction). Win condition: restore conversion 
+to ≥11% within 60 days.
+
+### Approach
+Compared old and new UI information architecture for the path: 
+Dashboard → Integrations → Stripe Setup.
+
+### Findings
+
+**Old UI path:** Dashboard → Sidebar (always visible) → "Integrations" 
+(2nd item) → Stripe card → "Connect" button. Total: 3 clicks, 
+all visible without scrolling.
+
+**New UI path:** Dashboard → Top nav "Settings" → Left panel 
+"Advanced" → "Integrations" tab → Stripe card → "Connect" button. 
+Total: 5 clicks, requires knowing to look under Settings → Advanced.
+
+**Impact assessment:** The critical path doubled in click depth and 
+moved from a persistent, visible location to a nested, non-obvious 
+one. For trial users with a specific intent (connect Stripe), the 
+new path violates the principle of progressive disclosure — the 
+most important conversion action is hidden behind the least 
+intuitive label ("Advanced").
+
+### Proposed Changes (ranked by expected impact)
+
+1. **Surface Integrations in primary navigation.** Move it from 
+   Settings → Advanced back to the main sidebar or top nav. 
+   Expected impact: high. Cost: low (nav restructure, ~2 days eng).
+
+2. **Add contextual prompts.** When a trial user has not connected 
+   any integrations after 48 hours, surface a non-dismissable 
+   tooltip: "Connect your tools to get started." 
+   Expected impact: medium. Cost: low (~1 day eng).
+
+3. **Redesign Settings hierarchy.** Rename "Advanced" to 
+   "Integrations & API" and promote it to top-level within 
+   Settings. Expected impact: medium-low (still requires users 
+   to go to Settings first). Cost: low.
+
+### Open Questions for Review
+- Should we A/B test change #1, or is the heatmap evidence 
+  sufficient to ship directly?
+- Does this analysis hold for Frame 02 users (paid social cohort), 
+  or do they have different navigation patterns?
+- The redesign team chose to nest Integrations deliberately 
+  (to reduce sidebar clutter). How do we balance discoverability 
+  against the original design intent?
+```
+
+Notice what makes this Work output useful. It explicitly references the frame it is solving for. It uses verified facts from Context (the click depth comparison, the heatmap data). It acknowledges open questions. And it structures the output so the Review layer has clear decision points — not a vague "here is what I think" but a ranked list of specific proposals with expected impacts.
+
+### The AI Generates. The Human Reviews.
+
+No review, no iteration. This is the governance contract for the Work layer. The AI can produce as many analyses, designs, and prototypes as needed, but nothing advances to Review without a human looking at it.
+
+This is not a trust issue. It is a quality issue. The AI will produce coherent, well-structured output that is *wrong* in ways that are invisible to the model but obvious to someone who knows the domain. In the example above, the AI might not know that the redesign team deliberately nested Integrations because the CEO personally requested a "cleaner sidebar." That political context changes which solutions are actually viable, and it is the kind of information that lives in human heads, not in context files.
+
+The human review catches domain knowledge gaps, political realities, and implicit constraints that the frame and context files did not capture. It is the final filter before a solution enters the formal Review process.
+
+### The Iteration Accumulation Principle
+
+Each iteration builds on what came before. The `analysis.md` from iteration-01 is not deleted when iteration-02 begins — it is preserved as a record of what was tried. Iteration-02's analysis references iteration-01 explicitly: "Iteration 01 proposed three UX changes. After review, change #1 was approved for implementation but change #3 was rejected because the Settings hierarchy is being redesigned separately. This iteration focuses on implementing change #1 and measuring its impact."
+
+This accumulation is critical for two reasons. First, it prevents the AI from re-proposing rejected approaches. Without the iteration history, the model has no way to know that change #3 was already considered and rejected — it might propose it again, wasting a review cycle. Second, it creates a natural narrative of the problem-solving process that new team members or new AI sessions can read to orient themselves quickly.
+
+The iteration history is not just a log. It is compressed experience.
+
+### Anti-Patterns
+
+**The premature build.** The team jumps to Work before Frame and Context are stable. The AI generates solutions to a problem that has not been defined, using facts that have not been verified. The output looks professional but is strategically meaningless. The most common source of wasted effort is generating Work before the upstream layers have settled. The first pass through the workspace is slow by design. Each subsequent pass accelerates — but only if the foundation was laid properly.
+
+**The iteration graveyard.** Iterations accumulate but are never reviewed. The Work folder has seven iterations, none of which have been formally evaluated. The team "moves on" without closing the loop. The fix: no iteration should exist without a corresponding entry in Review. If you generated it, you evaluate it.
+
+**The monolithic output.** The AI produces a single massive document covering analysis, recommendations, implementation plan, and risk assessment. It is impressive and unusable. The fix: each iteration should have a clear, bounded scope. One question per iteration. One deliverable. One review cycle.

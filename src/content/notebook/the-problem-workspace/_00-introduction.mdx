@@ -1,0 +1,41 @@
+You open a new conversation with an AI model. You paste in a product brief, three customer interviews, a spreadsheet of churn numbers, and a screenshot of your analytics dashboard. You type: *"Help me figure out why trial-to-paid conversion dropped 40% after our redesign."*
+
+The model responds. It sounds smart. It references your data. It gives you a tidy list of hypotheses. You feel productive for about ninety seconds — until you realize the hypotheses are shallow, the model misread a column header in your spreadsheet, and it ignored the most important thing a customer said because it was buried on page four of a transcript.
+
+You try again. You rephrase. You paste more. The model apologizes, adjusts, and produces a slightly different version of the same mediocre analysis. An hour later, you have six chat messages, zero insight, and the distinct feeling that you just performed an elaborate ritual of copy-paste theater.
+
+**This is the default experience of working with AI on a hard problem. And it is almost entirely a structural failure, not an intelligence failure.**
+
+The model is not stupid. You are not lazy. The problem is that you handed a powerful reasoning engine a pile of unprocessed fragments and asked it to simultaneously understand the domain, define the problem, organize the evidence, generate solutions, and evaluate its own output — all in a single pass, with no memory of what it tried before, no way to distinguish verified facts from raw speculation, and no governance over what it can and cannot modify.
+
+That is not collaboration. That is a stress test.
+
+---
+
+## Why This Matters Now
+
+We are at a peculiar inflection point. AI models have become genuinely capable — they can read long documents, write working code, synthesize research, and reason through multi-step problems. Context windows have grown from 4,000 tokens to over a million. Tool use, function calling, and agent frameworks let models take action in the real world. The raw capability is there.
+
+And yet, most people working with AI on complex problems report the same experience: **it works for simple tasks and falls apart for hard ones.** Not because the model cannot think, but because the human never structured the problem in a way that makes thinking possible.
+
+This gap — between what AI *can* do and what it *actually* does in practice — is not a model problem. It is a problem-structuring problem. And it has been studied for decades, long before anyone was prompting language models.
+
+## The Uncomfortable Truth About Context
+
+The AI industry's answer to complexity has been "more context." Bigger windows. More tokens. RAG pipelines that retrieve everything even tangentially related. The assumption is that if the model can *see* enough information, it will figure out what matters.
+
+This assumption is wrong, and it is wrong in a way that research on human problem-solving predicted forty years ago.
+
+Herbert Simon called it **bounded rationality** — the idea that decision-makers, whether human or artificial, cannot process all available information and instead rely on simplified models of the world. Dumping more context into a window does not overcome bounded rationality. It worsens it. The model must now filter more noise to find less signal, with no structural guidance about which information is settled fact versus raw speculation versus outdated assumption.
+
+Context is necessary. But context without structure is noise with a higher word count.
+
+## What This Article Proposes
+
+This article introduces the **Problem Workspace** — a structured approach to human-AI collaboration on complex, ill-structured problems. It is not a prompt template. It is not a tool. It is an *architecture* for how information should be organized, governed, and evolved when you and an AI agent are working together on something genuinely hard.
+
+The model draws on decades of research in problem structuring, sensemaking, and decision theory, adapted for the specific constraints and capabilities of working with large language models. It proposes five layers of information — **Raw, Frame, Context, Work, and Review** — each with explicit rules about who writes, who reads, and who decides. It introduces governance: the idea that not all information should be equally editable, and that the boundaries between layers are as important as the content within them.
+
+Throughout this article, we will follow a single example: **a product team trying to understand why trial-to-paid conversion dropped 40% after a UI redesign.** This is not a toy problem. It involves ambiguous data, conflicting stakeholder perspectives, multiple possible root causes, and the kind of complexity that makes most AI interactions degrade into superficial pattern-matching. It is exactly the kind of problem the workspace is designed for.
+
+By the end, you will have a concrete, reusable model for structuring any complex problem so that AI can actually help you solve it — not by being smarter, but by operating within a structure that makes intelligence useful.

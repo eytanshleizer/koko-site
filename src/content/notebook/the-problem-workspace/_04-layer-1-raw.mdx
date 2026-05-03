@@ -1,0 +1,65 @@
+## Layer 1: Raw — The Unprocessed Signal
+
+Everything unprocessed lands here. Interviews, research, screenshots, bookmarks, half-formed notes. It is a dump. It is supposed to be messy. That is the entire point.
+
+The sub-structure is simple:
+
+```
+00-raw/
+├── interviews/
+├── research/
+├── screenshots/
+├── bookmarks/
+└── notes/
+```
+
+**Rule: humans write here. Never AI.** This is your messy thinking space. Voice memos, copy-pasted articles, photos of whiteboards, highlights from a book you are reading. If the agent wrote it, it does not belong in Raw.
+
+This rule exists for a reason that sounds philosophical but has immediate practical consequences: **you cannot curate what you did not author.** The moment AI-generated text leaks into the Raw layer, you lose the ability to distinguish between what you actually observed and what the model hallucinated into existence. Raw is ground truth. It is the evidence base. If the evidence base is contaminated, every layer above it is built on sand.
+
+The AI's job at this layer is to *wait.* It does not ingest Raw directly. It does not summarize it. It does not helpfully reorganize it. The human curates first — deciding what matters, what connects, and what should be promoted to the Frame — and then the upstream layers process the curated material.
+
+### The Raw Layer in Practice
+
+Let us see what this looks like for our conversion problem. The product team has been investigating for a week. Their `00-raw/` folder now contains:
+
+```
+00-raw/
+├── interviews/
+│   ├── user-interview-sarah-chen.md
+│   ├── user-interview-marcus-johnson.md
+│   └── user-interview-priya-patel.md
+├── research/
+│   ├── mixpanel-export-trial-cohorts-q1.csv
+│   ├── stripe-mrr-by-plan-tier.csv
+│   └── competitor-onboarding-teardown.md
+├── screenshots/
+│   ├── old-dashboard-ui.png
+│   ├── new-dashboard-ui.png
+│   ├── heatmap-old-settings-page.png
+│   └── heatmap-new-settings-page.png
+├── bookmarks/
+│   └── articles-on-saas-onboarding-benchmarks.md
+└── notes/
+    ├── pm-hypothesis-brainstorm.md
+    ├── slack-thread-redesign-rationale.md
+    └── board-meeting-feedback-notes.md
+```
+
+Notice what is in here: unedited interview transcripts with verbatim quotes, raw CSV exports that have not been analyzed, screenshots without annotation, a brainstorm document that contradicts itself, and a copy-pasted Slack thread. None of this is ready for an AI to act on. All of it is valuable.
+
+One of the interview transcripts contains this exchange:
+
+> **Sarah Chen (trial user, did not convert):** "I actually liked the new design better. It looked more professional. But I couldn't figure out how to connect my Stripe account, and that was the whole reason I signed up. I clicked around for twenty minutes and then just... gave up."
+
+This is gold. But if you dump this transcript into a chat alongside fifteen other files, the model is unlikely to surface it as the critical data point it is. The transcript is long, the quote is buried, and the model has no structural signal telling it that *this specific piece of customer testimony about a specific feature* might be more important than the competitive analysis someone did last quarter.
+
+In the workspace, this interview stays in Raw until the human reads it and recognizes its significance. Then the human promotes the relevant insight upward: into the Frame (as evidence supporting a particular problem definition) or into Context (as a verified customer pain point). The promotion is a conscious act. It is the human doing the work of curation that no amount of context window can replace.
+
+### Anti-Patterns
+
+**The eager assistant.** The AI reads raw interview transcripts and immediately produces a "summary of key themes." This sounds helpful. It is not. The summary will reflect the model's priors about what themes are important, not the human's judgment about what matters for *this specific problem*. Summarization is a downstream operation that belongs in Context, after framing.
+
+**The bottomless inbox.** Raw accumulates indefinitely with no curation. The folder grows to 200 files. Nothing is promoted. The human uses Raw as a guilt repository — a place where important things go to never be read again. The fix: treat Raw as a staging area, not an archive. If something has been in Raw for two weeks without being promoted, it is either not important or you are avoiding the work of framing.
+
+**The leaky boundary.** AI-generated analysis, summaries, or suggestions end up in the Raw folder. Now the human cannot tell what they actually observed versus what the model inferred. The evidence base is compromised. The fix: enforce the boundary. Raw is human-authored only, no exceptions.

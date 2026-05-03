@@ -1,0 +1,49 @@
+## The Premise: Your File System Is a Protocol
+
+The file system is not a filing cabinet. It is a protocol — a shared language between you and an AI agent about what information exists, what state it is in, and what should be done with it.
+
+This is a fundamental shift in how we think about file organization, and it is worth sitting with for a moment.
+
+For thirty years, we organized files for *retrieval*. Folders existed so you could find things later. The naming conventions, the hierarchies, the obsessive tagging systems — all optimized for a single operation: a human searching for a document they vaguely remember creating.
+
+That use case is dead. Search killed it years ago. But the habits persist. People still organize files as if the primary consumer is a future version of themselves squinting at a folder tree.
+
+When you work with an AI agent, the primary consumer of your file structure is a machine that reads *everything* in the directories you point it at, has no memory of previous sessions, and makes inferences about the status and reliability of information based entirely on where you put it. **The location of a file is now a semantic signal.** Putting a document in a folder called `raw/` tells the agent something different than putting the same document in `context/`. The file has not changed. Its meaning has.
+
+> **The Problem Workspace axiom:** Where you put something determines whether an agent can use it — and *how* it should use it.
+
+### What Goes Wrong Without Structure
+
+Let us return to our conversion problem. The product team has accumulated a significant amount of material: three customer interview transcripts, analytics exports from Mixpanel, a competitive analysis someone did last quarter, Slack threads about the redesign rationale, screenshots of the old and new UIs, a half-written hypothesis document from the PM, and a spreadsheet of trial cohort data with fifteen tabs.
+
+The typical approach: dump all of it into a conversation. Maybe zip it up and attach it. Maybe paste the most important parts. The model responds with something that sounds reasonable but is actually just a fluent recombination of whatever happened to be near the top of the context window.
+
+The failure modes are predictable and consistent:
+
+**Contamination.** The model treats a speculative note from a Slack thread with the same confidence as a verified analytics export. It cannot tell the difference because you gave it no structural signal about which is which.
+
+**Recency bias.** Information pasted later in the conversation overshadows information pasted earlier, regardless of importance. The model's attention is not uniform across long contexts, despite what the benchmarks suggest.
+
+**Frame lock.** The model adopts whatever framing was implied by the first message and struggles to consider alternatives. If you opened with "why is the new UI confusing users?" the model will analyze UI confusion even if the real issue is pricing.
+
+**Amnesia.** Each new conversation starts from zero. The insights from yesterday's session — the hypotheses you ruled out, the data you validated, the framing you refined — are gone. You re-explain, re-contextualize, re-orient. Every session is a cold start.
+
+**Governance collapse.** The model can and will modify any information you give it. It will "correct" your raw interview transcripts, "improve" your problem statement, and "update" your facts — all without distinguishing between editing its own work and overwriting yours. There is no boundary between human-authored truth and AI-generated suggestion.
+
+These are not bugs in any particular model. They are structural consequences of treating the model's input as an undifferentiated pile of text. The workspace solves each of them — not by making the model smarter, but by making the input structured.
+
+### The Workspace as Collaboration Interface
+
+Think of the Problem Workspace the way you would think about an API contract between two services. When two software systems need to communicate, they do not dump raw data at each other and hope. They define schemas, protocols, and contracts. They specify what format data should be in, what each field means, and what operations are valid.
+
+You and an AI agent are two systems that need to collaborate. The workspace is the contract. It specifies:
+
+- **What information exists** (the files)
+- **What state each piece of information is in** (which layer it lives in)
+- **Who authored it** (human, AI, or collaborative)
+- **What operations are valid** (who can read, who can write, who can modify)
+- **How information flows** (the layer progression and feedback loops)
+
+When the structure is explicit, the agent knows where it is in the process. It knows that files in `raw/` are human-authored inputs that should be read but never modified. It knows that files in `context/` are curated summaries that it maintains but the human reviews. It knows that `iterations/` in the Work layer are its own outputs, subject to review. The structure itself communicates intent, ownership, and trust level.
+
+When the structure is absent, you are both guessing.
